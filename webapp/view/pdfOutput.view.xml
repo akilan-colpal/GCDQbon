@@ -1,0 +1,17 @@
+<mvc:View 
+    controllerName="adobeform.controller.pdfOutput"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page title="PDF Output" showNavButton="true" navButtonPress=".onNavBack">
+        <content>
+            <!-- The source matches the property we set in the controller -->
+            <PDFViewer 
+                source="{view>/pdfSource}" 
+                title="Bonus Document" 
+                height="100%" 
+                width="100%" 
+                showDownloadButton="true">
+            </PDFViewer>
+        </content>
+    </Page>
+</mvc:View>

@@ -1,0 +1,39 @@
+{
+  "welcomeFile": "/index.html",
+  "authenticationMethod": "route",
+  "routes": [
+     {
+      "source": "^/sapadmin/(.*)$",
+      "target": "/$1",
+      "destination": "BTP_2_SF_OAUTH_sapadmin",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    },
+    {
+      
+      "source": "^/backend/(.*)$",
+      "target": "/$1",
+      "destination": "BTP_2_RAP_USER_TOKEN",
+      "authenticationType": "xsuaa",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/resources/(.*)$",
+      "target": "/resources/$1",
+      "authenticationType": "none",
+      "destination": "ui5"
+    },
+    {
+      "source": "^/test-resources/(.*)$",
+      "target": "/test-resources/$1",
+      "authenticationType": "none",
+      "destination": "ui5"
+    },
+    {
+      "source": "^(.*)$",
+      "target": "$1",
+      "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa"
+    }
+  ]
+}

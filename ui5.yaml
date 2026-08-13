@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=https://sap.github.io/ui5-tooling/schema/ui5.yaml.json
+specVersion: "4.0"
+metadata:
+  name: adobeform
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertErrors: false
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+        backend:
+          - url: https://eaeae0ff-9ca5-4323-b47d-ab81f7338371.abap.us10.hana.ondemand.com
+            authenticationType: OAuth2UserTokenExchange
+            destination: BTP_2_RAP_USER_TOKEN
+            path: /backend
+            pathPrefix: /
+          - url: https://api4.successfactors.com
+            authenticationType: OAuth2SAMLBearerAssertion
+            destination: BTP_2_SF_OAUTH_sapadmin
+            path: /sapadmin
+            pathPrefix: /
+
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: fiori-tools-preview
+      afterMiddleware: fiori-tools-appreload
+      configuration:
+        flp:
+          theme: sap_horizon
+    - name: ui5-tooling-transpile-middleware
+      afterMiddleware: compression
+      configuration:
+        debug: true
+        transformModulesToUI5:
+          overridesToOverride: true
+        excludePatterns:
+          - /Component-preload.js
+builder:
+  customTasks:
+    - name: ui5-tooling-transpile-task
+      afterTask: replaceVersion
+      configuration:
+        debug: true
+        transformModulesToUI5:
+          overridesToOverride: true
+  resources:
+    excludes:
+      - /test/**
+      - /localService/**

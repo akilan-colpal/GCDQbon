@@ -1,0 +1,140 @@
+{
+  "_version": "1.84.0",
+  "sap.app": {
+    "id": "adobeform",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.24.0",
+      "toolsId": "0c6a7ede-c1c0-40fb-b9a8-abff720a0872"
+    },
+    "dataSources": {
+      "SuccessFactorService": {
+        "uri": "/sapadmin/odata/v2/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "2.0"
+        }
+      },
+      "mainService": {
+        "uri": "/backend/sap/opu/odata/sap/Z_GCDQBON_SERVICE/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "2.0"
+        }
+      }
+      }
+    },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": false,
+    "dependencies": {
+      "minUI5Version": "1.147.2",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "adobeform.i18n.i18n"
+        }
+      },
+      "mSuccessFactorsModel": {
+        "dataSource": "SuccessFactorService",
+        "preload": true,
+        "settings": {}
+      },
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      }
+    },
+    "resources": {
+      "css": [
+        {
+          "uri": "css/style.css"
+        }
+      ]
+    },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "controlAggregation": "pages",
+        "controlId": "app",
+        "transition": "slide",
+        "type": "View",
+        "viewType": "XML",
+        "path": "adobeform.view",
+        "async": true,
+        "viewPath": "adobeform.view"
+      },
+      "routes": [
+        {
+          "name": "RouteadobeForm",
+          "pattern": ":?query:",
+          "target": [
+            "TargetadobeForm"
+          ]
+        },
+        {
+          "name": "RoutePdfOutput",
+          "pattern": "pdf",
+          "target": [
+            "TargetPdfOutput"
+          ]
+        }
+      ],
+      "targets": {
+        "TargetadobeForm": {
+          "id": "adobeForm",
+          "name": "adobeForm"
+        },
+        "TargetPdfOutput": {
+          "id": "pdfOutput",
+          "name": "pdfOutput"
+        }
+      }
+    },
+    "rootView": {
+      "viewName": "adobeform.view.App",
+      "type": "XML",
+      "id": "App",
+      "async": true
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "adobeform"
+  }
+}

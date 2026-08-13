@@ -1,0 +1,25 @@
+<mvc:View controllerName="adobeform.controller.App"
+    displayBlock="true"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:tnt="sap.tnt"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m">
+    
+    <tnt:ToolPage id="toolPage" sideExpanded="false">
+        <tnt:header>
+            <tnt:ToolHeader id="toolHeader" class="toolHeader">
+                
+                <Image src="{value: 'adobeform/image/ColPal_Icon.svg', formatter: 'sap.ui.require.toUrl'}" width="auto" height="8.5rem" id="logo" press = "pressLogo" class="sapMPointer"/>        
+
+                <Title id="appTitle" level="H5" text="{i18n>title}" class="toolHeaderTitle center"/>
+                <ToolbarSpacer id="_IDGenToolbarSpacer" />
+                                
+            </tnt:ToolHeader>
+        </tnt:header>
+
+        <tnt:mainContents>
+            <App id="app" />
+        </tnt:mainContents>
+
+    </tnt:ToolPage>
+</mvc:View>
