@@ -4,7 +4,6 @@
     xmlns="sap.m">
     <Page title="PDF Output" showNavButton="true" navButtonPress=".onNavBack">
         <content>
-            <!-- The source matches the property we set in the controller -->
             <PDFViewer 
                 source="{view>/pdfSource}" 
                 title="Bonus Document" 

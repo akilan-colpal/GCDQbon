@@ -32,7 +32,6 @@ sap.ui.define([
                         aBytes[i] = sBinaryString.charCodeAt(i);
                     }
 
-                    // Create a Blob and URL
                     var oBlob = new Blob([aBytes], { type: "application/pdf" });
                     var sBlobUrl = URL.createObjectURL(oBlob);
                     
