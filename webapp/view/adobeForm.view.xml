@@ -112,7 +112,7 @@
                             </HBox>
                         </HBox>
 
-                                            <!-- TABLES CONTAINER -->
+                    <!-- TABLES CONTAINER -->
                     <VBox id="_IDGenVBox12" alignItems="Center" width="100%" class="sapUiMediumMarginTop">
                         
                         <!-- TABLE 1: KPI DATA -->
@@ -243,7 +243,38 @@
                                     </VBox>
                                 </HBox>
                             </VBox>
+                            <VBox id="disclaimerContainer" width="95%" class="sapUiMediumMarginTop sapUiLargeMarginBottom">
+                                <Table id="disclaimerTable" 
+                                       showSeparators="All" 
+                                       backgroundDesign="Solid" 
+                                       inset="false"
+                                       class="sapUiTinyMarginBottom">
+                                    <columns>
+                                        <Column width="25%"><Text text="" visible="false" /></Column>
+                                        <Column width="25%"><Text text="" visible="false" /></Column>
+                                        <Column width="25%"><Text text="" visible="false" /></Column>
+                                        <Column width="25%"><Text text="" visible="false" /></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem vAlign="Top">
+                                            <cells>
+                                                <FormattedText class="sapUiTinyMargin" htmlText="&lt;strong&gt;&lt;em&gt;Calculation Basis:&lt;/em&gt;&lt;/strong&gt; &lt;em&gt;Your GCD Bonus award is determined by a combination of Business Performance (Sales Targets/KPIs) and your Individual contribution. The &quot;Total Payout&quot; reflects your achievement against the specific quarterly targets assigned to your role and region.&lt;/em&gt;" />
+                                                
+                                                <FormattedText class="sapUiTinyMargin" htmlText="&lt;strong&gt;&lt;em&gt;Eligibility &amp; Pro-ration:&lt;/em&gt;&lt;/strong&gt; &lt;em&gt;Please note that if you joined the plan mid-quarter, changed roles, or took a leave of absence (LOA), your award has been pro-rated. The calculation is based strictly on the number of active days in the eligible position during this performance period.&lt;/em&gt;" />
+                                                
+                                                <FormattedText class="sapUiTinyMargin" htmlText="&lt;strong&gt;&lt;em&gt;Payment Information:&lt;/em&gt;&lt;/strong&gt; &lt;em&gt;The &quot;Total Award&quot; displayed is a gross amount (pre-tax). Statutory deductions and taxes will be applied at the time of payment through your local payroll. The net amount will be reflected in your upcoming payslip according to the local payroll cycle.&lt;/em&gt;" />
+                                                
+                                                <FormattedText class="sapUiTinyMargin" htmlText="&lt;strong&gt;&lt;em&gt;Official Policy &amp; Disclaimer:&lt;/em&gt;&lt;/strong&gt; &lt;em&gt;This statement is for informational purposes only. In the event of any discrepancy between this statement and the official plan rules, the GCD Bonus Plan Document shall prevail. This award does not constitute a guarantee of future employment or compensation.&lt;/em&gt;" />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
 
+                                <HBox justifyContent="Center" class="sapUiSmallMarginTop">
+                                    <Title text="Note: GCD Bonus Amount is Pre-Tax (gross)" level="H6" titleStyle="H6" />
+                                </HBox>
+
+                            </VBox>
                         </VBox>
                     </content>
                 </Panel>

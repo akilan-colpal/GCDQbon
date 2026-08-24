@@ -65,7 +65,6 @@ sap.ui.define([
                                     bonusYear: sYear,
                                     bonusQuarter: sQuarter
                                 });
-
                                 if (!aYears.some(function(y) { return y.year === sYear; })) {
                                     aYears.push({ year: sYear });
                                 }
@@ -171,7 +170,7 @@ sap.ui.define([
             var oRecord = oViewModel.getProperty("/data");
 
             if (!oRecord || !oRecord.PdfContent) {
-                sap.m.MessageBox.error("No PDF data is available for this record. Please search again.");
+                sap.m.MessageBox.error("No PDF data is available for this record.");
                 return;
             }
 
@@ -192,7 +191,7 @@ sap.ui.define([
                 var oNewTab = window.open(sBlobUrl, "_blank");
 
                 if (!oNewTab) {
-                    sap.m.MessageBox.warning("Your browser blocked the new tab. Please allow pop-ups for this site.");
+                    sap.m.MessageBox.warning("Your browser blocked the new tab.");
                 }
 
             } catch (e) {
@@ -205,13 +204,10 @@ sap.ui.define([
             if (!sValue) {
                 return ""; 
             }
-            
             var fValue = parseFloat(sValue);
-            
             if (isNaN(fValue)) {
                 return sValue; 
             }
-
             return fValue.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2
