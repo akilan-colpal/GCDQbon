@@ -36,49 +36,80 @@ sap.ui.define([
             }
         },
 
-        _loadDropdownData: function (sEmployeeId) {
-            var oView = this.getView();
-            var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
+_loadDropdownData: function (sEmployeeId) {
+    var oView = this.getView();
+    var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
 
-            var aFilters = [new Filter("cust_EmployeeID", FilterOperator.EQ, sEmployeeId)];
+    var aFilters = [
+        new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
+    ];
 
-            oView.setBusy(true);
+    oView.setBusy(true);
 
-            oSFModel.read("/cust_VarPayBusinessGoals", {
-                filters: aFilters,
-                success: function (oData) {
-                    oView.setBusy(false);
-                    var aResults = oData.results || [];
-                    var aYears = [];
-                    var aParsedPeriods = [];
+    oSFModel.read("/cust_VarPayEmpHistData", {
+        filters: aFilters,
+        urlParameters: {
+            fromDate: "1900-01-01",     
+            toDate:   "9999-12-31",     
 
-                    aResults.forEach(function(item) {
-                        var sTemplateName = item.cust_VarPayTemplateName;
-                        
-                        if (sTemplateName) {
-                            var aMatch = sTemplateName.match(/(\d{4})\s+(Q[1-4])/i);
-                            if (aMatch) {
-                                var sYear = aMatch[1];
-                                var sQuarter = aMatch[2].toUpperCase();
-
-                                aParsedPeriods.push({
-                                    bonusYear: sYear,
-                                    bonusQuarter: sQuarter
-                                });
-                                if (!aYears.some(function(y) { return y.year === sYear; })) {
-                                    aYears.push({ year: sYear });
-                                }
-                            }
-                        }
-                    });
-
-                    oView.getModel().setProperty("/allPeriods", aParsedPeriods);
-                    aYears.sort(function(a, b) { return a.year.localeCompare(b.year); });                 
-                    oView.getModel().setProperty("/availableYears", aYears);
-                    oView.getModel().setProperty("/availableQuarters", []); 
-                }.bind(this),
-            });
+            "$orderby": "cust_VarPayTemplateName desc"
         },
+
+        success: function (oData) {
+            oView.setBusy(false);
+
+            var aResults        = oData.results || [];
+            var aYears          = [];
+            var aParsedPeriods  = [];
+            var aTemplateItems  = []; 
+            var oTemplateMap    = Object.create(null);
+
+            aResults.forEach(function (item) {
+                var sTemplateName = item.cust_VarPayTemplateName;
+
+                if (sTemplateName) {
+                    if (!oTemplateMap[sTemplateName]) {
+                        oTemplateMap[sTemplateName] = true;
+                        aTemplateItems.push({
+                            templateName: sTemplateName
+                        });
+                    }
+                    var aMatch = sTemplateName.match(/(\d{4})\s+(Q[1-4])/i);
+                    if (aMatch) {
+                        var sYear    = aMatch[1];
+                        var sQuarter = aMatch[2].toUpperCase();
+
+                        aParsedPeriods.push({
+                            bonusYear:    sYear,
+                            bonusQuarter: sQuarter,
+                            templateName: sTemplateName
+                        });
+
+                        if (!aYears.some(function (y) { return y.year === sYear; })) {
+                            aYears.push({ year: sYear });
+                        }
+                    }
+                }
+            });
+
+            aYears.sort(function (a, b) {
+                return a.year.localeCompare(b.year);
+            });
+            oView.getModel().setProperty("/allPeriods", aParsedPeriods);
+            oView.getModel().setProperty("/availableYears", aYears);
+            oView.getModel().setProperty("/availableQuarters", []);
+            aTemplateItems.sort(function (a, b) {
+                return a.templateName.localeCompare(b.templateName);
+            });
+            oView.getModel().setProperty("/availableTemplates", aTemplateItems);
+        }.bind(this),
+
+        error: function (oError) {
+            oView.setBusy(false);
+
+        }.bind(this)
+    });
+},
 
         onYearChange: function (oEvent) {
             var oView = this.getView();
@@ -166,38 +197,66 @@ sap.ui.define([
         },
 
     onGeneratePress: function () {
-            var oViewModel = this.getView().getModel();
-            var oRecord = oViewModel.getProperty("/data");
+            var oView = this.getView();
+            var sGlobalId = this.byId("globalIdInput").getValue();
+            var sYear = this.byId("bonusYearInput").getSelectedKey();
+            var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
 
-            if (!oRecord || !oRecord.PdfContent) {
-                sap.m.MessageBox.error("No PDF data is available for this record.");
+            if (!sGlobalId || !sYear || !sQuarter) {
+                sap.m.MessageBox.error("Missing search criteria to generate PDF.");
                 return;
             }
 
-            try {
-                var sBase64 = oRecord.PdfContent;
+            var aFilters = [
+                new sap.ui.model.Filter("global_id", sap.ui.model.FilterOperator.EQ, sGlobalId),
+                new sap.ui.model.Filter("bonusYear", sap.ui.model.FilterOperator.EQ, sYear),
+                new sap.ui.model.Filter("bonusQuarter", sap.ui.model.FilterOperator.EQ, sQuarter),
+                new sap.ui.model.Filter("generatePdfRequest", sap.ui.model.FilterOperator.EQ, "Y")
+            ];
 
-                var sBinaryString = window.atob(sBase64);
-                var iBinaryLen = sBinaryString.length;
-                var aBytes = new Uint8Array(iBinaryLen);
-                
-                for (var i = 0; i < iBinaryLen; i++) {
-                    aBytes[i] = sBinaryString.charCodeAt(i);
+            var oODataModel = this.getOwnerComponent().getModel();
+            
+            oView.setBusy(true);
+            oODataModel.read("/ZI_QBON_DD", {
+                filters: aFilters,
+                success: function (oData) {
+                    oView.setBusy(false);
+                    
+                    if (oData.results && oData.results.length > 0 && oData.results[0].PdfContent) {
+                        try {
+                            var sBase64 = oData.results[0].PdfContent;
+                            
+                            var sCleanBase64 = sBase64.replace(/\s/g, '');
+
+                            var sBinaryString = window.atob(sCleanBase64);
+                            var iBinaryLen = sBinaryString.length;
+                            var aBytes = new Uint8Array(iBinaryLen);
+                            
+                            for (var i = 0; i < iBinaryLen; i++) {
+                                aBytes[i] = sBinaryString.charCodeAt(i);
+                            }
+
+                            var oBlob = new Blob([aBytes], { type: "application/pdf" });
+                            var sBlobUrl = URL.createObjectURL(oBlob);
+                            var oNewTab = window.open("", "_blank");
+                            oNewTab.location.href = sBlobUrl;
+
+                        } catch (e) {
+                            sap.m.MessageBox.error("An error occurred while generating the PDF file locally.");
+                        }
+                    } else {
+                        oNewTab.close(); 
+                        sap.m.MessageBox.error("No PDF data returned from the backend.");
+                    }
+                }.bind(this),
+                error: function (oError) {
+                    oView.setBusy(false);
+                    if (oNewTab) {
+                        oNewTab.close();
+                    }
+                    sap.m.MessageBox.error("Failed to fetch the PDF from the backend.");
                 }
-
-                var oBlob = new Blob([aBytes], { type: "application/pdf" });
-                var sBlobUrl = URL.createObjectURL(oBlob);
-
-                var oNewTab = window.open(sBlobUrl, "_blank");
-
-                if (!oNewTab) {
-                    sap.m.MessageBox.warning("Your browser blocked the new tab.");
-                }
-
-            } catch (e) {
-                console.error("PDF Conversion Error:", e);
-                sap.m.MessageBox.error("An error occurred while generating the PDF file locally.");
-            }
+            });
         },
 
         formatCleanNumber: function (sValue) {

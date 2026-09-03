@@ -119,8 +119,12 @@
                         <VBox id="_IDGenVBox13" width="95%" class="sapUiLargeMarginBottom">
                             <Title id="_IDGenTitle1" text="KPI Details for Current Quarter" level="H3" class="sapUiTinyMarginBottom" />
                             <table:Table id="kpiTable" 
-                                        rows="{to_KPIs}" 
-                                        selectionMode="None" 
+                                       rows="{
+                                                path: 'to_KPIs',
+                                                sorter: [
+                                                    { path: 'startKpiDate', descending: false }
+                                                ]
+                                            }"                                        selectionMode="None" 
                                         class="kpiTableHeader"
                                         visibleRowCount="{/kpiRowCount}"
                                         rowHeight="45">
@@ -129,21 +133,36 @@
                                         <Label text="Quarter" textAlign="Center" width="100%" />
                                         <table:template><Text text="{bonusQuarter}" /></table:template>
                                     </table:Column>
-                                    
-                                    <table:Column >
+                                <table:Column width="9rem">
+                                    <Label text="Period" textAlign="Center" width="100%" />
+                                    <table:template>
+                                        <Text text="{
+                                            path: 'startKpiDate', 
+                                            type: 'sap.ui.model.type.Date', 
+                                            formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
+                                        } to {
+                                            path: 'endKpiDate', 
+                                            type: 'sap.ui.model.type.Date', 
+                                            formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
+                                        }" />
+
+                                    </table:template>
+                                </table:Column>
+                                    <table:Column width="10rem" >
                                         <Label text="KPI" textAlign="Center" width="100%" />
                                         <table:template><Text text="{KPIName}" /></table:template>
                                     </table:Column>
-                                    
-                                    <table:Column hAlign="End" width="10rem">
-                                        <Label text="KPI Result *Target" textAlign="Center" width="100%" />
+
+
+                                    <table:Column hAlign="End" width="9rem">
+                                        <Label text="KPI Result *Target" textAlign="Center" width="100%" class="KPIResultColumn" />
                                         <table:template><Text text="{path: 'kpiResTarget', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
                                     <table:Column hAlign="End" width="10rem">
-                                        <Label text="KPI Result *Achievement" textAlign="Center" width="100%" />
-                                        <table:template><Text text="{path: 'kpiResAchievement', formatter: '.formatCleanNumber'}" /></table:template>
+                                        <Label text="KPI Result *Achievement" textAlign="Center" width="100%" class="KPIResultColumn" />
+                                        <table:template><Text text="{path: 'kpiResAchievement', formatter: '.formatCleanNumber'} " /></table:template>
                                     </table:Column>
-                                    <table:Column hAlign="End" width="11rem">
+                                    <table:Column hAlign="End" width="10rem">
                                         <Label text="Prorated Target Amount" textAlign="Center" width="100%" />
                                         <table:template><Text text="{path: 'proratedTarget', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
@@ -157,17 +176,17 @@
                                         <table:template><Text text="{path: 'teamWeight', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
                                     
-                                    <table:Column hAlign="End" width="11rem">
+                                    <table:Column hAlign="End" width="9rem">
                                         <Label text="KPI Target Amount" textAlign="Center" width="100%" />
                                         <table:template><Text text="{path: 'kpiTargetAmount', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
                                     
-                                    <table:Column hAlign="End" width="6rem">
+                                    <table:Column hAlign="End" width="6.5rem">
                                         <Label text="KPI Payout %" textAlign="Center" width="100%" />
                                         <table:template><Text text="{path: 'kpiPayoutPercent', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
                                     
-                                    <table:Column hAlign="End" width="10rem">
+                                    <table:Column hAlign="End" width="9rem">
                                         <Label text="My KPI Payout" textAlign="Center" width="100%" />
                                         <table:template><Text text="{path: 'kpiPayout', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
@@ -189,21 +208,38 @@
                         <!-- TABLE 2: SUMMARY DATA -->
                         <VBox id="_IDGenVBox16" width="95%" class="sapUiLargeMarginBottom">
                             <Title id="_IDGenTitle2" text="Quarter Plan Summary" level="H3" class="sapUiTinyMarginBottom" />
-                            <table:Table id="summaryTable" 
-                                        rows="{to_qSum}" 
+                            <table:Table id="summaryTable"                             
+                                       rows="{
+                                                path: 'to_qSum',
+                                                sorter: [
+                                                    { path: 'summaryQuarter', descending: false },
+                                                    { path: 'startQSumDate', descending: false }
+                                                ]
+                                            }"
                                         class="summaryTableHeader"
                                         selectionMode="None" 
                                         visibleRowCount="{/summaryRowCount}"
                                         rowHeight="45">
                                 <table:columns>
-                                    <table:Column id="_IDGenColumn10" width="8rem">
+                                    <table:Column id="_IDGenColumn10" width="5rem">
                                         <Label id="_IDGenLabel18" text="Quarter" textAlign="Center" width="100%" />
                                         <table:template><Text id="_IDGenText12" text="{summaryQuarter}" /></table:template>
                                     </table:Column>
-                                    <table:Column id="_IDGenColumn11" width="9rem">
-                                        <Label id="_IDGenLabel19" text="Period" textAlign="Center" width="100%" />
-                                        <table:template><Text id="_IDGenText13" text="{period}" /></table:template>
-                                    </table:Column>
+                                <table:Column width="9rem">
+                                    <Label text="Period" textAlign="Center" width="100%" />
+                                    <table:template>
+                                        <Text text="{
+                                            path: 'startQSumDate', 
+                                            type: 'sap.ui.model.type.Date', 
+                                            formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
+                                        } to {
+                                            path: 'endQSumDate', 
+                                            type: 'sap.ui.model.type.Date', 
+                                            formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
+                                        }" />
+
+                                    </table:template>
+                                </table:Column>
                                     <table:Column id="_IDGenColumn12">
                                         <Label id="_IDGenLabel20" text="Plan Type" textAlign="Center" width="100%" />
                                         <table:template><Text id="_IDGenText14" text="{planType}" /></table:template>
@@ -216,16 +252,16 @@
                                         <Label id="_IDGenLabel22" text="Quarterly Target %" textAlign="Center" width="100%" />
                                         <table:template><Text id="_IDGenText16" text="{path: 'quarterTargetPercent', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
-                                    <table:Column id="_IDGenColumn16" width="10rem">
+                                    <table:Column id="_IDGenColumn16" hAlign="End" width="10rem">
                                         <Label id="_IDGenLabel24" text="Payment Period" textAlign="Center" width="100%" />
-                                        <table:template><Text id="_IDGenText18" text="{paymentPeriod}" /></table:template>
+                                        <table:template><Text id="_IDGenText18" text="{path: 'paymentPeriod',formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
                                     <table:Column id="_IDGenColumn15" hAlign="End" width="11rem">
                                         <Label id="_IDGenLabel23" text="Quarterly Target Amt" textAlign="Center" width="100%" />
                                         <table:template><Text id="_IDGenText17" text="{path: 'quarterTargetAmount', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>
 
-                                    <table:Column id="_IDGenColumn17" hAlign="End" width="10rem">
+                                    <table:Column id="_IDGenColumn17" hAlign="End" >
                                         <Label id="_IDGenLabel25" text="Segment Award" textAlign="Center" width="100%" />
                                         <table:template><Text id="_IDGenText19" text="{path: 'segmentAward', formatter: '.formatCleanNumber'}" /></table:template>
                                     </table:Column>

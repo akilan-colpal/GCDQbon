@@ -12,6 +12,10 @@
 .toolHeaderTitle {
   color: #ffffff;
 }
+.KPIResultColumn {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;      
+}
 
 .kpiBoxOutline {
     border: 1px solid #d9d9d9; 
