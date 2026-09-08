@@ -1,5 +1,6 @@
 sap.ui.define([
-  "sap/ui/core/mvc/Controller"
+  "sap/ui/core/mvc/Controller",
+   "sap/ui/core/Configuration"
 ], (BaseController) => {
   "use strict";
 
@@ -7,6 +8,10 @@ sap.ui.define([
         pressLogo: function(){
           this.getOwnerComponent().getRouter().navTo("RouteadobeForm");
       },
+      onLanguageChange: function (oEvent) {
+        var sSelectedLang = oEvent.getParameter("selectedItem").getKey();
+        sap.ui.getCore().getConfiguration().setLanguage(sSelectedLang);
+      }
   });
 });
 
