@@ -19,10 +19,13 @@
                     <HBox id="_IDGenHBox" wrap="Wrap" class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
                         
                         <VBox id="_IDGenVBox1" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" />
+                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" visible="{/isGlobalIdVisible}" />
                             <MultiInput id="globalIdInput" 
                                         placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}" 
                                         change=".onGlobalIdChange" 
+                                        showValueHelp="true"
+                                        valueHelpRequest=".onGlobalIdValueHelp"
+                                        visible="{/isGlobalIdVisible}"
                                         width="14rem" />
                         </VBox>
 

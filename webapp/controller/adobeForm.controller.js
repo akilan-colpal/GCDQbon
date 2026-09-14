@@ -4,12 +4,12 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/MessageToast",
-    "sap/m/MessageBox"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/ui/core/Fragment"
+], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment) {
     "use strict";
 
     return Controller.extend("adobeform.controller.adobeForm", {
-
         onInit: function () {
             var oViewModel = new JSONModel({
                 data: {},
@@ -18,11 +18,119 @@ sap.ui.define([
                 availableQuarters: [],
                 isQuarterEnabled: false,
                 kpiRowCount: 1, 
-                summaryRowCount: 1
+                summaryRowCount: 1,
+                
+                isGlobalIdVisible: false,
+                treeHierarchy: []
             });
             this.getView().setModel(oViewModel); 
-            
             this.byId("resultsAccordion").bindElement("/data");
+            this.getView().setBusy(true);
+            this._preloadTreeData();
+        },
+
+        _preloadTreeData: async function () {
+            var oView = this.getView();
+            var oViewModel = oView.getModel();
+            var sRootEmpId = "00049421"; 
+            this.byId("globalIdInput").setValue(sRootEmpId);
+            try {
+                var aHierarchy = await this._buildTreeDFS(sRootEmpId, 0, 2);
+
+                if (aHierarchy && aHierarchy.length > 0) {
+                    oViewModel.setProperty("/isGlobalIdVisible", true);
+                    oViewModel.setProperty("/treeHierarchy", aHierarchy);
+                } else {
+                    this._loadDropdownData(sRootEmpId);
+                }
+            } catch (oError) {
+                console.error("Tree Preload Error:", oError);
+            } finally {
+                oView.setBusy(false);
+            }
+        },
+
+        // =======================================================
+        // RECURSIVE TREE BUILDER
+        // =======================================================
+        _buildTreeDFS: async function (sManagerId, iCurrentDepth, iMaxDepth) {
+            if (iCurrentDepth >= iMaxDepth) {
+                return [];
+            }
+            var aReports = await this._fetchDirectReports(sManagerId);
+            var aPromises = aReports.map(async (oNode) => {
+                if (oNode.isManager === "Y") {
+                    var aChildren = await this._buildTreeDFS(oNode.empid, iCurrentDepth + 1, iMaxDepth);
+
+                    if (aChildren && aChildren.length > 0) {
+                        oNode.nodes = aChildren;
+                    }
+                }
+                return oNode;
+            });
+
+            return await Promise.all(aPromises);
+        },
+
+        _fetchDirectReports: function (sManagerId) {
+            var oODataModel = this.getOwnerComponent().getModel("managerModel"); 
+            var sPath = "/teamview(mgrid='" + sManagerId + "',levels='1',exclude='N')/Set";
+            
+            var oListBinding = oODataModel.bindList(sPath, undefined, undefined, undefined, {
+                "$$groupId": "$direct"
+            });
+            return oListBinding.requestContexts(0, 1000).then(function (aContexts) {
+                return aContexts.map(function (oContext) {
+                    return oContext.getObject();
+                });
+            });
+        },
+
+        // =======================================================
+        // VALUE HELP DIALOG 
+        // =======================================================
+        onGlobalIdValueHelp: function () {
+            var oView = this.getView();
+            if (!this._pTreeDialog) {
+                this._pTreeDialog = Fragment.load({
+                    id: oView.getId(),
+                    name: "adobeform.fragment.ValueHelpDialog", 
+                    controller: this
+                }).then(function (oDialog) {
+                    oView.addDependent(oDialog);
+
+                    oDialog.setModel(oView.getModel(), "treeModel");
+                    
+                    return oDialog;
+                });
+            }
+       
+            this._pTreeDialog.then(function(oDialog) {
+                oDialog.open();
+            });
+        },
+
+        onCloseTreeDialog: function () {
+            this.byId("treeDialog").close();
+        },
+
+        onTreeItemPress: function (oEvent) {
+            var oItem = oEvent.getParameter("listItem");
+            var oContext = oItem.getBindingContext("treeModel");
+
+            var sSelectedId = oContext.getProperty("empid"); 
+            
+            var oGlobalIdInput = this.byId("globalIdInput");
+            oGlobalIdInput.setValue(sSelectedId);
+            
+           
+            this.byId("treeDialog").close();
+            
+            this.byId("bonusYearInput").setSelectedKey("");
+            this.byId("bonusQuarterInput").setSelectedKey("");
+            this.getView().getModel().setProperty("/isQuarterEnabled", false);
+            
+            this._loadDropdownData(sSelectedId);
         },
 
         onGlobalIdChange: function (oEvent) {
@@ -36,80 +144,77 @@ sap.ui.define([
             }
         },
 
-_loadDropdownData: function (sEmployeeId) {
-    var oView = this.getView();
-    var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
+        _loadDropdownData: function (sEmployeeId) {
+            var oView = this.getView();
+            var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
 
-    var aFilters = [
-        new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
-    ];
+            var aFilters = [
+                new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
+            ];
 
-    oView.setBusy(true);
+            oView.setBusy(true);
 
-    oSFModel.read("/cust_VarPayEmpHistData", {
-        filters: aFilters,
-        urlParameters: {
-            fromDate: "1900-01-01",     
-            toDate:   "9999-12-31",     
+            oSFModel.read("/cust_VarPayEmpHistData", {
+                filters: aFilters,
+                urlParameters: {
+                    fromDate: "1900-01-01",     
+                    toDate:   "9999-12-31",     
+                    "$orderby": "cust_VarPayTemplateName desc"
+                },
+                success: function (oData) {
+                    oView.setBusy(false);
 
-            "$orderby": "cust_VarPayTemplateName desc"
-        },
+                    var aResults        = oData.results || [];
+                    var aYears          = [];
+                    var aParsedPeriods  = [];
+                    var aTemplateItems  = []; 
+                    var oTemplateMap    = Object.create(null);
 
-        success: function (oData) {
-            oView.setBusy(false);
+                    aResults.forEach(function (item) {
+                        var sTemplateName = item.cust_VarPayTemplateName;
 
-            var aResults        = oData.results || [];
-            var aYears          = [];
-            var aParsedPeriods  = [];
-            var aTemplateItems  = []; 
-            var oTemplateMap    = Object.create(null);
+                        if (sTemplateName) {
+                            if (!oTemplateMap[sTemplateName]) {
+                                oTemplateMap[sTemplateName] = true;
+                                aTemplateItems.push({
+                                    templateName: sTemplateName
+                                });
+                            }
+                            var aMatch = sTemplateName.match(/(\d{4})\s+(Q[1-4])/i);
+                            if (aMatch) {
+                                var sYear    = aMatch[1];
+                                var sQuarter = aMatch[2].toUpperCase();
 
-            aResults.forEach(function (item) {
-                var sTemplateName = item.cust_VarPayTemplateName;
+                                aParsedPeriods.push({
+                                    bonusYear:    sYear,
+                                    bonusQuarter: sQuarter,
+                                    templateName: sTemplateName
+                                });
 
-                if (sTemplateName) {
-                    if (!oTemplateMap[sTemplateName]) {
-                        oTemplateMap[sTemplateName] = true;
-                        aTemplateItems.push({
-                            templateName: sTemplateName
-                        });
-                    }
-                    var aMatch = sTemplateName.match(/(\d{4})\s+(Q[1-4])/i);
-                    if (aMatch) {
-                        var sYear    = aMatch[1];
-                        var sQuarter = aMatch[2].toUpperCase();
-
-                        aParsedPeriods.push({
-                            bonusYear:    sYear,
-                            bonusQuarter: sQuarter,
-                            templateName: sTemplateName
-                        });
-
-                        if (!aYears.some(function (y) { return y.year === sYear; })) {
-                            aYears.push({ year: sYear });
+                                if (!aYears.some(function (y) { return y.year === sYear; })) {
+                                    aYears.push({ year: sYear });
+                                }
+                            }
                         }
-                    }
-                }
-            });
+                    });
 
-            aYears.sort(function (a, b) {
-                return a.year.localeCompare(b.year);
-            });
-            oView.getModel().setProperty("/allPeriods", aParsedPeriods);
-            oView.getModel().setProperty("/availableYears", aYears);
-            oView.getModel().setProperty("/availableQuarters", []);
-            aTemplateItems.sort(function (a, b) {
-                return a.templateName.localeCompare(b.templateName);
-            });
-            oView.getModel().setProperty("/availableTemplates", aTemplateItems);
-        }.bind(this),
+                    aYears.sort(function (a, b) {
+                        return a.year.localeCompare(b.year);
+                    });
+                    oView.getModel().setProperty("/allPeriods", aParsedPeriods);
+                    oView.getModel().setProperty("/availableYears", aYears);
+                    oView.getModel().setProperty("/availableQuarters", []);
+                    aTemplateItems.sort(function (a, b) {
+                        return a.templateName.localeCompare(b.templateName);
+                    });
+                    oView.getModel().setProperty("/availableTemplates", aTemplateItems);
+                }.bind(this),
 
-        error: function (oError) {
-            oView.setBusy(false);
-
-        }.bind(this)
-    });
-},
+                error: function (oError) {
+                    oView.setBusy(false);
+                }.bind(this)
+            });
+        },
 
         onYearChange: function (oEvent) {
             var oView = this.getView();
@@ -119,9 +224,7 @@ _loadDropdownData: function (sEmployeeId) {
 
             aAllPeriods.forEach(function(item) {
                 if (item.bonusYear === sSelectedYear) {
-                    
                     var isDuplicate = false; 
-                    
                     for (var j = 0; j < aQuarters.length; j++) {
                         if (aQuarters[j].quarter === item.bonusQuarter) {
                             isDuplicate = true; 
@@ -196,7 +299,7 @@ _loadDropdownData: function (sEmployeeId) {
             });
         },
 
-    onGeneratePress: function () {
+        onGeneratePress: function () {
             var oView = this.getView();
             var sGlobalId = this.byId("globalIdInput").getValue();
             var sYear = this.byId("bonusYearInput").getSelectedKey();
@@ -225,9 +328,7 @@ _loadDropdownData: function (sEmployeeId) {
                     if (oData.results && oData.results.length > 0 && oData.results[0].PdfContent) {
                         try {
                             var sBase64 = oData.results[0].PdfContent;
-                            
                             var sCleanBase64 = sBase64.replace(/\s/g, '');
-
                             var sBinaryString = window.atob(sCleanBase64);
                             var iBinaryLen = sBinaryString.length;
                             var aBytes = new Uint8Array(iBinaryLen);
@@ -245,15 +346,11 @@ _loadDropdownData: function (sEmployeeId) {
                             sap.m.MessageBox.error("An error occurred while generating the PDF file locally.");
                         }
                     } else {
-                        oNewTab.close(); 
                         sap.m.MessageBox.error("No PDF data returned from the backend.");
                     }
                 }.bind(this),
                 error: function (oError) {
                     oView.setBusy(false);
-                    if (oNewTab) {
-                        oNewTab.close();
-                    }
                     sap.m.MessageBox.error("Failed to fetch the PDF from the backend.");
                 }
             });
@@ -271,7 +368,6 @@ _loadDropdownData: function (sEmployeeId) {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2
             });
-        },
-
+        }
     });
 });

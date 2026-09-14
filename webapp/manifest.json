@@ -30,6 +30,14 @@
           "annotations": [],
           "odataVersion": "2.0"
         }
+      },
+        "managerService": {
+        "uri": "backend/sap/opu/odata4/sap/zsb_mgr_reportee/srvd_a2x/sap/zsd_mgr_reportee/0001/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
       }
       }
     },
@@ -73,6 +81,11 @@
       },
       "mSuccessFactorsModel": {
         "dataSource": "SuccessFactorService",
+        "preload": true,
+        "settings": {}
+      },
+      "managerModel": {
+        "dataSource": "managerService",
         "preload": true,
         "settings": {}
       },
