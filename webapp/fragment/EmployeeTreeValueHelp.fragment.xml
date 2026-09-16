@@ -4,20 +4,34 @@
     <Dialog 
         id="treeDialog" 
         title="Select Employee" 
-        contentWidth="40em" 
+        contentWidth="50em" 
         contentHeight="40em">
-        
+        <SearchField 
+            placeholder="Search by Name or ID..."
+            liveChange=".onManagerTreeSearch"
+            search=".onManagerTreeSearch"
+            width="100%"
+            class="sapUiBottomMargin" />
         <content>
             <Tree 
                 id="orgTree"
                 mode="SingleSelectMaster"
                 itemPress=".onTreeItemPress"
+                toggleOpenState=".onTreeToggleOpenState"
                 items="{
                     path: 'treeModel>/treeHierarchy',
                     parameters: { arrayNames: ['nodes'] }
                 }">
                 <StandardTreeItem 
-                    title="{treeModel>firstname} {treeModel>lastname} ({treeModel>empid})"
+                    title="{
+                        parts: [
+                            'treeModel>firstname', 
+                            'treeModel>lastname', 
+                            'treeModel>empid', 
+                            'treeModel>_bIsDummy'
+                        ],
+                        formatter: '.formatTreeTitle'
+                    }"
                     type="Active" />
             </Tree>
         </content>

@@ -9,7 +9,7 @@ sap.ui.define([
 ], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment) {
     "use strict";
 
-    return Controller.extend("adobeform.controller.adobeForm", {
+    return Controller.extend("adobeform.controller.adobeForm", { 
         onInit: function () {
             var oViewModel = new JSONModel({
                 data: {},
@@ -25,86 +25,118 @@ sap.ui.define([
             });
             this.getView().setModel(oViewModel); 
             this.byId("resultsAccordion").bindElement("/data");
+            
             this.getView().setBusy(true);
             this._preloadTreeData();
         },
 
+        formatTreeTitle: function (sFirstName, sLastName, sEmpId) {
+            return (sFirstName || "") + " " + (sLastName || "") + " (" + (sEmpId || "") + ")";
+        },
+
+        // =======================================================
+        _fetchSFData: function (sPath, oUrlParams) {
+            var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
+            return new Promise(function (resolve, reject) {
+                oSFModel.read(sPath, {
+                    urlParameters: oUrlParams,
+                    success: function (oData) { resolve(oData); },
+                    error: function (oError) { reject(oError); }
+                });
+            });
+        },
+
+        // =======================================================
+        // TREE DATA LOAD 
+        // =======================================================
         _preloadTreeData: async function () {
             var oView = this.getView();
             var oViewModel = oView.getModel();
-            var sRootEmpId = "00049421"; 
-            this.byId("globalIdInput").setValue(sRootEmpId);
-            try {
-                var aHierarchy = await this._buildTreeDFS(sRootEmpId, 0, 2);
+            
+            var oUserDataModel = this.getOwnerComponent().getModel("mUserDataModel");
+            var sRootEmpId = oUserDataModel.getProperty("/userId"); 
+            
+            this.byId("employeeIdInput").setValue(sRootEmpId);
 
-                if (aHierarchy && aHierarchy.length > 0) {
-                    oViewModel.setProperty("/isGlobalIdVisible", true);
-                    oViewModel.setProperty("/treeHierarchy", aHierarchy);
-                } else {
-                    this._loadDropdownData(sRootEmpId);
+             try {
+                var oUserData = await this._fetchSFData("/User('" + sRootEmpId + "')", {
+                    "$select": "userId,firstName,lastName,directReports/userId,directReports/firstName,directReports/lastName,directReports/directReports/userId,directReports/directReports/firstName,directReports/directReports/lastName,directReports/directReports/directReports/userId,directReports/directReports/directReports/firstName,directReports/directReports/directReports/lastName", 
+                    "$expand": "directReports,directReports/directReports,directReports/directReports/directReports"
+                });
+
+                var aDirectReports = (oUserData.directReports && oUserData.directReports.results) ? oUserData.directReports.results : [];
+
+                var oUserNode = {
+                    empid: oUserData.userId,
+                    firstname: oUserData.firstName,
+                    lastname: oUserData.lastName,
+                    nodes: []
+                };
+
+                if (aDirectReports.length > 0) {
+                    oUserNode.nodes = aDirectReports.map(function(dr) {
+                        
+                        var aSubReports = (dr.directReports && dr.directReports.results) ? dr.directReports.results : [];
+                        
+                        return {
+                            empid: dr.userId,
+                            firstname: dr.firstName,
+                            lastname: dr.lastName,
+                            nodes: aSubReports.map(function(subDr) {
+                                
+                                var aSubSubReports = (subDr.directReports && subDr.directReports.results) ? subDr.directReports.results : [];
+
+                                return {
+                                    empid: subDr.userId,
+                                    firstname: subDr.firstName,
+                                    lastname: subDr.lastName,
+                                    nodes: aSubSubReports.map(function(subSubDr) {
+                                        return {
+                                            empid: subSubDr.userId,
+                                            firstname: subSubDr.firstName,
+                                            lastname: subSubDr.lastName,
+                                            nodes: [] 
+                                        };
+                                    })
+                                };
+                            })
+                        };
+                    });
                 }
+
+                var aTree = [oUserNode];
+
+         
+                oViewModel.setProperty("/isGlobalIdVisible", true);
+                oViewModel.setProperty("/treeHierarchy", aTree);
+                this._loadDropdownData(sRootEmpId);
+
+            
+
             } catch (oError) {
-                console.error("Tree Preload Error:", oError);
+                console.error("Tree Load Error:", oError);
+                MessageBox.error("Failed to load employee hierarchy.");
             } finally {
                 oView.setBusy(false);
             }
         },
 
         // =======================================================
-        // RECURSIVE TREE BUILDER
-        // =======================================================
-        _buildTreeDFS: async function (sManagerId, iCurrentDepth, iMaxDepth) {
-            if (iCurrentDepth >= iMaxDepth) {
-                return [];
-            }
-            var aReports = await this._fetchDirectReports(sManagerId);
-            var aPromises = aReports.map(async (oNode) => {
-                if (oNode.isManager === "Y") {
-                    var aChildren = await this._buildTreeDFS(oNode.empid, iCurrentDepth + 1, iMaxDepth);
-
-                    if (aChildren && aChildren.length > 0) {
-                        oNode.nodes = aChildren;
-                    }
-                }
-                return oNode;
-            });
-
-            return await Promise.all(aPromises);
-        },
-
-        _fetchDirectReports: function (sManagerId) {
-            var oODataModel = this.getOwnerComponent().getModel("managerModel"); 
-            var sPath = "/teamview(mgrid='" + sManagerId + "',levels='1',exclude='N')/Set";
-            
-            var oListBinding = oODataModel.bindList(sPath, undefined, undefined, undefined, {
-                "$$groupId": "$direct"
-            });
-            return oListBinding.requestContexts(0, 1000).then(function (aContexts) {
-                return aContexts.map(function (oContext) {
-                    return oContext.getObject();
-                });
-            });
-        },
-
-        // =======================================================
         // VALUE HELP DIALOG 
         // =======================================================
-        onGlobalIdValueHelp: function () {
+        onEmployeeTreeValueHelp: function () {
             var oView = this.getView();
             if (!this._pTreeDialog) {
                 this._pTreeDialog = Fragment.load({
                     id: oView.getId(),
-                    name: "adobeform.fragment.ValueHelpDialog", 
+                    name: "adobeform.fragment.EmployeeTreeValueHelp", 
                     controller: this
                 }).then(function (oDialog) {
                     oView.addDependent(oDialog);
-
                     oDialog.setModel(oView.getModel(), "treeModel");
-                    
                     return oDialog;
                 });
             }
-       
             this._pTreeDialog.then(function(oDialog) {
                 oDialog.open();
             });
@@ -120,10 +152,9 @@ sap.ui.define([
 
             var sSelectedId = oContext.getProperty("empid"); 
             
-            var oGlobalIdInput = this.byId("globalIdInput");
+            var oGlobalIdInput = this.byId("employeeIdInput");
             oGlobalIdInput.setValue(sSelectedId);
             
-           
             this.byId("treeDialog").close();
             
             this.byId("bonusYearInput").setSelectedKey("");
@@ -132,6 +163,70 @@ sap.ui.define([
             
             this._loadDropdownData(sSelectedId);
         },
+
+        // =======================================================
+        // HR MULTI-INPUT VALUE HELP
+        // =======================================================
+        onHREmployeeValueHelp: function () {
+            var oView = this.getView();
+            
+            if (!this._pEmployeeDialog) {
+                this._pEmployeeDialog = Fragment.load({
+                    id: oView.getId(),
+                    name: "adobeform.fragment.EmployeeSelectValueHelp", 
+                    controller: this
+                }).then(function (oDialog) {
+                    oView.addDependent(oDialog);
+                    return oDialog;
+                });
+            }
+       
+            this._pEmployeeDialog.then(function(oDialog) {
+                oDialog.getBinding("items").filter([]);
+                oDialog.open();
+            });
+        },
+
+        onHREmployeeSearch: function (oEvent) {
+            var sValue = oEvent.getParameter("value");
+            var oBinding = oEvent.getSource().getBinding("items");
+            
+            if (sValue) {
+                var oFilter = new sap.ui.model.Filter({
+                    filters: [
+                        new sap.ui.model.Filter("userId", sap.ui.model.FilterOperator.Contains, sValue),
+                        new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.Contains, sValue),
+                        new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.Contains, sValue)
+                    ],
+                    and: false
+                });
+                oBinding.filter([oFilter]);
+            } else {
+                oBinding.filter([]);
+            }
+        },
+
+        onHREmployeeConfirm: function (oEvent) {
+            var aSelectedContexts = oEvent.getParameter("selectedContexts");
+            
+            if (aSelectedContexts && aSelectedContexts.length > 0) {
+                var oContext = aSelectedContexts[0];
+                var sId = oContext.getProperty("userId");
+
+                var oInput = this.byId("hrEmployeeIdInput"); 
+                oInput.setValue(sId); 
+                this.byId("bonusYearInput").setSelectedKey("");
+                this.byId("bonusQuarterInput").setSelectedKey("");
+                this.getView().getModel().setProperty("/isQuarterEnabled", false);
+                
+                this._loadDropdownData(sId);
+            }
+        },
+
+
+        // =======================================================
+        // DROPDOWNS & DATA FETCHING
+        // =======================================================
 
         onGlobalIdChange: function (oEvent) {
             var sGlobalId = oEvent.getParameter("value");
@@ -143,6 +238,7 @@ sap.ui.define([
                 this._loadDropdownData(sGlobalId);
             }
         },
+
 
         _loadDropdownData: function (sEmployeeId) {
             var oView = this.getView();
@@ -245,7 +341,7 @@ sap.ui.define([
 
         onSearchPress: function () {
             var oView = this.getView();
-            var sGlobalId = this.byId("globalIdInput").getValue();
+            var sGlobalId = this.byId("hrEmployeeIdInput").getValue() || this.byId("employeeIdInput").getValue();
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
 
@@ -301,7 +397,7 @@ sap.ui.define([
 
         onGeneratePress: function () {
             var oView = this.getView();
-            var sGlobalId = this.byId("globalIdInput").getValue();
+            var sGlobalId = this.byId("employeeIdInput").getValue() ||  this.byId("hrEmployeeIdInput").getValue();
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
 

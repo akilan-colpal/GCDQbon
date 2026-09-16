@@ -1,0 +1,49 @@
+<core:FragmentDefinition 
+    xmlns="sap.m" 
+    xmlns:core="sap.ui.core">
+    <TableSelectDialog
+        id="employeeSelectDialog"
+        title="Select Employee"
+        search=".onHREmployeeSearch"
+        confirm=".onHREmployeeConfirm"
+        contentWidth="50em" 
+        contentHeight="40em"
+        growing="true"
+        growingThreshold="20"
+        items="{
+            path: 'mSuccessFactorsModel>/User',
+            parameters: {
+                $select: 'userId,firstName,lastName'
+            }
+        }">
+        
+        <columns>
+            <Column>
+                <header>
+                    <Text text="Global ID" />
+                </header>
+            </Column>
+            <Column>
+                <header>
+                    <Text text="First Name" />
+                </header>
+            </Column>
+            <Column>
+                <header>
+                    <Text text="Last Name" />
+                </header>
+            </Column>
+        </columns>
+
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <Text text="{mSuccessFactorsModel>userId}" />
+                    <Text text="{mSuccessFactorsModel>firstName}" />
+                    <Text text="{mSuccessFactorsModel>lastName}" />
+                </cells>
+            </ColumnListItem>
+        </items>
+        
+    </TableSelectDialog>
+</core:FragmentDefinition>
