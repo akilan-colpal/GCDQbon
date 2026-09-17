@@ -4,7 +4,7 @@ QUnit.config.autostart = false;
 // import all your QUnit tests here
 void Promise.all([
 	import("sap/ui/core/Core"), // Required to wait until Core has booted to start the QUnit tests
-import("unit/controller/adobeFormPage.controller")
+import("unit/controller/gcdStatementFilterPage.controller")
 ]).then(([{default: Core}]) => Core.ready()).then(() => {
 	QUnit.start();
 });

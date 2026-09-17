@@ -119,10 +119,17 @@
       },
       "routes": [
         {
-          "name": "RouteadobeForm",
+          "name": "RouteAccessDenied",
+          "pattern": "accessDenied",
+          "target": [
+            "TargetAccessDenied"
+          ]
+        },
+        {
+          "name": "RouteGcdStatementFilter",
           "pattern": ":?query:",
           "target": [
-            "TargetadobeForm"
+            "TargetGcdStatementFilter"
           ]
         },
         {
@@ -134,9 +141,13 @@
         }
       ],
       "targets": {
-        "TargetadobeForm": {
-          "id": "adobeForm",
-          "name": "adobeForm"
+        "TargetAccessDenied": {
+          "id": "accessDenied",
+          "name": "AccessDenied"
+        },
+        "TargetGcdStatementFilter": {
+          "id": "gcdStatementFilter",
+          "name": "gcdStatementFilter"
         },
         "TargetPdfOutput": {
           "id": "pdfOutput",

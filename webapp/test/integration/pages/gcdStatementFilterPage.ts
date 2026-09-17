@@ -1,15 +1,15 @@
 import Opa5 from "sap/ui/test/Opa5";
 
-const sViewName = "adobeForm";
+const sViewName = "gcdStatementFilter";
 
-export default class adobeFormPage extends Opa5 {
+export default class gcdStatementFilterPage extends Opa5 {
 	// Actions
 
 
 	// Assertions
 	iShouldSeeThePageView() {
 		return this.waitFor({
-			id: "page",
+			id: "mainPage",
 			viewName: sViewName,
 			success: function () {
 				Opa5.assert.ok(true, "The " + sViewName + " view is displayed");
@@ -19,5 +19,3 @@ export default class adobeFormPage extends Opa5 {
 	}
 
 }
-
-

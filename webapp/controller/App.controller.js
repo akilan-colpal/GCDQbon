@@ -7,7 +7,7 @@ sap.ui.define([
 
     return BaseController.extend("adobeform.controller.App", {
         pressLogo: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteadobeForm");
+            this.getOwnerComponent().getRouter().navTo("RouteGcdStatementFilter");
         },
       
         onLanguageChange: function (oEvent) {

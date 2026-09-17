@@ -1,0 +1,82 @@
+<mvc:View 
+    controllerName="adobeform.controller.gcdStatementFilter"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    
+    <Page id="mainPage" showHeader="false">
+        <content>
+            
+            <VBox id="_IDGenVBox" width="100%" class="cappedAppContainer">
+                
+                <!--  Filter Criteria -->
+                <Panel id="mainPanel" 
+                       width="auto"
+                       class="sapUiResponsiveMargin"
+                       headerText="{i18n>FILTER_CRITERIA}">
+                    
+                    <HBox id="_IDGenHBox" wrap="Wrap" class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
+
+                        <!-- MANAGER VIEW -->
+                        <VBox id="_IDGenVBox1" visible="{/isGlobalIdVisible}" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" />
+                            <Input 
+                                id="employeeIdInput" 
+                                placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}" 
+                                change=".onGlobalIdChange" 
+                                showValueHelp="true"
+                                valueHelpRequest=".onEmployeeTreeValueHelp"
+                                valueHelpOnly="true"
+                                width="14rem" />
+                        </VBox>
+
+                        <!-- HR VIEW -->
+                        <VBox visible="{mUserDataModel>/isHR}" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                            <Label text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" />
+                            <Input 
+                                id="hrEmployeeIdInput"
+                                placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}"
+                                showValueHelp="true"
+                                valueHelpRequest=".onHREmployeeValueHelp"
+                                width="14rem" 
+                                change=".onGlobalIdChange"/>
+                        </VBox>
+
+                        <VBox id="_IDGenVBox2" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                            <Label id="_IDGenLabel1" text="{i18n>BONUS_YEAR}" design="Bold" class="sapUiTinyMarginBottom" />
+                            <Select id="bonusYearInput" 
+                                    forceSelection="false"
+                                    items="{/availableYears}" 
+                                    change=".onYearChange"
+                                    width="14rem">
+                                <core:Item id="_IDGenItem" key="{year}" text="{year}" />
+                            </Select>
+                        </VBox>
+
+                        <VBox id="_IDGenVBox3" class="sapUiSmallMarginBottom">
+                            <Label id="_IDGenLabel2" text="{i18n>BONUS_QUARTER}" design="Bold" class="sapUiTinyMarginBottom" />
+                            <Select id="bonusQuarterInput" 
+                                    forceSelection="false"
+                                    enabled="{/isQuarterEnabled}"
+                                    items="{/availableQuarters}"
+                                    width="14rem">
+                                <core:Item id="_IDGenItem1" key="{quarter}" text="{quarter}" />
+                            </Select>
+                        </VBox>
+                        
+                    </HBox>
+
+                    <HBox id="actionBox" justifyContent="End" class="sapUiTinyMarginBottom sapUiTinyMarginEnd">
+                        <Button id="searchBtn" text="{i18n>SEARCH_RECORDS}" type="Default" press=".onSearchPress" />
+                    </HBox>
+                </Panel>
+
+                <mvc:XMLView
+                    id="resultsView"
+                    viewName="adobeform.view.gcdStatementResults"
+                    async="true" />
+                
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

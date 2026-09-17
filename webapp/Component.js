@@ -3,9 +3,8 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/m/BusyDialog",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator",
-    "sap/m/MessageBox"
-], function (UIComponent, JSONModel, BusyDialog, Filter, FilterOperator, MessageBox) {
+    "sap/ui/model/FilterOperator"
+], function (UIComponent, JSONModel, BusyDialog, Filter, FilterOperator) {
     "use strict";
 
     return UIComponent.extend("adobeform.Component", { 
@@ -23,7 +22,8 @@ sap.ui.define([
                 userId: "",
                 userGlobalId: "", 
                 isHR: false,       
-                isMgr: false 
+                isMgr: false,
+                accessDeniedMessage: ""
             });
             this.setModel(oUserDataModel, "mUserDataModel");
 
@@ -164,9 +164,12 @@ sap.ui.define([
 
         getIllustratedMessage: function (sErrorMessage) {
             this.fnCloseBusyDialog();
-            MessageBox.error(sErrorMessage, {
-                title: "Access Denied"
-            });
+            var oBundle = this.getModel("i18n").getResourceBundle();
+            var sMessage = sErrorMessage || oBundle.getText("ACCESS_DENIED_DESCRIPTION");
+            this.getModel("mUserDataModel").setProperty("/accessDeniedMessage", sMessage);
+            var oRouter = this.getRouter();
+            oRouter.initialize(true);
+            oRouter.navTo("RouteAccessDenied", {}, true);
         },
 
         fnCloseBusyDialog: function () {

@@ -11,7 +11,8 @@ sap.ui.define([
 ], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment, HRValueHelpHandler, EmployeeValueHelpHandler) {
     "use strict";
 
-    return Controller.extend("adobeform.controller.adobeForm", { 
+    return Controller.extend("adobeform.controller.gcdStatementFilter", { 
+
         onInit: function () {
             var oViewModel = new JSONModel({
                 data: {},
@@ -22,10 +23,15 @@ sap.ui.define([
                 kpiRowCount: 1, 
                 summaryRowCount: 1,       
                 isGlobalIdVisible: false,
-                treeHierarchy: []
+                treeHierarchy: [],
+                isPdfButtonVisible: false,
+                searchCriteria: {
+                    globalId: "",
+                    year: "",
+                    quarter: ""
+                }
             });
             this.getView().setModel(oViewModel); 
-            this.byId("resultsAccordion").bindElement("/data");
             this.oValueHelpHandler = new HRValueHelpHandler(this);
             this.oEmployeeTreeHandler = new EmployeeValueHelpHandler(this); 
             var oUserDataModel = this.getOwnerComponent().getModel("mUserDataModel");
@@ -53,6 +59,9 @@ sap.ui.define([
                 this._loadDropdownData(sEmpId); 
             }
         },
+
+        // =======================================================
+        // SUCCESSFACTORS HELPERS
         // =======================================================
         _fetchSFData: function (sPath, oUrlParams) {
             var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
@@ -205,7 +214,9 @@ sap.ui.define([
             }
         },
 
-
+        // =======================================================
+        // LOAD DROPDOWNS
+        // =======================================================
         _loadDropdownData: function (sEmployeeId) {
             var oView = this.getView();
             var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
@@ -300,6 +311,7 @@ sap.ui.define([
                         oViewModel.setProperty("/isQuarterEnabled", false);
                         this.byId("bonusYearInput").setSelectedKey("");
                         this.byId("bonusQuarterInput").setSelectedKey("");
+                        MessageToast.show("No statements found");
                         oView.setBusy(false); 
                     }
 
@@ -310,6 +322,10 @@ sap.ui.define([
                 }.bind(this)
             });
         },
+
+        // =======================================================
+        // YEAR / QUARTER DROPDOWNS
+        // =======================================================
         onYearChange: function (oEvent) {
             var oView = this.getView();
             var sSelectedYear = oEvent.getParameter("selectedItem").getKey();
@@ -337,6 +353,9 @@ sap.ui.define([
             oView.getModel().setProperty("/isQuarterEnabled", aQuarters.length > 0); 
         },
 
+        // =======================================================
+        // STATEMENT SEARCH
+        // =======================================================
         onSearchPress: function () {
             var oView = this.getView();
             var sGlobalId = "";
@@ -384,13 +403,18 @@ sap.ui.define([
                         oView.getModel().setProperty("/summaryRowCount", iSumLength || 1);
                         
                         oView.getModel().setProperty("/data", oRecord);
+                        oView.getModel().setProperty("/searchCriteria", {
+                            globalId: sGlobalId,
+                            year: sYear,
+                            quarter: sQuarter
+                        });
+                        oView.getModel().setProperty("/isPdfButtonVisible", true);
                         MessageToast.show("Data loaded successfully.");
-                        this.byId("generatePdfBtn").setVisible(true);
                     } else {
                         oView.getModel().setProperty("/data", {});
                         oView.getModel().setProperty("/kpiRowCount", 1);
                         oView.getModel().setProperty("/summaryRowCount", 1);
-                        this.byId("generatePdfBtn").setVisible(false);
+                        oView.getModel().setProperty("/isPdfButtonVisible", false);
                         MessageBox.information("No records found for the selected criteria.");
                     }
                 }.bind(this),
@@ -400,6 +424,10 @@ sap.ui.define([
                 }
             });
         },
+
+        // =======================================================
+        // PERIOD HELPERS
+        // =======================================================
         _getLatestPeriod: function (aParsedPeriods) {
             var oQuarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
             var oLatest = null;
@@ -421,84 +449,6 @@ sap.ui.define([
             });
 
             return oLatest;
-        },
-        onGeneratePress: function () {
-            var oView = this.getView();
-            var sGlobalId = "";
-            var sHrId = this.byId("hrEmployeeIdInput") && this.byId("hrEmployeeIdInput").getValue();
-            var sTreeId = this.byId("employeeIdInput") && this.byId("employeeIdInput").getValue();
-
-            if (sHrId) {
-                sGlobalId = sHrId;
-            } else if (sTreeId) {
-                sGlobalId = sTreeId;
-            }            
-            var sYear = this.byId("bonusYearInput").getSelectedKey();
-            var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
-
-            if (!sGlobalId || !sYear || !sQuarter) {
-                sap.m.MessageBox.error("Missing search criteria to generate PDF.");
-                return;
-            }
-
-            var aFilters = [
-                new sap.ui.model.Filter("global_id", sap.ui.model.FilterOperator.EQ, sGlobalId),
-                new sap.ui.model.Filter("bonusYear", sap.ui.model.FilterOperator.EQ, sYear),
-                new sap.ui.model.Filter("bonusQuarter", sap.ui.model.FilterOperator.EQ, sQuarter),
-                new sap.ui.model.Filter("generatePdfRequest", sap.ui.model.FilterOperator.EQ, "Y")
-            ];
-
-            var oODataModel = this.getOwnerComponent().getModel();
-            
-            oView.setBusy(true);
-            oODataModel.read("/ZI_QBON_DD", {
-                filters: aFilters,
-                success: function (oData) {
-                    oView.setBusy(false);
-                    
-                    if (oData.results && oData.results.length > 0 && oData.results[0].PdfContent) {
-                        try {
-                            var sBase64 = oData.results[0].PdfContent;
-                            var sCleanBase64 = sBase64.replace(/\s/g, '');
-                            var sBinaryString = window.atob(sCleanBase64);
-                            var iBinaryLen = sBinaryString.length;
-                            var aBytes = new Uint8Array(iBinaryLen);
-                            
-                            for (var i = 0; i < iBinaryLen; i++) {
-                                aBytes[i] = sBinaryString.charCodeAt(i);
-                            }
-
-                            var oBlob = new Blob([aBytes], { type: "application/pdf" });
-                            var sBlobUrl = URL.createObjectURL(oBlob);
-                            var oNewTab = window.open("", "_blank");
-                            oNewTab.location.href = sBlobUrl;
-
-                        } catch (e) {
-                            sap.m.MessageBox.error("An error occurred while generating the PDF file locally.");
-                        }
-                    } else {
-                        sap.m.MessageBox.error("No PDF data returned from the backend.");
-                    }
-                }.bind(this),
-                error: function (oError) {
-                    oView.setBusy(false);
-                    sap.m.MessageBox.error("Failed to fetch the PDF from the backend.");
-                }
-            });
-        },
-
-        formatCleanNumber: function (sValue) {
-            if (!sValue) {
-                return ""; 
-            }
-            var fValue = parseFloat(sValue);
-            if (isNaN(fValue)) {
-                return sValue; 
-            }
-            return fValue.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2
-            });
         }
     });
 });
