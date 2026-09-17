@@ -22,7 +22,8 @@ sap.ui.define([
                 email: "",
                 userId: "",
                 userGlobalId: "", 
-                isHR: false        
+                isHR: false,       
+                isMgr: false 
             });
             this.setModel(oUserDataModel, "mUserDataModel");
 
@@ -56,17 +57,16 @@ sap.ui.define([
                     }
                     
                     this.fnGetGlobalId(sEmail, bIsDeveloper);
-                } else {
-                    this.getIllustratedMessage("No email provided by BTP SSO.");
-                }
+                } 
             }.bind(this));
 
             oBtpModel.attachRequestFailed(function () {
                 console.warn("Local environment");                
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
-                oUserDataModel.setProperty("/userId", "00049421");
-                oUserDataModel.setProperty("/userGlobalId", "00049421");
-                oUserDataModel.setProperty("/isHR", true); 
+                oUserDataModel.setProperty("/userId", "00006077");
+                oUserDataModel.setProperty("/userGlobalId", "00006077");
+                oUserDataModel.setProperty("/isHR", false); 
+                oUserDataModel.setProperty("/isMgr", true);
                 
                 this.fnCloseBusyDialog();
                 this.getRouter().initialize();
@@ -91,14 +91,15 @@ sap.ui.define([
             oSFModel.read("/User", {
                 filters: [oEmailFilter],
                 urlParameters: {
-                    "$select": "userId,email" 
+                    "$select": "userId,email, totalTeamSize" 
                 },
                 success: function (oData) {
                     if (oData.results && oData.results.length > 0) {
                         var sRawUserId = oData.results[0].userId;
                         var sUserGlobalId = "";
                         var sUserId = "";
-
+                        var bIsMgr = parseInt(oData.results[0].totalTeamSize, 10) > 0;
+                        
                         if (sRawUserId.includes("BP") || sRawUserId.includes("GP")) {
                             sUserGlobalId = sRawUserId.slice(2);
                             sUserId = sRawUserId;
@@ -113,13 +114,13 @@ sap.ui.define([
                         oUserDataModel.setProperty("/email", sEmail);
                         oUserDataModel.setProperty("/userId", sUserId);
                         oUserDataModel.setProperty("/userGlobalId", sUserGlobalId);
+                        oUserDataModel.setProperty("/isMgr", bIsMgr);
                         
                         if (bIsDeveloper) {
                             oUserDataModel.setProperty("/isHR", true);
                             this.fnCloseBusyDialog();
                             this.getRouter().initialize();
-                        } else {
-                            
+                        } else {                           
                             var sIdForRoles = sUserId.includes("BP") ? sUserId : sUserGlobalId;
                             this.fnValidateUserRoles(sIdForRoles);
                         }
@@ -149,6 +150,7 @@ sap.ui.define([
                     });
 
                     oUserDataModel.setProperty("/isHR", bIsHR);
+
                     this.fnCloseBusyDialog();
 
                     this.getRouter().initialize();

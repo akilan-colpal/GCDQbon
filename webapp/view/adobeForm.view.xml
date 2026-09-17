@@ -18,20 +18,18 @@
                     
                     <HBox id="_IDGenHBox" wrap="Wrap" class="sapUiSmallMarginTop sapUiSmallMarginBottom sapUiSmallMarginBegin">
 
-                        <!-- Manager/Employee View -->
-                    <VBox visible="{= !${mUserDataModel>/isHR}}">          
-                        <VBox id="_IDGenVBox1" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" visible="{/isGlobalIdVisible}" />
-                            <Input id="employeeIdInput" 
-                                        placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}" 
-                                        change=".onGlobalIdChange" 
-                                        showValueHelp="true"
-                                        valueHelpRequest=".onEmployeeTreeValueHelp"
-                                        valueHelpOnly="true"
-                                        visible="{/isGlobalIdVisible}"
-                                        width="14rem" />
+                        <!-- MANAGER VIEW -->
+                        <VBox id="_IDGenVBox1" visible="{/isGlobalIdVisible}" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" />
+                            <Input 
+                                id="employeeIdInput" 
+                                placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}" 
+                                change=".onGlobalIdChange" 
+                                showValueHelp="true"
+                                valueHelpRequest=".onEmployeeTreeValueHelp"
+                                valueHelpOnly="true"
+                                width="14rem" />
                         </VBox>
-                    </VBox>
 
                         <!-- HR VIEW -->
                         <VBox visible="{mUserDataModel>/isHR}" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
@@ -42,7 +40,7 @@
                                 showValueHelp="true"
                                 valueHelpRequest=".onHREmployeeValueHelp"
                                 width="14rem" 
-                                change=".onHREmployeeManualChange"/>
+                                change=".onGlobalIdChange"/>
                         </VBox>
 
                         <VBox id="_IDGenVBox2" class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
@@ -97,7 +95,6 @@
                     </headerToolbar>
                     
                     <content>
-                        
                         <!--  HEADER DISPLAY -->
                         <HBox id="_IDGenHBox1" wrap="Wrap" justifyContent="SpaceAround" class="sapUiSmallMargin">
                             <HBox id="_IDGenHBox3" class="sapUiTinyMarginBottom sapUiSmallMarginRight">

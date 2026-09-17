@@ -5,8 +5,10 @@ sap.ui.define([
     "sap/ui/model/FilterOperator",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
-    "sap/ui/core/Fragment"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment) {
+    "sap/ui/core/Fragment",
+    "adobeform/controller/HRValueHelpHandler.controller",
+    "adobeform/controller/EmployeeValueHelpHandler.controller"
+], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment, HRValueHelpHandler, EmployeeValueHelpHandler) {
     "use strict";
 
     return Controller.extend("adobeform.controller.adobeForm", { 
@@ -18,22 +20,39 @@ sap.ui.define([
                 availableQuarters: [],
                 isQuarterEnabled: false,
                 kpiRowCount: 1, 
-                summaryRowCount: 1,
-                
+                summaryRowCount: 1,       
                 isGlobalIdVisible: false,
                 treeHierarchy: []
             });
             this.getView().setModel(oViewModel); 
             this.byId("resultsAccordion").bindElement("/data");
-            
-            this.getView().setBusy(true);
-            this._preloadTreeData();
-        },
+            this.oValueHelpHandler = new HRValueHelpHandler(this);
+            this.oEmployeeTreeHandler = new EmployeeValueHelpHandler(this); 
+            var oUserDataModel = this.getOwnerComponent().getModel("mUserDataModel");
+            var bIsHR = oUserDataModel.getProperty("/isHR"); 
+            var bIsMgr = oUserDataModel.getProperty("/isMgr"); 
 
-        formatTreeTitle: function (sFirstName, sLastName, sEmpId) {
-            return (sFirstName || "") + " " + (sLastName || "") + " (" + (sEmpId || "") + ")";
-        },
+            if (bIsHR) {
+                var sEmpId = oUserDataModel.getProperty("/userId");
+                this.byId("hrEmployeeIdInput").setValue(sEmpId);
+                this._loadDropdownData(sEmpId); 
+                
+            } else if (bIsMgr) {
+                oViewModel.setProperty("/isGlobalIdVisible", true);
+                this._preloadTreeData();     
+                           
+            } else {
+                oViewModel.setProperty("/isGlobalIdVisible", false);
 
+                var sEmpId = oUserDataModel.getProperty("/userId");
+                var oEmpInput = this.byId("employeeIdInput"); 
+                if (oEmpInput) {
+                    oEmpInput.setValue(sEmpId);
+                }
+                
+                this._loadDropdownData(sEmpId); 
+            }
+        },
         // =======================================================
         _fetchSFData: function (sPath, oUrlParams) {
             var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
@@ -106,13 +125,8 @@ sap.ui.define([
 
                 var aTree = [oUserNode];
 
-         
-                oViewModel.setProperty("/isGlobalIdVisible", true);
                 oViewModel.setProperty("/treeHierarchy", aTree);
                 this._loadDropdownData(sRootEmpId);
-
-            
-
             } catch (oError) {
                 console.error("Tree Load Error:", oError);
                 MessageBox.error("Failed to load employee hierarchy.");
@@ -122,108 +136,60 @@ sap.ui.define([
         },
 
         // =======================================================
-        // VALUE HELP DIALOG 
+        // EMPLOYEE VALUE HELP DIALOG 
         // =======================================================
-        onEmployeeTreeValueHelp: function () {
-            var oView = this.getView();
-            if (!this._pTreeDialog) {
-                this._pTreeDialog = Fragment.load({
-                    id: oView.getId(),
-                    name: "adobeform.fragment.EmployeeTreeValueHelp", 
-                    controller: this
-                }).then(function (oDialog) {
-                    oView.addDependent(oDialog);
-                    oDialog.setModel(oView.getModel(), "treeModel");
-                    return oDialog;
-                });
-            }
-            this._pTreeDialog.then(function(oDialog) {
-                oDialog.open();
-            });
-        },
+        onEmployeeTreeValueHelp: function (oEvent) {
+            
+            this.oEmployeeTreeHandler.openTreeDialog(oEvent, function(sSelectedId, oInputBox) {
+                
+                oInputBox.setValue(sSelectedId);
+                
+                this.byId("bonusYearInput").setSelectedKey("");
+                this.byId("bonusQuarterInput").setSelectedKey("");
+                this.getView().getModel().setProperty("/isQuarterEnabled", false);
+                
+                this._loadDropdownData(sSelectedId);
 
-        onCloseTreeDialog: function () {
-            this.byId("treeDialog").close();
-        },
-
-        onTreeItemPress: function (oEvent) {
-            var oItem = oEvent.getParameter("listItem");
-            var oContext = oItem.getBindingContext("treeModel");
-
-            var sSelectedId = oContext.getProperty("empid"); 
-            
-            var oGlobalIdInput = this.byId("employeeIdInput");
-            oGlobalIdInput.setValue(sSelectedId);
-            
-            this.byId("treeDialog").close();
-            
-            this.byId("bonusYearInput").setSelectedKey("");
-            this.byId("bonusQuarterInput").setSelectedKey("");
-            this.getView().getModel().setProperty("/isQuarterEnabled", false);
-            
-            this._loadDropdownData(sSelectedId);
+            }.bind(this));
         },
 
         // =======================================================
         // HR MULTI-INPUT VALUE HELP
         // =======================================================
-        onHREmployeeValueHelp: function () {
-            var oView = this.getView();
-            
-            if (!this._pEmployeeDialog) {
-                this._pEmployeeDialog = Fragment.load({
-                    id: oView.getId(),
-                    name: "adobeform.fragment.EmployeeSelectValueHelp", 
-                    controller: this
-                }).then(function (oDialog) {
-                    oView.addDependent(oDialog);
-                    return oDialog;
-                });
-            }
-       
-            this._pEmployeeDialog.then(function(oDialog) {
-                oDialog.getBinding("items").filter([]);
-                oDialog.open();
-            });
-        },
 
-        onHREmployeeSearch: function (oEvent) {
-            var sValue = oEvent.getParameter("value");
-            var oBinding = oEvent.getSource().getBinding("items");
+        onHREmployeeValueHelp: function (oEvent) {
             
-            if (sValue) {
-                var oFilter = new sap.ui.model.Filter({
-                    filters: [
-                        new sap.ui.model.Filter("userId", sap.ui.model.FilterOperator.Contains, sValue),
-                        new sap.ui.model.Filter("firstName", sap.ui.model.FilterOperator.Contains, sValue),
-                        new sap.ui.model.Filter("lastName", sap.ui.model.FilterOperator.Contains, sValue)
-                    ],
-                    and: false
-                });
-                oBinding.filter([oFilter]);
-            } else {
-                oBinding.filter([]);
-            }
-        },
+            var oConfig = {
+                entitySet: "User",
+                key: "userId",
+                description: "lastName",
+                parameters: {
+                    "select": "userId,firstName,lastName"
+                },
+                columns: [
+                    { label: "Employee ID", template: "userId" },
+                    { label: "First Name", template: "firstName" },
+                    { label: "Last Name", template: "lastName" }
+                ],
+                title: "Employees",
+                aFilters: [], 
+                aSorters: [] 
+            };
 
-        onHREmployeeConfirm: function (oEvent) {
-            var aSelectedContexts = oEvent.getParameter("selectedContexts");
-            
-            if (aSelectedContexts && aSelectedContexts.length > 0) {
-                var oContext = aSelectedContexts[0];
-                var sId = oContext.getProperty("userId");
-
-                var oInput = this.byId("hrEmployeeIdInput"); 
-                oInput.setValue(sId); 
-                this.byId("bonusYearInput").setSelectedKey("");
-                this.byId("bonusQuarterInput").setSelectedKey("");
-                this.getView().getModel().setProperty("/isQuarterEnabled", false);
+            this.oValueHelpHandler.openValueHelpDialog(oEvent, oConfig, "mSuccessFactorsModel", function(aSelectedTokens, oInputBox) {
                 
-                this._loadDropdownData(sId);
-            }
+                if (aSelectedTokens && aSelectedTokens.length > 0) {
+                    var sId = aSelectedTokens[0].getKey();
+                    
+                    oInputBox.setValue(sId);
+                    
+            this.byId("bonusYearInput").setSelectedKey("");
+            this.byId("bonusQuarterInput").setSelectedKey("");
+            this.getView().getModel().setProperty("/isQuarterEnabled", false);
+            this._loadDropdownData(sId);                }
+
+            }.bind(this)); 
         },
-
-
         // =======================================================
         // DROPDOWNS & DATA FETCHING
         // =======================================================
@@ -247,24 +213,22 @@ sap.ui.define([
             var aFilters = [
                 new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
             ];
-
-            oView.setBusy(true);
-
             oSFModel.read("/cust_VarPayEmpHistData", {
                 filters: aFilters,
                 urlParameters: {
-                    fromDate: "1900-01-01",     
-                    toDate:   "9999-12-31",     
+                    "fromDate": "1900-01-01",
+                    "toDate":   "9999-12-31",
+                    "$select": "cust_VarPayTemplateName",
                     "$orderby": "cust_VarPayTemplateName desc"
                 },
                 success: function (oData) {
-                    oView.setBusy(false);
-
+                    
                     var aResults        = oData.results || [];
                     var aYears          = [];
                     var aParsedPeriods  = [];
-                    var aTemplateItems  = []; 
+                    var aTemplateItems  = [];
                     var oTemplateMap    = Object.create(null);
+                    var oViewModel      = oView.getModel();
 
                     aResults.forEach(function (item) {
                         var sTemplateName = item.cust_VarPayTemplateName;
@@ -276,6 +240,7 @@ sap.ui.define([
                                     templateName: sTemplateName
                                 });
                             }
+
                             var aMatch = sTemplateName.match(/(\d{4})\s+(Q[1-4])/i);
                             if (aMatch) {
                                 var sYear    = aMatch[1];
@@ -297,13 +262,47 @@ sap.ui.define([
                     aYears.sort(function (a, b) {
                         return a.year.localeCompare(b.year);
                     });
-                    oView.getModel().setProperty("/allPeriods", aParsedPeriods);
-                    oView.getModel().setProperty("/availableYears", aYears);
-                    oView.getModel().setProperty("/availableQuarters", []);
+
+                    oViewModel.setProperty("/allPeriods", aParsedPeriods);
+                    oViewModel.setProperty("/availableYears", aYears);
+                    
                     aTemplateItems.sort(function (a, b) {
                         return a.templateName.localeCompare(b.templateName);
                     });
-                    oView.getModel().setProperty("/availableTemplates", aTemplateItems);
+                    oViewModel.setProperty("/availableTemplates", aTemplateItems);
+
+                    if (aParsedPeriods.length > 0) {
+                        var oLatest = this._getLatestPeriod(aParsedPeriods);
+
+                        if (oLatest) {
+                            var aQuarters = [];
+                            aParsedPeriods.forEach(function (item) {
+                                if (item.bonusYear === oLatest.bonusYear &&
+                                    !aQuarters.some(function (q) { return q.quarter === item.bonusQuarter; })) {
+                                    aQuarters.push({ quarter: item.bonusQuarter });
+                                }
+                            });
+
+                            aQuarters.sort(function (a, b) {
+                                return a.quarter.localeCompare(b.quarter);
+                            });
+
+                            oViewModel.setProperty("/availableQuarters", aQuarters);
+                            oViewModel.setProperty("/isQuarterEnabled", aQuarters.length > 0);
+
+                            this.byId("bonusYearInput").setSelectedKey(oLatest.bonusYear);
+                            this.byId("bonusQuarterInput").setSelectedKey(oLatest.bonusQuarter);
+                            
+                        }
+                    } else {
+                        
+                        oViewModel.setProperty("/availableQuarters", []);
+                        oViewModel.setProperty("/isQuarterEnabled", false);
+                        this.byId("bonusYearInput").setSelectedKey("");
+                        this.byId("bonusQuarterInput").setSelectedKey("");
+                        oView.setBusy(false); 
+                    }
+
                 }.bind(this),
 
                 error: function (oError) {
@@ -311,7 +310,6 @@ sap.ui.define([
                 }.bind(this)
             });
         },
-
         onYearChange: function (oEvent) {
             var oView = this.getView();
             var sSelectedYear = oEvent.getParameter("selectedItem").getKey();
@@ -341,7 +339,15 @@ sap.ui.define([
 
         onSearchPress: function () {
             var oView = this.getView();
-            var sGlobalId = this.byId("hrEmployeeIdInput").getValue() || this.byId("employeeIdInput").getValue();
+            var sGlobalId = "";
+            var sHrId = this.byId("hrEmployeeIdInput") && this.byId("hrEmployeeIdInput").getValue();
+            var sTreeId = this.byId("employeeIdInput") && this.byId("employeeIdInput").getValue();
+
+            if (sHrId) {
+                sGlobalId = sHrId;
+            } else if (sTreeId) {
+                sGlobalId = sTreeId;
+            }           
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
 
@@ -394,10 +400,39 @@ sap.ui.define([
                 }
             });
         },
+        _getLatestPeriod: function (aParsedPeriods) {
+            var oQuarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
+            var oLatest = null;
 
+            aParsedPeriods.forEach(function (oPeriod) {
+                if (!oLatest) {
+                    oLatest = oPeriod;
+                    return;
+                }
+
+                if (oPeriod.bonusYear > oLatest.bonusYear) {
+                    oLatest = oPeriod;
+                } else if (oPeriod.bonusYear === oLatest.bonusYear) {
+                    if ((oQuarterOrder[oPeriod.bonusQuarter] || 0) >
+                        (oQuarterOrder[oLatest.bonusQuarter] || 0)) {
+                        oLatest = oPeriod;
+                    }
+                }
+            });
+
+            return oLatest;
+        },
         onGeneratePress: function () {
             var oView = this.getView();
-            var sGlobalId = this.byId("employeeIdInput").getValue() ||  this.byId("hrEmployeeIdInput").getValue();
+            var sGlobalId = "";
+            var sHrId = this.byId("hrEmployeeIdInput") && this.byId("hrEmployeeIdInput").getValue();
+            var sTreeId = this.byId("employeeIdInput") && this.byId("employeeIdInput").getValue();
+
+            if (sHrId) {
+                sGlobalId = sHrId;
+            } else if (sTreeId) {
+                sGlobalId = sTreeId;
+            }            
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
 
