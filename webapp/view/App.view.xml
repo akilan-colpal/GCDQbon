@@ -13,7 +13,7 @@
 
                 <Title id="appTitle" level="H5" text="{i18n>title}" class="toolHeaderTitle center"/>
                 <ToolbarSpacer id="_IDGenToolbarSpacer" />
-          <Select change="onLanguageChange">
+          <Select id="languageSelect" selectedKey="en" change=".onLanguageChange">
                 <core:Item key="en" text="English" />
                 <core:Item key="es" text="Español" />
             </Select>

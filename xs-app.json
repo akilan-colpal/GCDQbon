@@ -7,6 +7,12 @@
       "target": "$1",
       "service": "sap-approuter-userapi"
     },
+    {
+      "source": "^/sapadmin/odata/v2/\\$metadata(\\?.*)?$",
+      "target": "odata/v2/User, cust_VarPayEmpHistData/$metadata$1",
+      "destination": "BTP_2_SF_OAUTH_sapadmin",
+      "authenticationType": "xsuaa"
+    },
      {
       "source": "^/sapadmin/(.*)$",
       "target": "/$1",
@@ -14,8 +20,7 @@
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
-    {
-      
+    {     
       "source": "^/backend/(.*)$",
       "target": "/$1",
       "destination": "BTP_2_RAP_USER_TOKEN",

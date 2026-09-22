@@ -35,10 +35,16 @@ sap.ui.define([
 
         getUserInfo: function () {
             this._oBusyDialog = new BusyDialog({
-                title: "Please Wait",
-                text: "Verifying user permissions..."
+                title: "Loading...",
+                text: "Please Wait"
             });
             this._oBusyDialog.open();
+
+            var oRoot = this.getRootControl();
+            if (oRoot) {
+                oRoot.setBusyIndicatorDelay(0);
+                oRoot.setBusy(true);
+            }
             
             var oUserDataModel = this.getModel("mUserDataModel");
             var sBtpAttributesUrl = "./userapi/attributes"; 
@@ -51,11 +57,7 @@ sap.ui.define([
                 if (sEmail) {
                     var sLowerEmail = sEmail.toLowerCase();
                     var bIsDeveloper = this.aDevelopers.includes(sLowerEmail);
-                    
-                    if (bIsDeveloper) {
-                        console.warn("Developer access granted for: " + sEmail);
-                    }
-                    
+                                        
                     this.fnGetGlobalId(sEmail, bIsDeveloper);
                 } 
             }.bind(this));
@@ -65,14 +67,18 @@ sap.ui.define([
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
                 oUserDataModel.setProperty("/userId", "00006077");
                 oUserDataModel.setProperty("/userGlobalId", "00006077");
-                oUserDataModel.setProperty("/isHR", false); 
-                oUserDataModel.setProperty("/isMgr", true);
+                oUserDataModel.setProperty("/isHR", true); 
+                oUserDataModel.setProperty("/isMgr", false);
                 
                 this.fnCloseBusyDialog();
                 this.getRouter().initialize();
             }.bind(this));
-
-            oBtpModel.loadData(sBtpAttributesUrl);
+            this.getModel("mSuccessFactorsModel").metadataLoaded().then(function () {
+                if (oRoot) {
+                    oRoot.setBusy(false);
+                }
+                oBtpModel.loadData(sBtpAttributesUrl);
+            }.bind(this));
         },
 
         fnGetGlobalId: function (sEmail, bIsDeveloper) {
@@ -97,7 +103,7 @@ sap.ui.define([
                     if (oData.results && oData.results.length > 0) {
                         var sRawUserId = oData.results[0].userId;
                         var sUserGlobalId = "";
-                        var sUserId = "";
+                        var sUserId = "lol";
                         var bIsMgr = parseInt(oData.results[0].totalTeamSize, 10) > 0;
                         
                         if (sRawUserId.includes("BP") || sRawUserId.includes("GP")) {
@@ -105,7 +111,7 @@ sap.ui.define([
                             sUserId = sRawUserId;
                         } else if (sRawUserId.length === 8 && !isNaN(sRawUserId)) {
                             sUserGlobalId = sRawUserId;
-                            sUserId = "";
+                            sUserId = sRawUserId;
                         } else {
                             sUserGlobalId = sRawUserId;
                             sUserId = sRawUserId;
@@ -143,10 +149,14 @@ sap.ui.define([
                 urlParameters: { userId: sUserId },
                 success: function (oData) {
                     var aRoles = oData.results || [];
-                    console.log("Raw Array Data: ", aRoles);
-                    
-                    var bIsHR = aRoles.some(function (oRole) {
-                        return oRole.roleName.includes("palceholder") || oRole.roleName.includes("HR");
+                    var aHRRole = [
+                        "Salary Planning CBS Only", 
+                        "COHRE COMP-BTP", 
+                        "AnnualBonusAdmin"
+                    ];
+
+                    var bIsHR = aRoles.some(function (oRole) {                       
+                            return aHRRole.includes(oRole.roleName);
                     });
 
                     oUserDataModel.setProperty("/isHR", bIsHR);

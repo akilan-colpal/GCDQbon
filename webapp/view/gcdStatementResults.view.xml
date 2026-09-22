@@ -115,11 +115,11 @@
                             
                             <table:Column hAlign="End" width="6rem">
                                 <Label text="{i18n>KPI_WEIGHT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'kpiWeight', formatter: '.formatCleanNumber'}" /></table:template>
+                                <table:template><Text text="{path: 'kpiWeight', formatter: '.formatPercent'}" /></table:template>
                             </table:Column>
                             <table:Column hAlign="End" width="6rem">
                                 <Label text="{i18n>TEAM_WEIGHT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'teamWeight', formatter: '.formatCleanNumber'}" /></table:template>
+                                <table:template><Text text="{path: 'teamWeight', formatter: '.formatPercent'}" /></table:template>
                             </table:Column>
                             
                             <table:Column hAlign="End" width="9rem">
@@ -129,7 +129,7 @@
                             
                             <table:Column hAlign="End" width="6.5rem">
                                 <Label text="{i18n>KPI_PAYOUT_PERCENT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'kpiPayoutPercent', formatter: '.formatCleanNumber'}" /></table:template>
+                                <table:template><Text text="{path: 'kpiPayoutPercent', formatter: '.formatPercent'}" /></table:template>
                             </table:Column>
                             
                             <table:Column hAlign="End" width="9rem">
@@ -196,11 +196,11 @@
                             </table:Column>
                             <table:Column id="_IDGenColumn14" hAlign="End" width="10rem">
                                 <Label id="_IDGenLabel22" text="{i18n>QUARTERLY_TARGET_PERCENT}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText16" text="{path: 'quarterTargetPercent', formatter: '.formatCleanNumber'}" /></table:template>
+                                <table:template><Text id="_IDGenText16" text="{path: 'quarterTargetPercent', formatter: '.formatPercent'}" /></table:template>
                             </table:Column>
                             <table:Column id="_IDGenColumn16" hAlign="End" width="10rem">
                                 <Label id="_IDGenLabel24" text="{i18n>PAYMENT_PERIOD}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText18" text="{path: 'paymentPeriod',formatter: '.formatCleanNumber'}" /></table:template>
+                                <table:template><Text id="_IDGenText18" text="{path: 'paymentPeriod', formatter: '.formatPercent'}" /></table:template>
                             </table:Column>
                             <table:Column id="_IDGenColumn15" hAlign="End" width="11rem">
                                 <Label id="_IDGenLabel23" text="{i18n>QUARTERLY_TARGET_AMOUNT}" textAlign="Center" width="100%" />

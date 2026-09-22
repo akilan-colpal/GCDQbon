@@ -28,11 +28,14 @@ sap.ui.define([
                 return;
             }
 
+            var oAppSettings = this.getOwnerComponent().getModel("appSettings");
+            var sPdfLanguage = (oAppSettings && oAppSettings.getProperty("/language")) || "en";
+
             var aFilters = [
                 new Filter("global_id", FilterOperator.EQ, sGlobalId),
                 new Filter("bonusYear", FilterOperator.EQ, sYear),
                 new Filter("bonusQuarter", FilterOperator.EQ, sQuarter),
-                new Filter("generatePdfRequest", FilterOperator.EQ, "Y")
+                new Filter("generatePdfRequest", FilterOperator.EQ, sPdfLanguage)
             ];
 
             var oODataModel = this.getOwnerComponent().getModel();
@@ -92,6 +95,11 @@ sap.ui.define([
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 2
             });
+        },
+
+        formatPercent: function (sValue) {
+            var sFormatted = this.formatCleanNumber(sValue);
+            return sFormatted ? sFormatted + "%" : "";
         }
     });
 });

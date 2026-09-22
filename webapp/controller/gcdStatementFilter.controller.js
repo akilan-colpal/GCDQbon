@@ -19,12 +19,14 @@ sap.ui.define([
                 allPeriods: [], 
                 availableYears: [],
                 availableQuarters: [],
+                isYearEnabled: false,
                 isQuarterEnabled: false,
                 kpiRowCount: 1, 
                 summaryRowCount: 1,       
                 isGlobalIdVisible: false,
                 treeHierarchy: [],
                 isPdfButtonVisible: false,
+                isSearchEnabled: false,
                 searchCriteria: {
                     globalId: "",
                     year: "",
@@ -41,6 +43,7 @@ sap.ui.define([
             if (bIsHR) {
                 var sEmpId = oUserDataModel.getProperty("/userId");
                 this.byId("hrEmployeeIdInput").setValue(sEmpId);
+                this._updateSearchEnabled();
                 this._loadDropdownData(sEmpId); 
                 
             } else if (bIsMgr) {
@@ -55,6 +58,7 @@ sap.ui.define([
                 if (oEmpInput) {
                     oEmpInput.setValue(sEmpId);
                 }
+                this._updateSearchEnabled();
                 
                 this._loadDropdownData(sEmpId); 
             }
@@ -85,6 +89,7 @@ sap.ui.define([
             var sRootEmpId = oUserDataModel.getProperty("/userId"); 
             
             this.byId("employeeIdInput").setValue(sRootEmpId);
+            this._updateSearchEnabled();
 
              try {
                 var oUserData = await this._fetchSFData("/User('" + sRootEmpId + "')", {
@@ -155,7 +160,9 @@ sap.ui.define([
                 
                 this.byId("bonusYearInput").setSelectedKey("");
                 this.byId("bonusQuarterInput").setSelectedKey("");
+                this.getView().getModel().setProperty("/isYearEnabled", false);
                 this.getView().getModel().setProperty("/isQuarterEnabled", false);
+                this._updateSearchEnabled();
                 
                 this._loadDropdownData(sSelectedId);
 
@@ -194,7 +201,9 @@ sap.ui.define([
                     
             this.byId("bonusYearInput").setSelectedKey("");
             this.byId("bonusQuarterInput").setSelectedKey("");
+            this.getView().getModel().setProperty("/isYearEnabled", false);
             this.getView().getModel().setProperty("/isQuarterEnabled", false);
+            this._updateSearchEnabled();
             this._loadDropdownData(sId);                }
 
             }.bind(this)); 
@@ -209,8 +218,12 @@ sap.ui.define([
             if (sGlobalId) {
                 this.byId("bonusYearInput").setSelectedKey("");
                 this.byId("bonusQuarterInput").setSelectedKey("");
+                this.getView().getModel().setProperty("/isYearEnabled", false);
                 this.getView().getModel().setProperty("/isQuarterEnabled", false);
+                this._updateSearchEnabled();
                 this._loadDropdownData(sGlobalId);
+            } else {
+                this._updateSearchEnabled();
             }
         },
 
@@ -219,7 +232,18 @@ sap.ui.define([
         // =======================================================
         _loadDropdownData: function (sEmployeeId) {
             var oView = this.getView();
+            var oViewModel = oView.getModel();
             var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
+
+            oViewModel.setProperty("/data", {});
+            oViewModel.setProperty("/kpiRowCount", 1);
+            oViewModel.setProperty("/summaryRowCount", 1);
+            oViewModel.setProperty("/isPdfButtonVisible", false);
+            oViewModel.setProperty("/searchCriteria", {
+                globalId: "",
+                year: "",
+                quarter: ""
+            });
 
             var aFilters = [
                 new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
@@ -239,7 +263,6 @@ sap.ui.define([
                     var aParsedPeriods  = [];
                     var aTemplateItems  = [];
                     var oTemplateMap    = Object.create(null);
-                    var oViewModel      = oView.getModel();
 
                     aResults.forEach(function (item) {
                         var sTemplateName = item.cust_VarPayTemplateName;
@@ -299,18 +322,22 @@ sap.ui.define([
                             });
 
                             oViewModel.setProperty("/availableQuarters", aQuarters);
+                            oViewModel.setProperty("/isYearEnabled", aYears.length > 0);
                             oViewModel.setProperty("/isQuarterEnabled", aQuarters.length > 0);
 
                             this.byId("bonusYearInput").setSelectedKey(oLatest.bonusYear);
                             this.byId("bonusQuarterInput").setSelectedKey(oLatest.bonusQuarter);
+                            this._updateSearchEnabled();
                             
                         }
                     } else {
                         
                         oViewModel.setProperty("/availableQuarters", []);
+                        oViewModel.setProperty("/isYearEnabled", false);
                         oViewModel.setProperty("/isQuarterEnabled", false);
                         this.byId("bonusYearInput").setSelectedKey("");
                         this.byId("bonusQuarterInput").setSelectedKey("");
+                        this._updateSearchEnabled();
                         MessageToast.show("No statements found");
                         oView.setBusy(false); 
                     }
@@ -319,6 +346,9 @@ sap.ui.define([
 
                 error: function (oError) {
                     oView.setBusy(false);
+                    oViewModel.setProperty("/isYearEnabled", false);
+                    oViewModel.setProperty("/isQuarterEnabled", false);
+                    this._updateSearchEnabled();
                 }.bind(this)
             });
         },
@@ -351,22 +381,42 @@ sap.ui.define([
             oView.getModel().setProperty("/availableQuarters", aQuarters);
             this.byId("bonusQuarterInput").setSelectedKey("");
             oView.getModel().setProperty("/isQuarterEnabled", aQuarters.length > 0); 
+            this._updateSearchEnabled();
+        },
+
+        onQuarterChange: function () {
+            this._updateSearchEnabled();
         },
 
         // =======================================================
         // STATEMENT SEARCH
         // =======================================================
-        onSearchPress: function () {
-            var oView = this.getView();
-            var sGlobalId = "";
+        _getSelectedGlobalId: function () {
             var sHrId = this.byId("hrEmployeeIdInput") && this.byId("hrEmployeeIdInput").getValue();
             var sTreeId = this.byId("employeeIdInput") && this.byId("employeeIdInput").getValue();
 
             if (sHrId) {
-                sGlobalId = sHrId;
-            } else if (sTreeId) {
-                sGlobalId = sTreeId;
-            }           
+                return sHrId;
+            }
+            if (sTreeId) {
+                return sTreeId;
+            }
+            return "";
+        },
+
+        _updateSearchEnabled: function () {
+            var oYearSelect = this.byId("bonusYearInput");
+            var oQuarterSelect = this.byId("bonusQuarterInput");
+            var sGlobalId = this._getSelectedGlobalId();
+            var sYear = oYearSelect ? oYearSelect.getSelectedKey() : "";
+            var sQuarter = oQuarterSelect ? oQuarterSelect.getSelectedKey() : "";
+
+            this.getView().getModel().setProperty("/isSearchEnabled", !!(sGlobalId && sYear && sQuarter));
+        },
+
+        onSearchPress: function () {
+            var oView = this.getView();
+            var sGlobalId = this._getSelectedGlobalId(); 
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var sQuarter = this.byId("bonusQuarterInput").getSelectedKey();
 

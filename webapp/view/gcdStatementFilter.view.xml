@@ -46,6 +46,7 @@
                             <Label id="_IDGenLabel1" text="{i18n>BONUS_YEAR}" design="Bold" class="sapUiTinyMarginBottom" />
                             <Select id="bonusYearInput" 
                                     forceSelection="false"
+                                    enabled="{/isYearEnabled}"
                                     items="{/availableYears}" 
                                     change=".onYearChange"
                                     width="14rem">
@@ -59,6 +60,7 @@
                                     forceSelection="false"
                                     enabled="{/isQuarterEnabled}"
                                     items="{/availableQuarters}"
+                                    change=".onQuarterChange"
                                     width="14rem">
                                 <core:Item id="_IDGenItem1" key="{quarter}" text="{quarter}" />
                             </Select>
@@ -67,7 +69,7 @@
                     </HBox>
 
                     <HBox id="actionBox" justifyContent="End" class="sapUiTinyMarginBottom sapUiTinyMarginEnd">
-                        <Button id="searchBtn" text="{i18n>SEARCH_RECORDS}" type="Default" press=".onSearchPress" />
+                        <Button id="searchBtn" text="{i18n>SEARCH_RECORDS}" type="Default" enabled="{/isSearchEnabled}" press=".onSearchPress" />
                     </HBox>
                 </Panel>
 
