@@ -244,6 +244,11 @@ sap.ui.define([
                 year: "",
                 quarter: ""
             });
+            this.byId("bonusYearInput").setSelectedKey("");
+            this.byId("bonusQuarterInput").setSelectedKey("");
+            oViewModel.setProperty("/isYearEnabled", false);
+            oViewModel.setProperty("/isQuarterEnabled", false);
+            this._updateSearchEnabled();
 
             var aFilters = [
                 new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
@@ -338,7 +343,7 @@ sap.ui.define([
                         this.byId("bonusYearInput").setSelectedKey("");
                         this.byId("bonusQuarterInput").setSelectedKey("");
                         this._updateSearchEnabled();
-                        MessageToast.show("No statements found");
+                        MessageBox.warning("No statements found");
                         oView.setBusy(false); 
                     }
 
@@ -408,10 +413,10 @@ sap.ui.define([
             var oYearSelect = this.byId("bonusYearInput");
             var oQuarterSelect = this.byId("bonusQuarterInput");
             var sGlobalId = this._getSelectedGlobalId();
-            var sYear = oYearSelect ? oYearSelect.getSelectedKey() : "";
-            var sQuarter = oQuarterSelect ? oQuarterSelect.getSelectedKey() : "";
+            var bYearSelected = !!(oYearSelect && oYearSelect.getSelectedItem());
+            var bQuarterSelected = !!(oQuarterSelect && oQuarterSelect.getSelectedItem());
 
-            this.getView().getModel().setProperty("/isSearchEnabled", !!(sGlobalId && sYear && sQuarter));
+            this.getView().getModel().setProperty("/isSearchEnabled", !!(sGlobalId && bYearSelected && bQuarterSelected));
         },
 
         onSearchPress: function () {

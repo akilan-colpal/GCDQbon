@@ -145,22 +145,16 @@ sap.ui.define([
             var oSFModel = this.getModel("mSuccessFactorsModel");
             var oUserDataModel = this.getModel("mUserDataModel");
 
-            oSFModel.callFunction("/getUserRolesByUserId", {
-                urlParameters: { userId: sUserId },
+            oSFModel.read("/User('" + sUserId + "')", {
+                urlParameters: {
+                    "$select": "userId,custom05"
+                },
                 success: function (oData) {
-                    var aRoles = oData.results || [];
-                    var aHRRole = [
-                        "Salary Planning CBS Only", 
-                        "COHRE COMP-BTP", 
-                        "AnnualBonusAdmin"
-                    ];
-
-                    var bIsHR = aRoles.some(function (oRole) {                       
-                            return aHRRole.includes(oRole.roleName);
-                    });
+                    var sCustom05 = oData.custom05 || "";
+                    var bIsHR = sCustom05.indexOf("(06)") !== -1;
 
                     oUserDataModel.setProperty("/isHR", bIsHR);
-
+                    console.log(oData.custom05)
                     this.fnCloseBusyDialog();
 
                     this.getRouter().initialize();

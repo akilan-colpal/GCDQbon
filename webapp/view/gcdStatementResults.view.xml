@@ -9,6 +9,7 @@
            width="auto"
            expandable="true" 
            expanded="true" 
+           visible="{/isPdfButtonVisible}"
            class="sapUiNoMarginTop sapUiResponsiveMargin">
         
         <headerToolbar>

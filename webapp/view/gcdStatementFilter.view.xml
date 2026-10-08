@@ -47,6 +47,7 @@
                             <Select id="bonusYearInput" 
                                     forceSelection="false"
                                     enabled="{/isYearEnabled}"
+                                    placeholder="{i18n>SELECT_PLACEHOLDER}"
                                     items="{/availableYears}" 
                                     change=".onYearChange"
                                     width="14rem">
@@ -59,6 +60,7 @@
                             <Select id="bonusQuarterInput" 
                                     forceSelection="false"
                                     enabled="{/isQuarterEnabled}"
+                                    placeholder="{i18n>SELECT_PLACEHOLDER}"
                                     items="{/availableQuarters}"
                                     change=".onQuarterChange"
                                     width="14rem">
