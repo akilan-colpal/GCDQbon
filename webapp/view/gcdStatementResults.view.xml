@@ -1,263 +1,269 @@
-<mvc:View 
+<mvc:View
     controllerName="adobeform.controller.gcdStatementResults"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m"
-    xmlns:table="sap.ui.table">
-                
-    <!-- DATA ACCORDION -->
-    <Panel id="resultsAccordion" 
-           width="auto"
-           expandable="true" 
-           expanded="true" 
-           visible="{/isPdfButtonVisible}"
-           class="sapUiNoMarginTop sapUiResponsiveMargin">
-        
-        <headerToolbar>
-            <Toolbar id="_IDGenToolbar" height="3rem">
-                <Title id="_IDGenTitle" text="{VarPayTemplateName}" level="H2" />
-                <ToolbarSpacer id="_IDGenToolbarSpacer1" /> 
-                <HBox id="custom"  class="sapUiTinyMarginEnd">
-                    <Button 
-                        id="generatePdfBtn" 
-                        text="{i18n>GENERATE_PDF}" 
-                        press=".onGeneratePress" 
-                        type="Emphasized" 
-                        visible="{/isPdfButtonVisible}" />                           
-                </HBox>
-           </Toolbar>
-        </headerToolbar>
-        
-        <content>
-            <!--  HEADER DISPLAY -->
-            <HBox id="_IDGenHBox1" wrap="Wrap" justifyContent="SpaceAround" class="sapUiSmallMargin">
-                <HBox id="_IDGenHBox3" class="sapUiTinyMarginBottom sapUiSmallMarginRight">
-                    <VBox id="_IDGenVBox6" class="kpiLabelBox" justifyContent="Center">
-                        <Label id="_IDGenLabel4" text="{i18n>ELIGIBILITY}" />
-                    </VBox>
-                    <VBox id="_IDGenVBox7" class="kpiValueBox" justifyContent="Center">
-                        <Label id="_IDGenText1" text="{eligibilityPeriod}"  design="Bold" class="blackTextLabel"/>                                
-                    </VBox>
-                </HBox>
-                <HBox id="_IDGenHBox4" class="sapUiTinyMarginBottom sapUiSmallMarginRight">
-                    <VBox id="_IDGenVBox8" class="kpiLabelBox" justifyContent="Center">
-                        <Label id="_IDGenLabel5" text="{i18n>QUARTER_AWARD}" />
-                    </VBox>
-                    <VBox id="_IDGenVBox9" class="kpiValueBox" justifyContent="Center">
-                        <ObjectNumber id="_IDGenObjectNumber1" class="blackBoldNumber"
-                                      number="{path: 'totalQuarterAward', formatter: '.formatCleanNumber'}" 
-                                      unit="{currency}" />
-                    </VBox>
-                </HBox>
-                <HBox id="_IDGenHBox5" class="sapUiTinyMarginBottom">
-                    <VBox id="_IDGenVBox10" class="kpiLabelBox" justifyContent="Center">
-                        <Label id="_IDGenLabel6" text="{i18n>BONUSABLE_EARNINGS}" />
-                    </VBox>
-                    <VBox id="_IDGenVBox11" class="kpiValueBox" justifyContent="Center">
-                        <ObjectNumber id="_IDGenObjectNumber2" class="blackBoldNumber"
-                                      number="{path: 'bonusableEarnings', formatter: '.formatCleanNumber'}" 
-                                      unit="{currency}" />
-                    </VBox>
-                </HBox>
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.data="sap.viz.ui5.data"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns="sap.m">
+
+    <VBox id="resultsRoot" width="100%" class="resultsShell">
+
+        <!-- ===================== AT A GLANCE ===================== -->
+        <VBox class="glanceHero" width="100%">
+            <HBox wrap="Wrap" alignItems="Start" justifyContent="SpaceBetween" width="100%">
+                <VBox class="glanceHeroMain">
+                    <Title text="{VarPayTemplateName}" level="H2" titleStyle="H2" class="glanceTitle" />
+                    <Text text="{i18n>ELIGIBILITY}: {eligibilityPeriod}" class="glanceEligibility" />
+                </VBox>
+                <Button
+                    id="generatePdfBtn"
+                    text="{i18n>GENERATE_PDF}"
+                    press=".onGeneratePress"
+                    type="Emphasized"
+                    class="glancePdfBtn"
+                    visible="{/isPdfButtonVisible}" />
             </HBox>
 
-            <!-- TABLES CONTAINER -->
-            <VBox id="_IDGenVBox12" alignItems="Center" width="100%" class="sapUiMediumMarginTop">
-                
-                <!-- TABLE 1: KPI DATA -->
-                <VBox id="_IDGenVBox13" width="95%" class="sapUiLargeMarginBottom">
-                    <Title id="_IDGenTitle1" text="{i18n>KPI_DETAILS_CURRENT_Q}" level="H3" class="sapUiTinyMarginBottom" />
-                    <table:Table id="kpiTable" 
-                                 rows="{
-                                            path: 'to_KPIs',
-                                            sorter: [
-                                                { path: 'startKpiDate', descending: false }
-                                            ]
-                                        }"                                        
-                                 selectionMode="None" 
-                                 class="kpiTableHeader"
-                                 visibleRowCount="{/kpiRowCount}"
-                                 rowHeight="45">
-                        <table:columns>
-                            <table:Column width="5rem">
-                                <Label text="{i18n>QUARTER}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{bonusQuarter}" /></table:template>
-                            </table:Column>
-                            <table:Column width="9rem">
-                                <Label text="{i18n>PERIOD}" textAlign="Center" width="100%" />
-                                <table:template>
-                                    <Text text="{
-                                        path: 'startKpiDate', 
-                                        type: 'sap.ui.model.type.Date', 
-                                        formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
-                                    } to {
-                                        path: 'endKpiDate', 
-                                        type: 'sap.ui.model.type.Date', 
-                                        formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
-                                    }" />
-                                </table:template>
-                            </table:Column>
-                            <table:Column width="10rem">
-                                <Label text="{i18n>KPI}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{KPIName}" /></table:template>
-                            </table:Column>
-
-                            <table:Column hAlign="End" width="9rem">
-                                <Label text="{i18n>KPI_RESULT_TARGET}" textAlign="Center" width="100%" class="KPIResultColumn" />
-                                <table:template><Text text="{path: 'kpiResTarget', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-                            <table:Column hAlign="End" width="10rem">
-                                <Label text="{i18n>KPI_RESULT_ACHIEVEMENT}" textAlign="Center" width="100%" class="KPIResultColumn" />
-                                <table:template><Text text="{path: 'kpiResAchievement', formatter: '.formatCleanNumber'} " /></table:template>
-                            </table:Column>
-                            <table:Column hAlign="End" width="10rem">
-                                <Label text="{i18n>PRORATED_TARGET_AMOUNT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'proratedTarget', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-                            
-                            <table:Column hAlign="End" width="6rem">
-                                <Label text="{i18n>KPI_WEIGHT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'kpiWeight', formatter: '.formatPercent'}" /></table:template>
-                            </table:Column>
-                            <table:Column hAlign="End" width="6rem">
-                                <Label text="{i18n>TEAM_WEIGHT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'teamWeight', formatter: '.formatPercent'}" /></table:template>
-                            </table:Column>
-                            
-                            <table:Column hAlign="End" width="9rem">
-                                <Label text="{i18n>KPI_TARGET_AMOUNT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'kpiTargetAmount', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-                            
-                            <table:Column hAlign="End" width="6.5rem">
-                                <Label text="{i18n>KPI_PAYOUT_PERCENT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'kpiPayoutPercent', formatter: '.formatPercent'}" /></table:template>
-                            </table:Column>
-                            
-                            <table:Column hAlign="End" width="9rem">
-                                <Label text="{i18n>MY_KPI_PAYOUT}" textAlign="Center" width="100%" />
-                                <table:template><Text text="{path: 'kpiPayout', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-                        </table:columns>
-                    </table:Table>
-                    
-                    <HBox id="_IDGenHBox6" justifyContent="End" alignItems="Center" class="sapUiTinyMarginTop">
-                        <VBox id="_IDGenVBox14" class="kpiLabelBox" justifyContent="Center">
-                            <Label id="_IDGenLabel17" text="{i18n>TOTAL_KPI_PAYOUT}" design="Bold" class="sapUiSmallMarginRight" />
-                        </VBox>
-                        <VBox id="_IDGenVBox15" class="kpiValueBox" justifyContent="Center">
-                            <ObjectNumber id="_IDGenObjectNumber3" class="blackBoldNumber"
-                                          number="{path: 'totalKPIPayout', formatter: '.formatCleanNumber'}" 
-                                          unit="{currency}" />
-                        </VBox>
+            <HBox wrap="Wrap" alignItems="End" class="glanceAwardRow sapUiSmallMarginTop">
+                <VBox class="glanceAwardBlock">
+                    <Text text="{i18n>PERIOD_TOTAL}" class="glanceMetricLabel" />
+                    <HBox alignItems="Baseline">
+                        <Text text="$" class="glanceCurrency" />
+                        <Text text="{path: 'totalQuarterAward', formatter: '.formatCleanNumber'}" class="glanceAwardAmount" />
+                        <Text text="{currency}" class="glanceCurrency sapUiTinyMarginBegin" />
                     </HBox>
                 </VBox>
+            </HBox>
 
-                <!-- TABLE 2: SUMMARY DATA -->
-                <VBox id="_IDGenVBox16" width="95%" class="sapUiLargeMarginBottom">
-                    <Title id="_IDGenTitle2" text="{i18n>QUARTER_PLAN_SUMMARY}" level="H3" class="sapUiTinyMarginBottom" />
-                    <table:Table id="summaryTable"                             
-                                 rows="{
-                                            path: 'to_qSum',
-                                            sorter: [
-                                                { path: 'summaryQuarter', descending: false },
-                                                { path: 'startQSumDate', descending: false }
-                                            ]
-                                        }"
-                                 class="summaryTableHeader"
-                                 selectionMode="None" 
-                                 visibleRowCount="{/summaryRowCount}"
-                                 rowHeight="45">
-                        <table:columns>
-                            <table:Column id="_IDGenColumn10" width="5rem">
-                                <Label id="_IDGenLabel18" text="{i18n>QUARTER}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText12" text="{summaryQuarter}" /></table:template>
-                            </table:Column>
-                            <table:Column width="9rem">
-                                <Label text="{i18n>PERIOD}" textAlign="Center" width="100%" />
-                                <table:template>
-                                    <Text text="{
-                                        path: 'startQSumDate', 
-                                        type: 'sap.ui.model.type.Date', 
-                                        formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
-                                    } to {
-                                        path: 'endQSumDate', 
-                                        type: 'sap.ui.model.type.Date', 
-                                        formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
-                                    }" />
-
-                                </table:template>
-                            </table:Column>
-                            <table:Column id="_IDGenColumn12">
-                                <Label id="_IDGenLabel20" text="{i18n>PLAN_TYPE}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText14" text="{planType}" /></table:template>
-                            </table:Column>
-                            <table:Column id="_IDGenColumn13" hAlign="End" width="12rem">
-                                <Label id="_IDGenLabel21" text="{i18n>BONUSABLE_EARNINGS}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText15" text="{path: 'bonusableQuarterEarn', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-                            <table:Column id="_IDGenColumn14" hAlign="End" width="10rem">
-                                <Label id="_IDGenLabel22" text="{i18n>QUARTERLY_TARGET_PERCENT}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText16" text="{path: 'quarterTargetPercent', formatter: '.formatPercent'}" /></table:template>
-                            </table:Column>
-                            <table:Column id="_IDGenColumn16" hAlign="End" width="10rem">
-                                <Label id="_IDGenLabel24" text="{i18n>PAYMENT_PERIOD}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText18" text="{path: 'paymentPeriod', formatter: '.formatPercent'}" /></table:template>
-                            </table:Column>
-                            <table:Column id="_IDGenColumn15" hAlign="End" width="11rem">
-                                <Label id="_IDGenLabel23" text="{i18n>QUARTERLY_TARGET_AMOUNT}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText17" text="{path: 'quarterTargetAmount', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-
-                            <table:Column id="_IDGenColumn17" hAlign="End">
-                                <Label id="_IDGenLabel25" text="{i18n>SEGMENT_AWARD}" textAlign="Center" width="100%" />
-                                <table:template><Text id="_IDGenText19" text="{path: 'segmentAward', formatter: '.formatCleanNumber'}" /></table:template>
-                            </table:Column>
-                        </table:columns>
-                    </table:Table>
-                        
-                    <HBox id="_IDGenHBox7" justifyContent="End" alignItems="Center" class="sapUiTinyMarginTop">
-                        <VBox id="_IDGenVBox17" class="kpiLabelBox" justifyContent="Center">
-                            <Label id="_IDGenLabel26" text="{i18n>TOTAL_BONUS_YTD}" design="Bold" class="sapUiSmallMarginRight" />
-                        </VBox>
-                        <VBox id="_IDGenVBox18" class="kpiValueBox" justifyContent="Center">
-                            <ObjectNumber id="_IDGenObjectNumber4" class="blackBoldNumber"
-                                          number="{path: 'totalBonusYTD', formatter: '.formatCleanNumber'}" 
-                                          unit="{currency}" />
-                        </VBox>
-                    </HBox>
+            <l:Grid defaultSpan="XL6 L6 M6 S12" containerQuery="true" class="glanceMetricGrid sapUiMediumMarginTop">
+                <VBox class="glanceMetricTile">
+                    <Text text="{i18n>BONUSABLE_EARNINGS}" class="glanceMetricLabel" />
+                    <ObjectNumber
+                        number="{path: 'bonusableEarnings', formatter: '.formatCleanNumber'}"
+                        unit="{currency}"
+                        emphasized="true"
+                        class="glanceObjectNumber" />
                 </VBox>
-
-                <!-- DISCLAIMER SECTION -->
-                <VBox id="disclaimerContainer" width="95%" class="sapUiMediumMarginTop sapUiLargeMarginBottom">
-                    <Table id="disclaimerTable" 
-                           showSeparators="All" 
-                           backgroundDesign="Solid" 
-                           inset="false"
-                           class="sapUiTinyMarginBottom">
-                        <columns>
-                            <Column width="25%"><Text text="" visible="false" /></Column>
-                            <Column width="25%"><Text text="" visible="false" /></Column>
-                            <Column width="25%"><Text text="" visible="false" /></Column>
-                            <Column width="25%"><Text text="" visible="false" /></Column>
-                        </columns>
-                        <items>
-                            <ColumnListItem vAlign="Top">
-                                <cells>
-                                    <FormattedText class="sapUiTinyMargin" htmlText="{i18n>CALCULATION_BASIS_HTML}" />
-                                    <FormattedText class="sapUiTinyMargin" htmlText="{i18n>ELIGIBILITY_PRORATION_HTML}" />
-                                    <FormattedText class="sapUiTinyMargin" htmlText="{i18n>PAYMENT_INFORMATION_HTML}" />
-                                    <FormattedText class="sapUiTinyMargin" htmlText="{i18n>OFFICIAL_POLICY_DISCLAIMER_HTML}" />
-                                </cells>
-                            </ColumnListItem>
-                        </items>
-                    </Table>
-
-                    <HBox justifyContent="Center" class="sapUiSmallMarginTop">
-                        <Title text="{i18n>NOTE_GCD_BONUS_PRETAX}" level="H6" titleStyle="H6" />
-                    </HBox>
-
+                <VBox class="glanceMetricTile">
+                    <Text text="{i18n>TOTAL_BONUS_YTD}" class="glanceMetricLabel" />
+                    <ObjectNumber
+                        number="{path: 'totalBonusYTD', formatter: '.formatCleanNumber'}"
+                        unit="{currency}"
+                        emphasized="true"
+                        class="glanceObjectNumber" />
                 </VBox>
+            </l:Grid>
+        </VBox>
+
+        <!-- ===================== KPI DETAILS ===================== -->
+        <VBox class="resultsSection kpiDetailsSection" width="100%">
+            <VBox class="kpiDetailsHeader" width="100%">
+                <Title text="{i18n>MY_KPI_DETAILS}" level="H3" class="kpiDetailsHeaderTitle" />
             </VBox>
-        </content>
-    </Panel>
+
+            <List
+                id="kpiDetailList"
+                items="{
+                    path: 'to_KPIs',
+                    sorter: { path: 'startKpiDate', descending: false }
+                }"
+                mode="None"
+                showSeparators="None"
+                class="kpiDetailAccordion">
+                <CustomListItem>
+                    <Panel
+                        expandable="true"
+                        expanded="false"
+                        expand=".onKpiPanelExpand"
+                        width="auto"
+                        class="kpiDetailPanel"
+                        headerText="{KPIName}">
+                        <VBox class="kpiDetailBody">
+                            <Text text="{KPIName}" class="kpiCyanBanner" />
+
+                            <l:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="2" vSpacing="1" containerQuery="true" class="kpiDetailGrid">
+                                <!-- LEFT: calculation flow -->
+                                <VBox class="kpiCalcColumn">
+                                    <Text text="{i18n>KPI_BREAKDOWN}" class="kpiColumnTitle" />
+                                    <VBox class="kpiFlowCard">
+                                        <HBox wrap="NoWrap" alignItems="Start" width="100%" class="kpiFlowRow">
+                                            <VBox class="kpiFlowFactor">
+                                                <HBox alignItems="Baseline" justifyContent="Center" wrap="NoWrap" class="kpiFlowAmount">
+                                                    <Text text="{path: 'proratedTarget', formatter: '.formatCleanNumber'}" class="kpiFlowValue kpiFlowValueLarge" />
+                                                    <Text text="{path: 'proratedTarget', formatter: '.formatCurrencyCode'}" class="kpiFlowCurrency" />
+                                                </HBox>
+                                                <Text text="{i18n>PRORATED_TARGET_AMOUNT}" class="kpiFlowLabel" />
+                                            </VBox>
+                                            <Text text="×" class="kpiFlowOperator" />
+                                            <VBox class="kpiFlowFactor">
+                                                <Text text="{path: 'kpiWeight', formatter: '.formatPercent'}" class="kpiFlowValue" />
+                                                <Text text="{i18n>KPI_WEIGHT}" class="kpiFlowLabel" />
+                                            </VBox>
+                                            <Text text="×" class="kpiFlowOperator" />
+                                            <VBox class="kpiFlowFactor">
+                                                <Text text="{path: 'teamWeight', formatter: '.formatPercent'}" class="kpiFlowValue" />
+                                                <Text text="{i18n>TEAM_WEIGHT}" class="kpiFlowLabel" />
+                                            </VBox>
+                                            <Text text="=" class="kpiFlowOperator kpiFlowEquals" />
+                                        </HBox>
+                                    </VBox>
+                                    <HBox justifyContent="Center" class="kpiFlowChevron">
+                                        <core:Icon src="sap-icon://slim-arrow-down" class="kpiFlowChevronIcon" />
+                                    </HBox>
+
+                                    <VBox class="kpiFlowCard">
+                                        <HBox wrap="NoWrap" alignItems="Start" width="100%" class="kpiFlowRow">
+                                            <VBox class="kpiFlowFactor">
+                                                <HBox alignItems="Baseline" justifyContent="Center" wrap="NoWrap" class="kpiFlowAmount">
+                                                    <Text text="{path: 'kpiTargetAmount', formatter: '.formatCleanNumber'}" class="kpiFlowValue kpiFlowValueLarge" />
+                                                    <Text text="{path: 'kpiTargetAmount', formatter: '.formatCurrencyCode'}" class="kpiFlowCurrency" />
+                                                </HBox>
+                                                <Text text="{i18n>KPI_TARGET_AMOUNT}" class="kpiFlowLabel" />
+                                            </VBox>
+                                            <Text text="×" class="kpiFlowOperator" />
+                                            <VBox class="kpiFlowFactor">
+                                                <Text text="{path: 'kpiPayoutPercent', formatter: '.formatPercent'}" class="kpiFlowValue" />
+                                                <Text text="{i18n>KPI_PAYOUT_PERCENT}" class="kpiFlowLabel" />
+                                            </VBox>
+                                            <Text text="=" class="kpiFlowOperator kpiFlowEquals" />
+                                        </HBox>
+                                    </VBox>
+                                    <HBox justifyContent="Center" class="kpiFlowChevron">
+                                        <core:Icon src="sap-icon://slim-arrow-down" class="kpiFlowChevronIcon" />
+                                    </HBox>
+
+                                    <HBox alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap" class="kpiFlowResultCard">
+                                        <Text text="{i18n>MY_KPI_PAYOUT}" class="kpiFlowResultLabel" />
+                                        <Text text="{path: 'kpiPayout', formatter: '.formatAmountMxp'}" class="kpiFlowResultPill" />
+                                    </HBox>
+                                </VBox>
+
+                                <!-- RIGHT: tier table + payout curve -->
+                                <VBox class="kpiRightColumn">
+                                    <Text text="{i18n>CHART_KPI_COMPARE}" class="kpiColumnTitle" />
+                                    <VBox class="kpiTierCard" width="100%">
+                                        <Table
+                                            class="kpiTierTable"
+                                            mode="None"
+                                            showSeparators="Inner"
+                                            backgroundDesign="Transparent"
+                                            items="{
+                                                path: 'tierRows',
+                                                templateShareable: false
+                                            }"
+                                            fixedLayout="false">
+                                            <columns>
+                                                <Column width="28%"><Text text="" /></Column>
+                                                <Column hAlign="End"><Text text="{i18n>KPI_RESULT_MXP}" class="kpiTierHeader" /></Column>
+                                                <Column hAlign="End"><Text text="{i18n>PAYOUT_PERCENT_COL}" class="kpiTierHeader" /></Column>
+                                                <Column hAlign="End"><Text text="{i18n>AMOUNT_MXP}" class="kpiTierHeader" /></Column>
+                                            </columns>
+                                            <items>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <Text text="{tier}" class="kpiTierName" />
+                                                        <Text text="{path: 'kpiResult', formatter: '.formatCleanNumber'}" class="kpiTierCell" />
+                                                        <Text text="{path: 'payoutPercent', formatter: '.formatPercent'}" class="kpiTierCell" />
+                                                        <ObjectStatus
+                                                            text="{path: 'amount', formatter: '.formatCleanNumber'}"
+                                                            state="{path: 'highlight', formatter: '.formatTierState'}"
+                                                            class="kpiTierAmountStatus" />
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </items>
+                                        </Table>
+                                    </VBox>
+
+                                    <VBox class="kpiCurveCard" width="100%">
+                                        <Title text="{i18n>CHART_PAYOUT_CURVE}" level="H5" class="kpiCurveTitle" />
+                                        <viz:VizFrame
+                                            vizType="line"
+                                            height="14rem"
+                                            width="100%"
+                                            class="kpiPayoutCurve">
+                                            <viz:dataset>
+                                                <viz.data:FlattenedDataset data="{
+                                                    path: 'payoutCurve',
+                                                    templateShareable: false
+                                                }">
+                                                    <viz.data:dimensions>
+                                                        <viz.data:DimensionDefinition name="KPI Result" value="{category}" />
+                                                    </viz.data:dimensions>
+                                                    <viz.data:measures>
+                                                        <viz.data:MeasureDefinition name="Payout %" value="{payoutPercent}" />
+                                                    </viz.data:measures>
+                                                </viz.data:FlattenedDataset>
+                                            </viz:dataset>
+                                            <viz:feeds>
+                                                <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Payout %" />
+                                                <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="KPI Result" />
+                                            </viz:feeds>
+                                        </viz:VizFrame>
+                                    </VBox>
+                                </VBox>
+                            </l:Grid>
+                        </VBox>
+                    </Panel>
+                </CustomListItem>
+            </List>
+        </VBox>
+
+        <!-- ===================== QUARTER SUMMARY ===================== -->
+        <VBox class="resultsSection resultsSectionAlt quarterSummarySection" width="100%">
+            <VBox class="kpiDetailsHeader" width="100%">
+                <Title text="{i18n>QUARTER_PLAN_SUMMARY}" level="H3" class="kpiDetailsHeaderTitle" />
+            </VBox>
+
+            <Table
+                id="summaryTable"
+                items="{
+                    path: 'to_qSum',
+                    sorter: [
+                        { path: 'summaryQuarter', descending: false },
+                        { path: 'startQSumDate', descending: false }
+                    ]
+                }"
+                alternateRowColors="true"
+                sticky="ColumnHeaders"
+                autoPopinMode="false"
+                fixedLayout="true"
+                class="bonusTable">
+                <columns>
+                    <Column width="9%" importance="High"><Text text="{i18n>QUARTER}" class="bonusTableHeader" /></Column>
+                    <Column width="16%" importance="High"><Text text="{i18n>PERIOD}" class="bonusTableHeader" /></Column>
+                    <Column width="13%" importance="High"><Text text="{i18n>PLAN_TYPE}" class="bonusTableHeader" /></Column>
+                    <Column width="14%" hAlign="End" importance="High"><Text text="{i18n>BONUSABLE_EARNINGS}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>QUARTERLY_TARGET_PERCENT}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>PAYMENT_PERIOD}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>QUARTERLY_TARGET_AMOUNT}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>SEGMENT_AWARD}" class="bonusTableHeader" /></Column>
+                </columns>
+                <items>
+                    <ColumnListItem vAlign="Middle">
+                        <cells>
+                            <Text text="{summaryQuarter}" class="bonusTableCell" />
+                            <Text text="{
+                                path: 'startQSumDate',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
+                            } to {
+                                path: 'endQSumDate',
+                                type: 'sap.ui.model.type.Date',
+                                formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
+                            }" class="bonusTableCell" />
+                            <Text text="{planType}" class="bonusTableCell" />
+                            <Text text="{path: 'bonusableQuarterEarn', formatter: '.formatCleanNumber'}" class="bonusTableCell" />
+                            <Text text="{path: 'quarterTargetPercent', formatter: '.formatPercent'}" class="bonusTableCell" />
+                            <Text text="{path: 'paymentPeriod', formatter: '.formatPercent'}" class="bonusTableCell" />
+                            <Text text="{path: 'quarterTargetAmount', formatter: '.formatCleanNumber'}" class="bonusTableCell" />
+                            <Text text="{path: 'segmentAward', formatter: '.formatCleanNumber'}" class="bonusTableCell" />
+                        </cells>
+                    </ColumnListItem>
+                </items>
+            </Table>
+        </VBox>
+
+    </VBox>
 </mvc:View>

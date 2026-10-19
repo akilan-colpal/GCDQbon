@@ -1,67 +1,244 @@
-/* Enter your custom styles here */
-.toolHeader {
-  background-color: #354a5f !important;
+/* Header */
+.toolHeader { background-color: #354a5f !important; }
+.toolHeader .sapMTitle,
+.toolHeaderTitle { color: #ffffff !important; }
+
+/* Startup layout: left card + right gradient/details */
+.startupPage {
+  max-width: 110rem;
+  margin: 0 auto;
+  padding: 0.75rem 0.75rem 0;
+  box-sizing: border-box;
+}
+.startupHero {
+  min-height: 30rem;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: nowrap !important;
+  align-items: stretch;
 }
 
-.toolHeader .sapMTitle {
-  color: #ffffff !important;
-  font-size: 1.125rem !important;
-  font-weight: bold !important;
-}
-
-.toolHeaderTitle {
+.bonusCard {
+  flex: 0 0 clamp(18rem, 24vw, 24rem);
+  width: clamp(18rem, 24vw, 24rem);
+  min-width: 18rem;
+  max-width: 26%;
+  box-sizing: border-box;
+  background: #1c6fbf;
   color: #ffffff;
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: 1.25rem;
 }
-.KPIResultColumn {
-    background-color: #e8f5e9 !important;
-    color: #2e7d32 !important;      
+.bonusCard .sapMTitle,
+.bonusCard .sapMLabel,
+.bonusCard .sapMText { color: #ffffff !important; }
+.bonusFigure, .bonusDollar { font-size: 2.5rem; font-weight: 300; line-height: 1; }
+.bonusField { margin-bottom: 1rem; }
+.bonusField .sapMInputBaseContentWrapper,
+.bonusField .sapMSlt { background: #ffffff !important; }
+.detailsAction { margin-top: auto; padding-top: 1.5rem; }
+.detailsBtn .sapMBtnInner {
+  background: #8dc63f !important;
+  border-color: #8dc63f !important;
+  border-radius: 999px !important;
+  color: #ffffff !important;
 }
-
-.kpiBoxOutline {
-    border: 1px solid #d9d9d9; 
-    border-radius: 0.25rem;   
-    background-color: #ffffff; 
-    padding: 1.5rem 2rem;     
-    min-width: 12rem;         
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.kpiLabelBox {
-    border: 1px solid #d9d9d9;
-    border-right: none; 
-    border-radius: 0.25rem 0 0 0.25rem; 
-    background-color: #f2f2f2;
-    padding: 0.5rem 1rem;
-}
-
-.kpiValueBox {
-    border: 1px solid #d9d9d9;
-    border-radius: 0 0.25rem 0.25rem 0;
-    background-color: #ffffff;
-    padding: 0.5rem 1rem;
+.detailsBtn.sapMBtnDisabled .sapMBtnInner {
+  background: #9aa3ad !important;
+  border-color: #9aa3ad !important;
 }
 
-.iconSize .sapMBtnIcon {
-    font-size: 2vh !important; 
+.heroSide {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 30rem;
+  border-radius: 1.25rem;
+  overflow: hidden;
+}
+.heroGradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, #155A9A, #0E3F72 50%, #0A3158);
+  border-radius: 1.25rem;
+}
+.detailsStack {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  background: #0E3F72;
+  border-radius: 1.25rem;
+  overflow: auto;
+  transform: translateX(100%);
+  transition: transform 0.35s ease;
+  pointer-events: none;
+}
+.detailsStack.detailsStackOpen {
+  transform: translateX(0);
+  pointer-events: auto;
+}
+.detailsStackBar {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #1c6fbf;
+  padding: 0.35rem 0.75rem;
+}
+.detailsBackBtn .sapMBtnIcon,
+.detailsStackTitle { color: #ffffff !important; }
+
+.disclaimerBand {
+  background: #ffffff;
+  padding: 0.5rem 0.75rem 0.75rem;
+  margin-bottom: 0.75rem;
 }
 
-.myCustomSearchMargin {
-    margin-left: 2rem !important;
-    margin-right: 1rem !important;
-        max-width: calc(100% - 4rem); 
+/* Results (inside details stack) */
+.resultsShell,
+.glanceHero,
+.resultsSection,
+.kpiDetailsSection,
+.quarterSummarySection {
+  background: #0E3F72;
+  color: #ffffff;
+  border: none;
+  box-shadow: none;
+  margin: 0;
+}
+.glanceHero,
+.resultsSection,
+.quarterSummarySection { padding: 1rem 1.1rem; }
+.kpiDetailsSection { padding: 0 !important; }
+
+.glanceTitle,
+.glanceEligibility,
+.glanceMetricLabel,
+.glanceAwardAmount,
+.glanceCurrency,
+.sectionTitle,
+.kpiDetailsHeaderTitle,
+.kpiColumnTitle,
+.kpiFlowValue,
+.kpiFlowLabel,
+.kpiFlowOperator,
+.kpiFlowCurrency,
+.kpiFlowResultLabel,
+.kpiTierHeader,
+.kpiTierName,
+.kpiTierCell,
+.kpiCurveTitle,
+.bonusTable .sapMText { color: #ffffff !important; }
+
+.glanceAwardAmount { font-size: 3rem; font-weight: 700; line-height: 1.05; }
+.glanceMetricTile {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 0.65rem;
+  padding: 0.9rem 1rem;
+}
+.glanceObjectNumber .sapMObjectNumberText,
+.glanceObjectNumber .sapMObjectNumberUnit { color: #ffffff !important; }
+
+.kpiDetailsHeader { background: #1c6fbf; padding: 1rem 1.25rem; }
+.kpiDetailAccordion,
+.kpiDetailAccordion .sapMListUl,
+.kpiDetailAccordion .sapMLIB { background: transparent !important; border: none !important; }
+.kpiDetailPanel {
+  margin: 0.75rem 1rem 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0.75rem !important;
+  overflow: hidden;
+}
+.kpiDetailPanel > .sapMPanelHeadingDiv,
+.kpiDetailPanel .sapMPanelHdr,
+.kpiDetailPanel .sapMPanelWrappingDivTb {
+  background: #5ac8fa !important;
+  border: none !important;
+  color: #ffffff !important;
+}
+.kpiDetailPanel .sapMPanelHdr .sapMTitle,
+.kpiDetailPanel .sapMPanelExpandableIcon,
+.kpiDetailPanel .sapMBtnIcon { color: #ffffff !important; }
+.kpiDetailPanel .sapMPanelContent {
+  background: #3f3d6a !important;
+  border: none !important;
+  color: #ffffff;
+  padding: 0.75rem 1rem 1rem !important;
+}
+.kpiCyanBanner { display: none; }
+
+.kpiFlowCard,
+.kpiFlowResultCard,
+.kpiTierCard,
+.kpiCurveCard {
+  background: #322f55;
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+.kpiFlowResultCard {
+  border: 1px solid rgba(90,200,250,0.45);
+  margin-top: 0.5rem;
+}
+.kpiFlowOperator { font-weight: 700; margin: 0 0.35rem; }
+.kpiFlowResultPill {
+  background: #5ac8fa;
+  color: #16324f !important;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+}
+.kpiTierTable,
+.kpiTierTable .sapMListTblHeaderCell,
+.kpiTierTable .sapMListTblCell,
+.kpiTierTable .sapMLIB {
+  background: transparent !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.35) !important;
+}
+.kpiTierAmountStatus.sapMObjStatusInformation .sapMObjStatusText {
+  border: 1px solid #ffffff;
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  color: #ffffff !important;
+}
+.kpiTierAmountStatus.sapMObjStatusSuccess .sapMObjStatusText {
+  background: #5ac8fa !important;
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  color: #16324f !important;
+  font-weight: 700;
+}
+.kpiCurveCard { margin-top: 1rem; }
+
+.bonusTable {
+  background: rgba(255,255,255,0.12);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.bonusTable .sapMListTblHeaderCell,
+.bonusTable .sapMListTblCell,
+.bonusTable .sapMLIB {
+  background: transparent !important;
+  color: #ffffff !important;
+  border-color: rgba(255,255,255,0.25) !important;
 }
 
-.cappedAppContainer {
-    max-width: 100rem;
-    margin: 0 auto !important;
-}
-
-.blackTextLabel {
-    color: #000000 !important;
-}
-
-.sapUiTableColHdrScr .sapMLabel,
-.sapUiTableColHdr .sapMLabel {
-    text-align: center !important;
-    width: 100% !important;
+@media (max-width: 900px) {
+  .startupHero { flex-wrap: wrap !important; }
+  .bonusCard,
+  .heroSide {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: none;
+    min-height: 18rem;
+  }
+  .detailsStack {
+    position: fixed;
+    inset: 0;
+    border-radius: 0;
+    z-index: 20;
+  }
 }
