@@ -3,6 +3,13 @@
   "authenticationMethod": "route",
   "routes": [
     {
+      "source": "^/(index\\.html|manifest\\.json|sap-ui-cachebuster-info\\.json)$",
+      "target": "/$1",
+      "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa",
+      "cacheControl": "no-cache, no-store, must-revalidate"
+    },
+    {
       "source": "^/userapi/(.*)$",
       "target": "$1",
       "service": "sap-approuter-userapi"

@@ -285,6 +285,10 @@ sap.ui.define([
                                 var sYear    = aMatch[1];
                                 var sQuarter = aMatch[2].toUpperCase();
 
+                                if (parseInt(sYear, 10) < 2025) {
+                                    return;
+                                }
+
                                 aParsedPeriods.push({
                                     bonusYear:    sYear,
                                     bonusQuarter: sQuarter,
