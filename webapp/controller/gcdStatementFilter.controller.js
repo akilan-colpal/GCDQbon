@@ -32,8 +32,6 @@ sap.ui.define([
                     quarter: ""
                 },
                 ui: {
-                    selectedKpiName: "",
-                    selectedKpiCurve: [],
                     quarterProgressChart: []
                 }
             });

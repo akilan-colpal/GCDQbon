@@ -94,8 +94,8 @@ sap.ui.define([
                 console.warn("Local environment — using hardcoded user model");
                 var oUserDataModel = this.getModel("mUserDataModel");
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
-                oUserDataModel.setProperty("/userId", "00149410");
-                oUserDataModel.setProperty("/userGlobalId", "00149410");
+                oUserDataModel.setProperty("/userId", "00024611");
+                oUserDataModel.setProperty("/userGlobalId", "00024611");
                 oUserDataModel.setProperty("/isHR", true);
                 oUserDataModel.setProperty("/isMgr", false);
                 this.fnCloseBusyDialog();

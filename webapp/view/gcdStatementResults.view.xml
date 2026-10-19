@@ -38,19 +38,11 @@
                 </VBox>
             </HBox>
 
-            <l:Grid defaultSpan="XL4 L4 M4 S12" containerQuery="true" class="glanceMetricGrid sapUiMediumMarginTop">
+            <l:Grid defaultSpan="XL6 L6 M6 S12" containerQuery="true" class="glanceMetricGrid sapUiMediumMarginTop">
                 <VBox class="glanceMetricTile">
                     <Text text="{i18n>BONUSABLE_EARNINGS}" class="glanceMetricLabel" />
                     <ObjectNumber
                         number="{path: 'bonusableEarnings', formatter: '.formatCleanNumber'}"
-                        unit="{currency}"
-                        emphasized="true"
-                        class="glanceObjectNumber" />
-                </VBox>
-                <VBox class="glanceMetricTile">
-                    <Text text="{i18n>TOTAL_KPI_PAYOUT}" class="glanceMetricLabel" />
-                    <ObjectNumber
-                        number="{path: 'totalKPIPayout', formatter: '.formatCleanNumber'}"
                         unit="{currency}"
                         emphasized="true"
                         class="glanceObjectNumber" />
@@ -92,22 +84,26 @@
                         <VBox class="kpiDetailBody">
                             <Text text="{KPIName}" class="kpiCyanBanner" />
 
-                            <l:Grid defaultSpan="XL6 L6 M12 S12" containerQuery="true" class="kpiDetailGrid">
+                            <l:Grid defaultSpan="XL6 L6 M12 S12" hSpacing="2" vSpacing="1" containerQuery="true" class="kpiDetailGrid">
                                 <!-- LEFT: calculation flow -->
                                 <VBox class="kpiCalcColumn">
+                                    <Text text="{i18n>KPI_BREAKDOWN}" class="kpiColumnTitle" />
                                     <VBox class="kpiFlowCard">
-                                        <HBox wrap="Wrap" alignItems="End" class="kpiFlowRow">
-                                            <VBox class="kpiFlowFactor sapUiTinyMarginEnd">
-                                                <Text text="{path: 'proratedTarget', formatter: '.formatAmountMxp'}" class="kpiFlowValue" />
+                                        <HBox wrap="Wrap" alignItems="Start" class="kpiFlowRow">
+                                            <VBox class="kpiFlowFactor">
+                                                <HBox alignItems="Baseline" wrap="Wrap" class="kpiFlowAmount">
+                                                    <Text text="{path: 'proratedTarget', formatter: '.formatCleanNumber'}" class="kpiFlowValue kpiFlowValueLarge" />
+                                                    <Text text="{path: 'proratedTarget', formatter: '.formatCurrencyCode'}" class="kpiFlowCurrency" />
+                                                </HBox>
                                                 <Text text="{i18n>PRORATED_TARGET_AMOUNT}" class="kpiFlowLabel" />
                                             </VBox>
-                                            <Text text="x" class="kpiFlowOperator" />
-                                            <VBox class="kpiFlowFactor sapUiTinyMarginBegin sapUiTinyMarginEnd">
+                                            <Text text="×" class="kpiFlowOperator" />
+                                            <VBox class="kpiFlowFactor">
                                                 <Text text="{path: 'kpiWeight', formatter: '.formatPercent'}" class="kpiFlowValue" />
                                                 <Text text="{i18n>KPI_WEIGHT}" class="kpiFlowLabel" />
                                             </VBox>
-                                            <Text text="x" class="kpiFlowOperator" />
-                                            <VBox class="kpiFlowFactor sapUiTinyMarginBegin">
+                                            <Text text="×" class="kpiFlowOperator" />
+                                            <VBox class="kpiFlowFactor">
                                                 <Text text="{path: 'teamWeight', formatter: '.formatPercent'}" class="kpiFlowValue" />
                                                 <Text text="{i18n>TEAM_WEIGHT}" class="kpiFlowLabel" />
                                             </VBox>
@@ -119,13 +115,16 @@
                                     </HBox>
 
                                     <VBox class="kpiFlowCard">
-                                        <HBox wrap="Wrap" alignItems="End" class="kpiFlowRow">
-                                            <VBox class="kpiFlowFactor sapUiTinyMarginEnd">
-                                                <Text text="{path: 'kpiTargetAmount', formatter: '.formatAmountMxp'}" class="kpiFlowValue" />
+                                        <HBox wrap="Wrap" alignItems="Start" class="kpiFlowRow">
+                                            <VBox class="kpiFlowFactor">
+                                                <HBox alignItems="Baseline" wrap="Wrap" class="kpiFlowAmount">
+                                                    <Text text="{path: 'kpiTargetAmount', formatter: '.formatCleanNumber'}" class="kpiFlowValue kpiFlowValueLarge" />
+                                                    <Text text="{path: 'kpiTargetAmount', formatter: '.formatCurrencyCode'}" class="kpiFlowCurrency" />
+                                                </HBox>
                                                 <Text text="{i18n>KPI_TARGET_AMOUNT}" class="kpiFlowLabel" />
                                             </VBox>
-                                            <Text text="x" class="kpiFlowOperator" />
-                                            <VBox class="kpiFlowFactor sapUiTinyMarginBegin">
+                                            <Text text="×" class="kpiFlowOperator" />
+                                            <VBox class="kpiFlowFactor">
                                                 <Text text="{path: 'kpiPayoutPercent', formatter: '.formatPercent'}" class="kpiFlowValue" />
                                                 <Text text="{i18n>KPI_PAYOUT_PERCENT}" class="kpiFlowLabel" />
                                             </VBox>
@@ -144,80 +143,72 @@
 
                                 <!-- RIGHT: tier table + payout curve -->
                                 <VBox class="kpiRightColumn">
-                                    <Table
-                                        class="kpiTierTable"
-                                        items="{tierRows}"
-                                        fixedLayout="false">
-                                        <columns>
-                                            <Column width="28%"><Text text="" /></Column>
-                                            <Column hAlign="End"><Text text="{i18n>KPI_RESULT_MXP}" class="kpiTierHeader" /></Column>
-                                            <Column hAlign="End"><Text text="{i18n>PAYOUT_PERCENT_COL}" class="kpiTierHeader" /></Column>
-                                            <Column hAlign="End"><Text text="{i18n>AMOUNT_MXP}" class="kpiTierHeader" /></Column>
-                                        </columns>
-                                        <items>
-                                            <ColumnListItem>
-                                                <cells>
-                                                    <Text text="{tier}" class="kpiTierName" />
-                                                    <Text text="{path: 'kpiResult', formatter: '.formatCleanNumber'}" class="kpiTierCell" />
-                                                    <Text text="{path: 'payoutPercent', formatter: '.formatPercent'}" class="kpiTierCell" />
-                                                    <HBox justifyContent="End">
-                                                        <Text
+                                    <Text text="{i18n>CHART_KPI_COMPARE}" class="kpiColumnTitle" />
+                                    <VBox class="kpiTierCard" width="100%">
+                                        <Table
+                                            class="kpiTierTable"
+                                            mode="None"
+                                            showSeparators="Inner"
+                                            backgroundDesign="Transparent"
+                                            items="{
+                                                path: 'tierRows',
+                                                templateShareable: false
+                                            }"
+                                            fixedLayout="false">
+                                            <columns>
+                                                <Column width="28%"><Text text="" /></Column>
+                                                <Column hAlign="End"><Text text="{i18n>KPI_RESULT_MXP}" class="kpiTierHeader" /></Column>
+                                                <Column hAlign="End"><Text text="{i18n>PAYOUT_PERCENT_COL}" class="kpiTierHeader" /></Column>
+                                                <Column hAlign="End"><Text text="{i18n>AMOUNT_MXP}" class="kpiTierHeader" /></Column>
+                                            </columns>
+                                            <items>
+                                                <ColumnListItem>
+                                                    <cells>
+                                                        <Text text="{tier}" class="kpiTierName" />
+                                                        <Text text="{path: 'kpiResult', formatter: '.formatCleanNumber'}" class="kpiTierCell" />
+                                                        <Text text="{path: 'payoutPercent', formatter: '.formatPercent'}" class="kpiTierCell" />
+                                                        <ObjectStatus
                                                             text="{path: 'amount', formatter: '.formatCleanNumber'}"
-                                                            visible="{= ${highlight} !== 'target' &amp;&amp; ${highlight} !== 'achievement'}"
-                                                            class="kpiTierCell" />
-                                                        <Text
-                                                            text="{path: 'amount', formatter: '.formatCleanNumber'}"
-                                                            visible="{= ${highlight} === 'target'}"
-                                                            class="kpiTierAmountTarget" />
-                                                        <Text
-                                                            text="{path: 'amount', formatter: '.formatCleanNumber'}"
-                                                            visible="{= ${highlight} === 'achievement'}"
-                                                            class="kpiTierAmountAchievement" />
-                                                    </HBox>
-                                                </cells>
-                                            </ColumnListItem>
-                                        </items>
-                                    </Table>
+                                                            state="{path: 'highlight', formatter: '.formatTierState'}"
+                                                            class="kpiTierAmountStatus" />
+                                                    </cells>
+                                                </ColumnListItem>
+                                            </items>
+                                        </Table>
+                                    </VBox>
+
+                                    <VBox class="kpiCurveCard" width="100%">
+                                        <Title text="{i18n>CHART_PAYOUT_CURVE}" level="H5" class="kpiCurveTitle" />
+                                        <viz:VizFrame
+                                            vizType="line"
+                                            height="17rem"
+                                            width="100%"
+                                            class="kpiPayoutCurve">
+                                            <viz:dataset>
+                                                <viz.data:FlattenedDataset data="{
+                                                    path: 'payoutCurve',
+                                                    templateShareable: false
+                                                }">
+                                                    <viz.data:dimensions>
+                                                        <viz.data:DimensionDefinition name="KPI Result" value="{category}" />
+                                                    </viz.data:dimensions>
+                                                    <viz.data:measures>
+                                                        <viz.data:MeasureDefinition name="Payout %" value="{payoutPercent}" />
+                                                    </viz.data:measures>
+                                                </viz.data:FlattenedDataset>
+                                            </viz:dataset>
+                                            <viz:feeds>
+                                                <viz.feeds:FeedItem uid="valueAxis" type="Measure" values="Payout %" />
+                                                <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="KPI Result" />
+                                            </viz:feeds>
+                                        </viz:VizFrame>
+                                    </VBox>
                                 </VBox>
                             </l:Grid>
                         </VBox>
                     </Panel>
                 </CustomListItem>
             </List>
-
-            <VBox class="kpiCurveCard sapUiSmallMarginTop" width="100%" visible="{= !!${/ui/selectedKpiName}}">
-                <Title
-                    text="{
-                        parts: [
-                            { path: 'i18n>CHART_PAYOUT_CURVE' },
-                            { path: '/ui/selectedKpiName' }
-                        ],
-                        formatter: '.formatCompareTitle'
-                    }"
-                    level="H5"
-                    class="kpiCurveTitle sapUiTinyMarginBottom" />
-                <viz:VizFrame
-                    id="kpiPayoutCurve"
-                    vizType="line"
-                    height="14rem"
-                    width="100%"
-                    class="kpiPayoutCurve">
-                    <viz:dataset>
-                        <viz.data:FlattenedDataset data="{/ui/selectedKpiCurve}">
-                            <viz.data:dimensions>
-                                <viz.data:DimensionDefinition name="KPI Result" value="{category}" />
-                            </viz.data:dimensions>
-                            <viz.data:measures>
-                                <viz.data:MeasureDefinition id="payoutCurveMeasure" name="Payout %" value="{payoutPercent}" />
-                            </viz.data:measures>
-                        </viz.data:FlattenedDataset>
-                    </viz:dataset>
-                    <viz:feeds>
-                        <viz.feeds:FeedItem id="payoutCurveFeed" uid="valueAxis" type="Measure" values="Payout %" />
-                        <viz.feeds:FeedItem uid="payoutCurveCategory" type="Dimension" values="KPI Result" />
-                    </viz:feeds>
-                </viz:VizFrame>
-            </VBox>
         </VBox>
 
         <!-- ===================== QUARTER PROGRESSION ===================== -->

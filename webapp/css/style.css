@@ -137,11 +137,12 @@
 
 .kpiDetailsHeader {
     background: #3455a2;
-    padding: 0.85rem 1.25rem;
+    padding: 1.25rem 1.75rem;
 }
 
 .kpiDetailsHeaderTitle {
     color: #ffffff !important;
+    font-size: 1.45rem !important;
     font-weight: 700 !important;
     margin: 0 !important;
 }
@@ -155,6 +156,18 @@
 .kpiDetailAccordion .sapMListUl {
     background: transparent !important;
     border: none !important;
+    padding-bottom: 0.5rem;
+}
+
+.kpiDetailAccordion .sapMLIB,
+.kpiDetailAccordion .sapMCLI {
+    background: transparent !important;
+    border: none !important;
+}
+
+.kpiDetailAccordion .sapMLIBContent,
+.kpiDetailAccordion .sapMCLI .sapMLIBContent {
+    padding: 0.85rem 1.25rem 0 !important;
 }
 
 .kpiDetailPanel {
@@ -162,25 +175,70 @@
     border: none !important;
     box-shadow: none !important;
     overflow: visible;
-    border-radius: 0 !important;
+    border-radius: 0.9rem !important;
 }
 
-.kpiDetailPanel > .sapMPanelHeadingDiv,
+.kpiDetailPanel > .sapMPanelHeadingDiv {
+    background: #5ac8fa !important;
+    border: none !important;
+    border-radius: 0.9rem 0.9rem 0 0;
+    overflow: hidden;
+}
+
+.kpiDetailPanel:not(.sapMPanelExpanded) > .sapMPanelHeadingDiv {
+    border-radius: 0.9rem;
+}
+
+.kpiDetailPanel .sapMPanelWrappingDiv,
+.kpiDetailPanel .sapMPanelWrappingDivExpanded,
 .kpiDetailPanel .sapMPanelWrappingDivTb,
 .kpiDetailPanel .sapMPanelHdr {
-    background: #5ac8fa !important;
+    background: transparent !important;
+    background-color: transparent !important;
     color: #ffffff !important;
     border: none !important;
+    box-shadow: none !important;
     display: flex !important;
     align-items: center !important;
     gap: 0.5rem;
-    min-height: 2.25rem;
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    min-height: 2.5rem !important;
+    height: auto !important;
 }
 
-.kpiDetailPanel .sapMPanelHdr > .sapMTitle {
+.kpiDetailPanel .sapMPanelWrappingDiv,
+.kpiDetailPanel .sapMPanelWrappingDivTb {
+    padding: 0.35rem 0.85rem !important;
+}
+
+.kpiDetailPanel .sapMPanelHdr {
+    padding: 0 !important;
+}
+
+.kpiDetailPanel .sapMPanelHdr > .sapMTitle,
+.kpiDetailPanel .sapMPanelHdr .sapMTitle {
     color: #ffffff !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    white-space: normal !important;
+}
+
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn::before,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn::after,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnInner::before,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnInner::after {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnInner,
+.kpiDetailPanel .sapMPanelExpandableIcon {
+    min-width: 2rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    margin: 0 !important;
 }
 
 .kpiDetailPanel .sapMPanelExpandableIcon,
@@ -194,15 +252,48 @@
     visibility: visible !important;
 }
 
+.kpiDetailPanel .sapMPanelExpandableIcon,
+.kpiDetailPanel .sapMPanelExpandableIcon:hover,
+.kpiDetailPanel .sapMPanelExpandableIcon:focus,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnInner,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn:hover > .sapMBtnInner,
+.kpiDetailPanel .sapMPanelWrappingDivTb .sapMBtn,
+.kpiDetailPanel .sapMPanelWrappingDivTb .sapMBtnInner,
+.kpiDetailPanel .sapMPanelWrappingDivTb .sapMBtn:hover > .sapMBtnInner,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnActive > .sapMBtnInner,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn:active > .sapMBtnInner,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtn:focus > .sapMBtnInner,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapUiIcon {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+}
+
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnIcon,
+.kpiDetailPanel .sapMPanelWrappingDivTb .sapMBtnIcon {
+    color: #ffffff !important;
+}
+
+.kpiDetailPanel .sapMPanelExpandableIcon .sapUiIcon,
+.kpiDetailPanel .sapMPanelExpandButton .sapUiIcon,
+.kpiDetailPanel .sapMPanelHeadingDiv .sapMBtnIcon,
+.kpiDetailPanel .sapMPanelWrappingDivTb .sapMBtnIcon {
+    font-size: 1.15rem !important;
+}
+
 .kpiDetailPanel .sapMPanelContent {
     background: #56548a !important;
     border: none !important;
     color: #ffffff;
     padding: 0 !important;
+    border-radius: 0 0 0.9rem 0.9rem;
 }
 
 .kpiDetailBody {
-    padding: 0 0 1rem;
+    padding: 0.35rem 0 1.5rem;
 }
 
 .kpiCyanBanner {
@@ -210,115 +301,270 @@
 }
 
 .kpiDetailGrid {
-    padding: 1rem 1.25rem 0;
+    padding: 1.15rem 1.35rem 0.25rem;
+}
+
+.kpiColumnTitle {
+    color: #ffffff !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    margin: 0 0 0.85rem 0.15rem !important;
 }
 
 .kpiFlowCard,
 .kpiFlowResultCard {
     background: #3e3d64;
-    border-radius: 0.15rem;
-    padding: 0.9rem 1rem;
+    border-radius: 0.85rem;
+    padding: 1.35rem 1.4rem;
     color: #ffffff;
 }
 
 .kpiFlowRow {
-    gap: 0.35rem;
+    gap: 1rem 1.25rem;
+}
+
+.kpiFlowFactor {
+    flex: 1 1 8rem;
+    min-width: 7.5rem;
+    max-width: 13rem;
 }
 
 .kpiFlowValue {
     color: #ffffff !important;
-    font-size: 1.15rem;
-    font-weight: 600;
-    line-height: 1.2;
+    font-size: 1.55rem !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+}
+
+.kpiFlowAmount {
+    gap: 0.35rem;
+}
+
+.kpiFlowValueLarge {
+    font-size: 1.95rem !important;
+    line-height: 1.1 !important;
+}
+
+.kpiFlowCurrency {
+    color: rgba(255, 255, 255, 0.78) !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em;
 }
 
 .kpiFlowLabel {
-    color: rgba(255, 255, 255, 0.72) !important;
-    font-size: 0.7rem;
-    margin-top: 0.2rem;
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    line-height: 1.35 !important;
+    margin-top: 0.4rem !important;
+    white-space: normal !important;
 }
 
 .kpiFlowOperator {
     color: #ffffff !important;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0 0.2rem 0.85rem;
+    font-size: 1.35rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    margin: 0.15rem 0 0 !important;
+    min-width: 2.1rem;
+    height: 2.1rem;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: rgba(90, 200, 250, 0.28);
 }
 
 .kpiFlowChevron {
-    margin: 0.15rem 0;
+    margin: 0.55rem 0;
 }
 
 .kpiFlowChevronIcon {
-    color: rgba(255, 255, 255, 0.85) !important;
-    font-size: 1rem !important;
+    color: #ffffff !important;
+    font-size: 1.35rem !important;
 }
 
 .kpiFlowResultCard {
     align-items: center;
+    background: #3455a2;
+    border: 1px solid rgba(90, 200, 250, 0.55);
+    padding: 1.2rem 1.4rem;
+    gap: 0.75rem 1.25rem;
 }
 
 .kpiFlowResultLabel {
     color: #ffffff !important;
-    font-weight: 600;
+    font-size: 1.15rem !important;
+    font-weight: 600 !important;
 }
 
 .kpiFlowResultPill {
     background: #5ac8fa;
-    color: #ffffff !important;
-    font-weight: 700;
+    color: #16324f !important;
+    font-size: 1.45rem !important;
+    font-weight: 700 !important;
     border-radius: 999px;
-    padding: 0.35rem 0.9rem;
+    padding: 0.55rem 1.25rem;
 }
 
 .kpiRightColumn {
     background: transparent;
+    gap: 0;
+}
+
+.kpiTierCard {
+    background: #3e3d64;
+    border-radius: 0.85rem;
+    padding: 0.85rem 1rem 1rem;
+    width: 100%;
 }
 
 .kpiTierTable {
-    background: transparent !important;
-    border: none !important;
+    --sapList_Background: transparent;
+    --sapList_HeaderBackground: transparent;
+    --sapList_Hover_Background: rgba(255, 255, 255, 0.06);
+    --sapList_TextColor: #ffffff;
+    --sapList_HeaderTextColor: #ffffff;
+    --sapList_BorderColor: rgba(255, 255, 255, 0.55);
+    --sapList_HeaderBorderColor: #ffffff;
+    --sapList_TableGroupHeaderBackground: transparent;
 }
 
+.kpiTierTable,
+.kpiTierTable.sapMList,
+.kpiTierTable table,
+.kpiTierTable thead,
+.kpiTierTable tbody,
+.kpiTierTable tr,
+.kpiTierTable th,
+.kpiTierTable td,
+.kpiTierTable .sapMListTbl,
+.kpiTierTable .sapMListUl,
+.kpiTierTable .sapMCLI,
+.kpiTierTable .sapMLIB,
+.kpiTierTable .sapMListTblRow,
+.kpiTierTable .sapMListTblHeader,
 .kpiTierTable .sapMListTblHeaderCell,
-.kpiTierTable .sapMListTblCell {
+.kpiTierTable .sapMListTblCell,
+.kpiTierTable .sapMListTblCnt,
+.kpiTierTable .sapMListTblHighlightCell,
+.kpiTierTable .sapMListTblNavigatedCell,
+.kpiTierTable .sapMListTblNavCol,
+.kpiTierTable .sapMListTblSelCol,
+.kpiTierTable .sapMListTblDummyCell,
+.kpiTierTable .sapMListNoData {
     background: transparent !important;
-    border-color: rgba(255, 255, 255, 0.18) !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
     color: #ffffff !important;
 }
 
+.kpiTierTable .sapMListTblHeader > th,
+.kpiTierTable .sapMListTblHeaderCell {
+    border-top: none !important;
+    border-bottom: 1px solid #ffffff !important;
+    padding: 0.95rem 0.7rem !important;
+}
+
+.kpiTierTable .sapMListTblRow > td,
+.kpiTierTable .sapMListTblCell {
+    border-top: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.55) !important;
+    padding: 1rem 0.7rem !important;
+}
+
+.kpiTierTable .sapMListTblRow:last-child > td {
+    border-bottom: none !important;
+}
+
+.kpiTierTable .sapMLIB:hover,
+.kpiTierTable .sapMListTblRow:hover {
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+.kpiTierTable .sapMText,
+.kpiTierTable .sapMLabel,
+.kpiTierTable .sapMListTblHeaderCell .sapMText,
+.kpiTierTable .sapMListTblCell .sapMText,
 .kpiTierHeader,
 .kpiTierName,
 .kpiTierCell {
     color: #ffffff !important;
+    font-size: 1.05rem !important;
+    line-height: 1.35 !important;
 }
 
-.kpiTierAmountTarget {
-    color: #ffffff !important;
-    border: 1px solid #ffffff;
-    border-radius: 999px;
-    padding: 0.15rem 0.65rem;
-    display: inline-block;
+.kpiTierHeader {
+    font-size: 0.98rem !important;
+    font-weight: 700 !important;
 }
 
-.kpiTierAmountAchievement {
-    background: #5ac8fa;
+.kpiTierName {
+    font-weight: 700 !important;
+}
+
+.kpiTierAmountStatus .sapMObjStatusText,
+.kpiTierAmountStatus .sapMObjStatusNone .sapMObjStatusText {
     color: #ffffff !important;
-    border-radius: 999px;
-    padding: 0.15rem 0.65rem;
+    font-size: 1.05rem !important;
+}
+
+/* Target amount: outlined pill */
+.kpiTierAmountStatus.sapMObjStatusInformation .sapMObjStatusText,
+.kpiTierAmountStatus .sapMObjStatusInformation .sapMObjStatusText {
+    border: 1px solid #ffffff !important;
+    border-radius: 999px !important;
+    padding: 0.3rem 0.85rem !important;
+    background: transparent !important;
+    color: #ffffff !important;
+}
+
+/* Achievement amount: cyan pill */
+.kpiTierAmountStatus.sapMObjStatusSuccess .sapMObjStatusText,
+.kpiTierAmountStatus .sapMObjStatusSuccess .sapMObjStatusText {
+    background: #5ac8fa !important;
+    border: none !important;
+    border-radius: 999px !important;
+    padding: 0.3rem 0.85rem !important;
+    color: #16324f !important;
     font-weight: 700;
-    display: inline-block;
 }
 
 .kpiCurveCard {
     background: #4b4a78;
-    margin: 0 1.25rem 1.25rem;
-    padding: 0.75rem 1rem 0.5rem;
-    border-radius: 0.35rem;
+    margin: 1.15rem 0 0;
+    padding: 1.15rem 1.25rem 0.85rem;
+    border-radius: 0.85rem;
+    width: 100%;
 }
 
-.kpiCurveTitle {
+.kpiCurveTitle,
+.kpiCurveTitle.sapMTitle {
     color: #ffffff !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    margin: 0 0 0.65rem !important;
+}
+
+.kpiPayoutCurve,
+.kpiPayoutCurve > div,
+.kpiPayoutCurve .ui5-viz-controls-viz-frame,
+.kpiPayoutCurve .v-m-root {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+.kpiPayoutCurve .v-background-body,
+.kpiPayoutCurve .v-background-root {
+    fill: transparent !important;
+}
+
+.kpiPayoutCurve .v-label,
+.kpiPayoutCurve .v-datalabel text,
+.kpiPayoutCurve .viz-axis-label text {
+    fill: #ffffff !important;
 }
 
 .bonusTable {

@@ -24,8 +24,6 @@ sap.ui.define([
             var oModel = oView.getModel();
             if (oModel && !oModel.getProperty("/ui")) {
                 oModel.setProperty("/ui", {
-                    selectedKpiName: "",
-                    selectedKpiCurve: [],
                     quarterProgressChart: []
                 });
             }
@@ -39,44 +37,85 @@ sap.ui.define([
         },
 
         _initCharts: function () {
-            var oPayoutCurve = this.byId("kpiPayoutCurve");
-            if (oPayoutCurve) {
-                oPayoutCurve.setUiConfig({ applicationSet: "fiori" });
-                oPayoutCurve.setVizProperties({
-                    plotArea: {
-                        dataLabel: { visible: true },
-                        colorPalette: ["#5AC8FA"],
-                        marker: { visible: true, size: 12 }
-                    },
-                    title: { visible: false },
-                    legend: { visible: false },
-                    categoryAxis: { title: { visible: false } },
-                    valueAxis: {
-                        title: { visible: false },
-                        scale: { minValue: 0 }
-                    }
-                });
-            }
-
-            var oProgressChart = this.byId("quarterProgressChart");
-            if (oProgressChart) {
-                oProgressChart.setUiConfig({ applicationSet: "fiori" });
-                oProgressChart.setVizProperties({
-                    plotArea: {
-                        dataLabel: { visible: true },
-                        colorPalette: ["#5BC5E5", "#4E67B0"]
-                    },
-                    title: { visible: false },
-                    legend: {
-                        visible: true,
-                        position: "bottom"
-                    },
-                    categoryAxis: { title: { visible: false } },
-                    valueAxis: { title: { visible: false } }
-                });
-            }
-
+            this._configureProgressChart();
             this._applyChartTexts();
+        },
+
+        _getPayoutCurveVizProperties: function () {
+            var oWhiteLabel = { style: { color: "#ffffff" } };
+            return {
+                general: {
+                    background: { color: "transparent" }
+                },
+                plotArea: {
+                    background: { color: "transparent" },
+                    dataLabel: {
+                        visible: true,
+                        style: { color: "#ffffff" }
+                    },
+                    colorPalette: ["#5AC8FA"],
+                    line: { width: 3 },
+                    marker: { visible: true, size: 10 },
+                    gridline: { color: "rgba(255,255,255,0.2)" }
+                },
+                title: { visible: false },
+                legend: { visible: false },
+                categoryAxis: {
+                    title: { visible: false },
+                    label: oWhiteLabel,
+                    color: "#ffffff"
+                },
+                valueAxis: {
+                    title: { visible: false },
+                    label: oWhiteLabel,
+                    color: "#ffffff",
+                    scale: { fixedRange: false, minValue: 0 }
+                }
+            };
+        },
+
+        _configurePayoutCurve: function (oChart) {
+            if (!oChart || !oChart.isA || !oChart.isA("sap.viz.ui5.controls.VizFrame")) {
+                return;
+            }
+            oChart.setUiConfig({ applicationSet: "fiori" });
+            oChart.setVizProperties(this._getPayoutCurveVizProperties());
+            setTimeout(function () {
+                oChart.invalidate();
+            }, 200);
+        },
+
+        _configureAllPayoutCurves: function () {
+            var oList = this.byId("kpiDetailList");
+            if (!oList) {
+                return;
+            }
+            var aCharts = oList.findAggregatedObjects(true, function (oControl) {
+                return oControl.isA && oControl.isA("sap.viz.ui5.controls.VizFrame") &&
+                    oControl.hasStyleClass("kpiPayoutCurve");
+            });
+            aCharts.forEach(this._configurePayoutCurve.bind(this));
+        },
+
+        _configureProgressChart: function () {
+            var oProgressChart = this.byId("quarterProgressChart");
+            if (!oProgressChart) {
+                return;
+            }
+            oProgressChart.setUiConfig({ applicationSet: "fiori" });
+            oProgressChart.setVizProperties({
+                plotArea: {
+                    dataLabel: { visible: true },
+                    colorPalette: ["#5BC5E5", "#4E67B0"]
+                },
+                title: { visible: false },
+                legend: {
+                    visible: true,
+                    position: "bottom"
+                },
+                categoryAxis: { title: { visible: false } },
+                valueAxis: { title: { visible: false } }
+            });
         },
 
         _applyChartTexts: function () {
@@ -85,18 +124,8 @@ sap.ui.define([
                 return;
             }
             var oBundle = oI18nModel.getResourceBundle();
-            var sPayout = oBundle.getText("CHART_PAYOUT_PERCENT");
             var sSegment = oBundle.getText("CHART_SEGMENT_AWARD");
             var sTarget = oBundle.getText("CHART_QUARTER_TARGET");
-
-            var oPayoutMeasure = this.byId("payoutCurveMeasure");
-            var oPayoutFeed = this.byId("payoutCurveFeed");
-            if (oPayoutMeasure) {
-                oPayoutMeasure.setName(sPayout);
-            }
-            if (oPayoutFeed) {
-                oPayoutFeed.setValues([sPayout]);
-            }
 
             var oSegmentMeasure = this.byId("segmentAwardMeasure");
             var oTargetMeasure = this.byId("quarterTargetMeasure");
@@ -115,28 +144,29 @@ sap.ui.define([
                 oTargetFeed.setValues([sTarget]);
             }
 
-            this._refreshChart("kpiPayoutCurve");
+            this._configureAllPayoutCurves();
             this._refreshChart("quarterProgressChart");
         },
 
         onDataReady: function () {
             var oModel = this.getView().getModel();
             var oData = oModel.getProperty("/data") || {};
-            var aKpis = oData.to_KPIs || [];
+            var aKpis = (oData.to_KPIs || []).slice();
             var aQSum = oData.to_qSum || [];
 
             this._enrichKpiRows(aKpis);
+            // New array reference so nested tierRows / payoutCurve bindings refresh
             oModel.setProperty("/data/to_KPIs", aKpis);
             oModel.setProperty("/ui/quarterProgressChart", this._prepareQuarterProgressChart(aQSum));
-            oModel.setProperty("/ui/selectedKpiName", "");
-            oModel.setProperty("/ui/selectedKpiCurve", []);
 
-            if (aKpis.length > 0) {
-                this._selectKpi(aKpis[0]);
-                this._syncPanelExpansion(aKpis[0].KPIName);
+            this._syncPanelExpansion(null);
+
+            var oList = this.byId("kpiDetailList");
+            if (oList && oList.getBinding("items")) {
+                oList.getBinding("items").refresh(true);
             }
 
-            this._refreshChart("kpiPayoutCurve");
+            setTimeout(this._configureAllPayoutCurves.bind(this), 0);
             this._refreshChart("quarterProgressChart");
         },
 
@@ -144,27 +174,31 @@ sap.ui.define([
             if (!oEvent.getParameter("expand")) {
                 return;
             }
-            var oContext = oEvent.getSource().getBindingContext();
-            if (!oContext) {
-                return;
-            }
-            this._selectKpi(oContext.getObject());
-            this._refreshChart("kpiPayoutCurve");
+            var oPanel = oEvent.getSource();
+            var aCharts = oPanel.findAggregatedObjects(true, function (oControl) {
+                return oControl.isA && oControl.isA("sap.viz.ui5.controls.VizFrame") &&
+                    oControl.hasStyleClass("kpiPayoutCurve");
+            });
+            aCharts.forEach(this._configurePayoutCurve.bind(this));
         },
 
         _enrichKpiRows: function (aKpis) {
-            var oBundle = this.getView().getModel("i18n").getResourceBundle();
+            var oI18n = this.getView().getModel("i18n");
+            var oBundle = oI18n && oI18n.getResourceBundle();
+            var sTarget = oBundle ? oBundle.getText("TIER_TARGET") : "Target";
+            var sAchievement = oBundle ? oBundle.getText("TIER_ACHIEVEMENT") : "Achievement";
+
             (aKpis || []).forEach(function (oKpi) {
                 oKpi.tierRows = [
                     {
-                        tier: oBundle.getText("TIER_TARGET"),
+                        tier: sTarget,
                         kpiResult: oKpi.kpiResTarget,
                         payoutPercent: 100,
                         amount: oKpi.kpiTargetAmount,
                         highlight: "target"
                     },
                     {
-                        tier: oBundle.getText("TIER_ACHIEVEMENT"),
+                        tier: sAchievement,
                         kpiResult: oKpi.kpiResAchievement,
                         payoutPercent: oKpi.kpiPayoutPercent,
                         amount: oKpi.kpiPayout,
@@ -176,31 +210,34 @@ sap.ui.define([
         },
 
         _buildPayoutCurve: function (oKpi) {
-            var aPoints = [];
-            var fTargetResult = this._toNumber(oKpi.kpiResTarget);
-            var fAchievementResult = this._toNumber(oKpi.kpiResAchievement);
-            var fPayoutPercent = this._toNumber(oKpi.kpiPayoutPercent);
+            var oI18n = this.getView().getModel("i18n");
+            var oBundle = oI18n && oI18n.getResourceBundle();
+            var sTarget = oBundle ? oBundle.getText("TIER_TARGET") : "Target";
+            var sAchievement = oBundle ? oBundle.getText("TIER_ACHIEVEMENT") : "Achievement";
 
-            aPoints.push({
-                category: this.formatCleanNumber(oKpi.kpiResTarget) || "Target",
-                sortValue: fTargetResult,
-                payoutPercent: 100
-            });
-            aPoints.push({
-                category: this.formatCleanNumber(oKpi.kpiResAchievement) || "Achievement",
-                sortValue: fAchievementResult,
-                payoutPercent: fPayoutPercent
-            });
-
-            return aPoints.sort(function (a, b) {
+            var aPoints = [
+                {
+                    category: sTarget + " (" + (this.formatCleanNumber(oKpi.kpiResTarget) || "0") + ")",
+                    sortValue: this._toNumber(oKpi.kpiResTarget),
+                    payoutPercent: 100
+                },
+                {
+                    category: sAchievement + " (" + (this.formatCleanNumber(oKpi.kpiResAchievement) || "0") + ")",
+                    sortValue: this._toNumber(oKpi.kpiResAchievement),
+                    payoutPercent: this._toNumber(oKpi.kpiPayoutPercent)
+                }
+            ].sort(function (a, b) {
                 return a.sortValue - b.sortValue;
             });
-        },
 
-        _selectKpi: function (oKpi) {
-            var oModel = this.getView().getModel();
-            oModel.setProperty("/ui/selectedKpiName", oKpi.KPIName || "");
-            oModel.setProperty("/ui/selectedKpiCurve", oKpi.payoutCurve || this._buildPayoutCurve(oKpi));
+            // Category labels must be unique or the chart merges them into a single point
+            aPoints.unshift({
+                category: "0",
+                sortValue: 0,
+                payoutPercent: 0
+            });
+
+            return aPoints;
         },
 
         _prepareQuarterProgressChart: function (aQSum) {
@@ -369,8 +406,25 @@ sap.ui.define([
         },
 
         formatPercent: function (sValue) {
-            var sNumber = this.formatCleanNumber(sValue);
-            return sNumber === "" ? "" : sNumber + " %";
+            if (sValue === null || sValue === undefined || sValue === "") {
+                return "";
+            }
+            var fValue = parseFloat(sValue);
+            if (isNaN(fValue)) {
+                return sValue;
+            }
+            return fValue.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }) + " %";
+        },
+
+        formatCurrencyCode: function (sValue) {
+            if (sValue === null || sValue === undefined || sValue === "") {
+                return "";
+            }
+            var oData = this.getView().getModel().getProperty("/data") || {};
+            return oData.currency || "MXP";
         },
 
         formatMoneyWithCurrency: function (sValue) {
@@ -398,6 +452,16 @@ sap.ui.define([
                 return sLabel || "";
             }
             return (sLabel || "") + ": " + sKpiName;
+        },
+
+        formatTierState: function (sHighlight) {
+            if (sHighlight === "target") {
+                return "Information";
+            }
+            if (sHighlight === "achievement") {
+                return "Success";
+            }
+            return "None";
         }
     });
 });
