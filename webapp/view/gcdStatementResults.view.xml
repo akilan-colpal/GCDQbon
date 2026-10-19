@@ -14,7 +14,6 @@
         <VBox class="glanceHero" width="100%">
             <HBox wrap="Wrap" alignItems="Start" justifyContent="SpaceBetween" width="100%">
                 <VBox class="glanceHeroMain">
-                    <Text text="{i18n>SECTION_AT_A_GLANCE}" class="glanceEyebrow" />
                     <Title text="{VarPayTemplateName}" level="H2" titleStyle="H2" class="glanceTitle" />
                     <Text text="{i18n>ELIGIBILITY}: {eligibilityPeriod}" class="glanceEligibility" />
                 </VBox>
@@ -89,9 +88,9 @@
                                 <VBox class="kpiCalcColumn">
                                     <Text text="{i18n>KPI_BREAKDOWN}" class="kpiColumnTitle" />
                                     <VBox class="kpiFlowCard">
-                                        <HBox wrap="Wrap" alignItems="Start" class="kpiFlowRow">
+                                        <HBox wrap="NoWrap" alignItems="Start" width="100%" class="kpiFlowRow">
                                             <VBox class="kpiFlowFactor">
-                                                <HBox alignItems="Baseline" wrap="Wrap" class="kpiFlowAmount">
+                                                <HBox alignItems="Baseline" justifyContent="Center" wrap="NoWrap" class="kpiFlowAmount">
                                                     <Text text="{path: 'proratedTarget', formatter: '.formatCleanNumber'}" class="kpiFlowValue kpiFlowValueLarge" />
                                                     <Text text="{path: 'proratedTarget', formatter: '.formatCurrencyCode'}" class="kpiFlowCurrency" />
                                                 </HBox>
@@ -107,7 +106,7 @@
                                                 <Text text="{path: 'teamWeight', formatter: '.formatPercent'}" class="kpiFlowValue" />
                                                 <Text text="{i18n>TEAM_WEIGHT}" class="kpiFlowLabel" />
                                             </VBox>
-                                            <Text text="=" class="kpiFlowOperator" />
+                                            <Text text="=" class="kpiFlowOperator kpiFlowEquals" />
                                         </HBox>
                                     </VBox>
                                     <HBox justifyContent="Center" class="kpiFlowChevron">
@@ -115,9 +114,9 @@
                                     </HBox>
 
                                     <VBox class="kpiFlowCard">
-                                        <HBox wrap="Wrap" alignItems="Start" class="kpiFlowRow">
+                                        <HBox wrap="NoWrap" alignItems="Start" width="100%" class="kpiFlowRow">
                                             <VBox class="kpiFlowFactor">
-                                                <HBox alignItems="Baseline" wrap="Wrap" class="kpiFlowAmount">
+                                                <HBox alignItems="Baseline" justifyContent="Center" wrap="NoWrap" class="kpiFlowAmount">
                                                     <Text text="{path: 'kpiTargetAmount', formatter: '.formatCleanNumber'}" class="kpiFlowValue kpiFlowValueLarge" />
                                                     <Text text="{path: 'kpiTargetAmount', formatter: '.formatCurrencyCode'}" class="kpiFlowCurrency" />
                                                 </HBox>
@@ -128,7 +127,7 @@
                                                 <Text text="{path: 'kpiPayoutPercent', formatter: '.formatPercent'}" class="kpiFlowValue" />
                                                 <Text text="{i18n>KPI_PAYOUT_PERCENT}" class="kpiFlowLabel" />
                                             </VBox>
-                                            <Text text="=" class="kpiFlowOperator" />
+                                            <Text text="=" class="kpiFlowOperator kpiFlowEquals" />
                                         </HBox>
                                     </VBox>
                                     <HBox justifyContent="Center" class="kpiFlowChevron">
@@ -181,7 +180,7 @@
                                         <Title text="{i18n>CHART_PAYOUT_CURVE}" level="H5" class="kpiCurveTitle" />
                                         <viz:VizFrame
                                             vizType="line"
-                                            height="17rem"
+                                            height="14rem"
                                             width="100%"
                                             class="kpiPayoutCurve">
                                             <viz:dataset>
@@ -211,37 +210,10 @@
             </List>
         </VBox>
 
-        <!-- ===================== QUARTER PROGRESSION ===================== -->
-        <VBox class="resultsSection resultsSectionAlt" width="100%">
-            <VBox class="sectionHeader">
-                <Title text="{i18n>SECTION_QUARTER_PROGRESSION}" level="H3" class="sectionTitle" />
-                <Text text="{i18n>QUARTER_PLAN_SUMMARY}" class="sectionSubtitle" />
-            </VBox>
-
-            <VBox class="progressChartCard sapUiSmallMarginTop" width="100%">
-                <Title text="{i18n>CHART_PROGRESSION_TITLE}" level="H4" class="chartCardTitle sapUiTinyMarginBottom" />
-                <viz:VizFrame
-                    id="quarterProgressChart"
-                    vizType="line"
-                    height="18rem"
-                    width="100%">
-                    <viz:dataset>
-                        <viz.data:FlattenedDataset data="{/ui/quarterProgressChart}">
-                            <viz.data:dimensions>
-                                <viz.data:DimensionDefinition name="Period" value="{category}" />
-                            </viz.data:dimensions>
-                            <viz.data:measures>
-                                <viz.data:MeasureDefinition id="segmentAwardMeasure" name="Segment Award" value="{segmentAward}" />
-                                <viz.data:MeasureDefinition id="quarterTargetMeasure" name="Quarterly Target" value="{quarterTargetAmount}" />
-                            </viz.data:measures>
-                        </viz.data:FlattenedDataset>
-                    </viz:dataset>
-                    <viz:feeds>
-                        <viz.feeds:FeedItem id="segmentAwardFeed" uid="valueAxis" type="Measure" values="Segment Award" />
-                        <viz.feeds:FeedItem id="quarterTargetFeed" uid="valueAxis" type="Measure" values="Quarterly Target" />
-                        <viz.feeds:FeedItem uid="categoryAxis" type="Dimension" values="Period" />
-                    </viz:feeds>
-                </viz:VizFrame>
+        <!-- ===================== QUARTER SUMMARY ===================== -->
+        <VBox class="resultsSection resultsSectionAlt quarterSummarySection" width="100%">
+            <VBox class="kpiDetailsHeader" width="100%">
+                <Title text="{i18n>QUARTER_PLAN_SUMMARY}" level="H3" class="kpiDetailsHeaderTitle" />
             </VBox>
 
             <Table
@@ -255,23 +227,23 @@
                 }"
                 alternateRowColors="true"
                 sticky="ColumnHeaders"
-                autoPopinMode="true"
-                contextualWidth="Auto"
-                class="bonusTable sapUiSmallMarginTop">
+                autoPopinMode="false"
+                fixedLayout="true"
+                class="bonusTable">
                 <columns>
-                    <Column importance="High"><Text text="{i18n>QUARTER}" /></Column>
-                    <Column importance="High" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>PERIOD}" /></Column>
-                    <Column importance="High"><Text text="{i18n>PLAN_TYPE}" /></Column>
-                    <Column importance="Medium" hAlign="End" minScreenWidth="Tablet" demandPopin="true"><Text text="{i18n>BONUSABLE_EARNINGS}" /></Column>
-                    <Column importance="Low" hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>QUARTERLY_TARGET_PERCENT}" /></Column>
-                    <Column importance="Low" hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>PAYMENT_PERIOD}" /></Column>
-                    <Column importance="Low" hAlign="End" minScreenWidth="Desktop" demandPopin="true"><Text text="{i18n>QUARTERLY_TARGET_AMOUNT}" /></Column>
-                    <Column importance="High" hAlign="End"><Text text="{i18n>SEGMENT_AWARD}" /></Column>
+                    <Column width="9%" importance="High"><Text text="{i18n>QUARTER}" class="bonusTableHeader" /></Column>
+                    <Column width="16%" importance="High"><Text text="{i18n>PERIOD}" class="bonusTableHeader" /></Column>
+                    <Column width="13%" importance="High"><Text text="{i18n>PLAN_TYPE}" class="bonusTableHeader" /></Column>
+                    <Column width="14%" hAlign="End" importance="High"><Text text="{i18n>BONUSABLE_EARNINGS}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>QUARTERLY_TARGET_PERCENT}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>PAYMENT_PERIOD}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>QUARTERLY_TARGET_AMOUNT}" class="bonusTableHeader" /></Column>
+                    <Column width="12%" hAlign="End" importance="High"><Text text="{i18n>SEGMENT_AWARD}" class="bonusTableHeader" /></Column>
                 </columns>
                 <items>
                     <ColumnListItem vAlign="Middle">
                         <cells>
-                            <Text text="{summaryQuarter}" />
+                            <Text text="{summaryQuarter}" class="bonusTableCell" />
                             <Text text="{
                                 path: 'startQSumDate',
                                 type: 'sap.ui.model.type.Date',
@@ -280,32 +252,18 @@
                                 path: 'endQSumDate',
                                 type: 'sap.ui.model.type.Date',
                                 formatOptions: { source: {pattern: 'yyyyMMdd'}, pattern: 'MMM dd' }
-                            }" />
-                            <Text text="{planType}" />
-                            <Text text="{path: 'bonusableQuarterEarn', formatter: '.formatCleanNumber'}" />
-                            <Text text="{path: 'quarterTargetPercent', formatter: '.formatPercent'}" />
-                            <Text text="{path: 'paymentPeriod', formatter: '.formatPercent'}" />
-                            <Text text="{path: 'quarterTargetAmount', formatter: '.formatCleanNumber'}" />
-                            <Text text="{path: 'segmentAward', formatter: '.formatCleanNumber'}" />
+                            }" class="bonusTableCell" />
+                            <Text text="{planType}" class="bonusTableCell" />
+                            <Text text="{path: 'bonusableQuarterEarn', formatter: '.formatCleanNumber'}" class="bonusTableCell" />
+                            <Text text="{path: 'quarterTargetPercent', formatter: '.formatPercent'}" class="bonusTableCell" />
+                            <Text text="{path: 'paymentPeriod', formatter: '.formatPercent'}" class="bonusTableCell" />
+                            <Text text="{path: 'quarterTargetAmount', formatter: '.formatCleanNumber'}" class="bonusTableCell" />
+                            <Text text="{path: 'segmentAward', formatter: '.formatCleanNumber'}" class="bonusTableCell" />
                         </cells>
                     </ColumnListItem>
                 </items>
             </Table>
         </VBox>
 
-        <!-- ===================== DISCLAIMERS ===================== -->
-        <VBox class="resultsSection disclaimerSection" width="100%">
-            <l:Grid defaultSpan="XL3 L3 M6 S12" containerQuery="true">
-                <FormattedText htmlText="{i18n>CALCULATION_BASIS_HTML}" class="disclaimerText" />
-                <FormattedText htmlText="{i18n>ELIGIBILITY_PRORATION_HTML}" class="disclaimerText" />
-                <FormattedText htmlText="{i18n>PAYMENT_INFORMATION_HTML}" class="disclaimerText" />
-                <FormattedText htmlText="{i18n>OFFICIAL_POLICY_DISCLAIMER_HTML}" class="disclaimerText" />
-            </l:Grid>
-            <MessageStrip
-                text="{i18n>NOTE_GCD_BONUS_PRETAX}"
-                type="Information"
-                showIcon="true"
-                class="sapUiSmallMarginTop sapUiMediumMarginBottom" />
-        </VBox>
     </VBox>
 </mvc:View>
