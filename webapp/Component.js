@@ -118,25 +118,17 @@ sap.ui.define([
             var oUserDataModel = this.getModel("mUserDataModel");
             var sEmailKey = this._normalizeEmail(sEmail);
 
-            console.log("Calling /ZI_QBON_USER_ACCESS");
 
             oODataModel.read("/ZI_QBON_USER_ACCESS", {
                 success: function (oData) {
-                    console.log("ZI_QBON_USER_ACCESS response:", oData);
 
                     var oAccess = (oData.results && oData.results.length > 0)
                         ? oData.results[0]
                         : oData;
 
-                    console.log("ZI_QBON_USER_ACCESS entity:", {
-                        userId: oAccess && oAccess.userId,
-                        userGlobalId: oAccess && oAccess.userGlobalId,
-                        isHR: oAccess && oAccess.isHR,
-                        isMgr: oAccess && oAccess.isMgr
-                    });
+
 
                     if (!oAccess || !oAccess.userId) {
-                        console.log("ZI_QBON_USER_ACCESS returned no usable userId");
                         this.getIllustratedMessage("Could not resolve user access from backend.");
                         return;
                     }
@@ -146,14 +138,13 @@ sap.ui.define([
                     var bIsHR = String(oAccess.isHR).toUpperCase() === "Y";
                     var bIsMgr = String(oAccess.isMgr).toUpperCase() === "Y";
 
-                    // Default: backend values
+                    // backend values
                     oUserDataModel.setProperty("/email", sEmail);
                     oUserDataModel.setProperty("/userId", sUserId);
                     oUserDataModel.setProperty("/userGlobalId", sUserGlobalId);
                     oUserDataModel.setProperty("/isHR", bIsHR);
                     oUserDataModel.setProperty("/isMgr", bIsMgr);
 
-                    // Overwrite only when the logged-in email is a known proxy
                     var sProxyId = this.mProxyUserIds[sEmailKey];
                     if (sProxyId) {
                         console.log("Proxy override for", sEmailKey, "->", sProxyId);
@@ -171,7 +162,6 @@ sap.ui.define([
                         oUserDataModel.setProperty("/isHR", true);
                     }
 
-                    console.log("Final user access:", oUserDataModel.getData());
 
                     this.fnCloseBusyDialog();
                     this.getRouter().initialize();

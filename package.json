@@ -24,7 +24,7 @@
   "scripts": {
     "start": "fiori run --open \"test/flp.html#app-preview\"",
     "start-local": "fiori run --config ./ui5-local.yaml --open \"test/flp.html#app-preview\"",
-    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist",
+    "build": "ui5 build --config=ui5.yaml --clean-dest --dest dist --include-task=generateCachebusterInfo",
     "lint": "eslint ./",
     "ts-typecheck": "tsc --noEmit",
     "prestart": "npm run ts-typecheck",

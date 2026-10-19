@@ -3,9 +3,22 @@
   "authenticationMethod": "route",
   "routes": [
     {
+      "source": "^/(index\\.html|manifest\\.json|sap-ui-cachebuster-info\\.json)$",
+      "target": "/$1",
+      "service": "html5-apps-repo-rt",
+      "authenticationType": "xsuaa",
+      "cacheControl": "no-cache, no-store, must-revalidate"
+    },
+    {
       "source": "^/userapi/(.*)$",
       "target": "$1",
       "service": "sap-approuter-userapi"
+    },
+    {
+      "source": "^/sapadmin/odata/v2/\\$metadata(\\?.*)?$",
+      "target": "odata/v2/User, cust_VarPayEmpHistData/$metadata$1",
+      "destination": "BTP_2_SF_OAUTH_sapadmin",
+      "authenticationType": "xsuaa"
     },
      {
       "source": "^/sapadmin/(.*)$",
@@ -14,8 +27,7 @@
       "authenticationType": "xsuaa",
       "csrfProtection": false
     },
-    {
-      
+    {     
       "source": "^/backend/(.*)$",
       "target": "/$1",
       "destination": "BTP_2_RAP_USER_TOKEN",
