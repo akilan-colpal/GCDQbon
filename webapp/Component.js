@@ -1,10 +1,8 @@
 sap.ui.define([
     "sap/ui/core/UIComponent",
     "sap/ui/model/json/JSONModel",
-    "sap/m/BusyDialog",
-    "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], function (UIComponent, JSONModel, BusyDialog, Filter, FilterOperator) {
+    "sap/m/BusyDialog"
+], function (UIComponent, JSONModel, BusyDialog) {
     "use strict";
 
     return UIComponent.extend("adobeform.Component", { 
@@ -28,136 +26,162 @@ sap.ui.define([
             this.setModel(oUserDataModel, "mUserDataModel");
 
             this.aDevelopers = [
-                "akilan_manivannan@colpal.com"
+                "isabel_miranda@colpal.com",
+                "juliana_guevara_vargas@colpal.com",
+                "shreya_b_bangera@colpal.com",
+                "arlette_almeida@colpal.com"
             ];
+            this.aRegularEmployees = [
+                "armaan_seelan@colpal.com"
+            ];
+            this.aManagers = [
+                "akilan_manivannan@colpal.com",
+                "shilpi_kumar@colpal.com",
+                "salvador_cuenca@colpal.com"
+            ];
+            // proxies
+            this.mProxyUserIds = {
+                "armaan_seelan@colpal.com": "00149410",
+                "shilpi_kumar@colpal.com": "00110564",
+                "salvador_cuenca@colpal.com": "00002002",
+                "akilan_manivannan@colpal.com": "00002002"
+            };
             this.getUserInfo();
+        },
+
+        _normalizeEmail: function (sEmail) {
+            return String(sEmail || "")
+                .trim()
+                .toLowerCase()
+                .replace(/\.test$/, "");
+        },
+
+        _isEmailInList: function (sEmail, aList) {
+            var sNormalized = this._normalizeEmail(sEmail);
+            return (aList || []).indexOf(sNormalized) !== -1;
         },
 
         getUserInfo: function () {
             this._oBusyDialog = new BusyDialog({
-                title: "Please Wait",
-                text: "Verifying user permissions..."
+                title: "Loading...",
+                text: "Please Wait"
             });
             this._oBusyDialog.open();
-            
-            var oUserDataModel = this.getModel("mUserDataModel");
-            var sBtpAttributesUrl = "./userapi/attributes"; 
+
+            var oRoot = this.getRootControl();
+            if (oRoot) {
+                oRoot.setBusyIndicatorDelay(0);
+                oRoot.setBusy(true);
+            }
+
+            var sBtpAttributesUrl = "./userapi/attributes";
             var oBtpModel = new JSONModel();
 
             oBtpModel.attachRequestCompleted(function (oEvent) {
+
                 var oData = oEvent.getSource().getData();
-                var sEmail = oData.email || oData.name;
-                
-                if (sEmail) {
-                    var sLowerEmail = sEmail.toLowerCase();
-                    var bIsDeveloper = this.aDevelopers.includes(sLowerEmail);
-                    
-                    if (bIsDeveloper) {
-                        console.warn("Developer access granted for: " + sEmail);
-                    }
-                    
-                    this.fnGetGlobalId(sEmail, bIsDeveloper);
-                } 
+                console.log("userapi attributes:", oData);
+                var sEmail = oData.email || oData.name || "";
+                if (!sEmail) {
+                    console.log("No email found in userapi attributes");
+                    return;
+                }
+                console.log("Logged in email:", sEmail || "(none)");
+                this.fnGetUserAccess(sEmail);
             }.bind(this));
 
             oBtpModel.attachRequestFailed(function () {
-                console.warn("Local environment");                
+                console.warn("Local environment — using hardcoded user model");
+                var oUserDataModel = this.getModel("mUserDataModel");
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
                 oUserDataModel.setProperty("/userId", "00006077");
                 oUserDataModel.setProperty("/userGlobalId", "00006077");
-                oUserDataModel.setProperty("/isHR", false); 
-                oUserDataModel.setProperty("/isMgr", true);
-                
+                oUserDataModel.setProperty("/isHR", true);
+                oUserDataModel.setProperty("/isMgr", false);
                 this.fnCloseBusyDialog();
                 this.getRouter().initialize();
             }.bind(this));
 
-            oBtpModel.loadData(sBtpAttributesUrl);
+            this.getModel().metadataLoaded().then(function () {
+                console.log("Main OData metadata loaded — calling ZI_QBON_USER_ACCESS");
+                if (oRoot) {
+                    oRoot.setBusy(false);
+                }
+                oBtpModel.loadData(sBtpAttributesUrl);
+            }.bind(this), function (oError) {
+                console.log("Main OData metadata failed:", oError);
+            }.bind(this));
         },
 
-        fnGetGlobalId: function (sEmail, bIsDeveloper) {
-            var oSFModel = this.getModel("mSuccessFactorsModel");
+        fnGetUserAccess: function (sEmail) {
+            var oODataModel = this.getModel();
             var oUserDataModel = this.getModel("mUserDataModel");
+            var sEmailKey = this._normalizeEmail(sEmail);
 
-            var sLowerEmail = sEmail.toLowerCase();
+            console.log("Calling /ZI_QBON_USER_ACCESS");
 
-            var oEmailFilter = new Filter({
-                path: "email",
-                operator: FilterOperator.Contains, 
-                value1: sLowerEmail,
-                caseSensitive: false 
-            });
-
-            oSFModel.read("/User", {
-                filters: [oEmailFilter],
-                urlParameters: {
-                    "$select": "userId,email, totalTeamSize" 
-                },
+            oODataModel.read("/ZI_QBON_USER_ACCESS", {
                 success: function (oData) {
-                    if (oData.results && oData.results.length > 0) {
-                        var sRawUserId = oData.results[0].userId;
-                        var sUserGlobalId = "";
-                        var sUserId = "";
-                        var bIsMgr = parseInt(oData.results[0].totalTeamSize, 10) > 0;
-                        
-                        if (sRawUserId.includes("BP") || sRawUserId.includes("GP")) {
-                            sUserGlobalId = sRawUserId.slice(2);
-                            sUserId = sRawUserId;
-                        } else if (sRawUserId.length === 8 && !isNaN(sRawUserId)) {
-                            sUserGlobalId = sRawUserId;
-                            sUserId = "";
-                        } else {
-                            sUserGlobalId = sRawUserId;
-                            sUserId = sRawUserId;
-                        }
+                    console.log("ZI_QBON_USER_ACCESS response:", oData);
 
-                        oUserDataModel.setProperty("/email", sEmail);
-                        oUserDataModel.setProperty("/userId", sUserId);
-                        oUserDataModel.setProperty("/userGlobalId", sUserGlobalId);
-                        oUserDataModel.setProperty("/isMgr", bIsMgr);
-                        
-                        if (bIsDeveloper) {
-                            oUserDataModel.setProperty("/isHR", true);
-                            this.fnCloseBusyDialog();
-                            this.getRouter().initialize();
-                        } else {                           
-                            var sIdForRoles = sUserId.includes("BP") ? sUserId : sUserGlobalId;
-                            this.fnValidateUserRoles(sIdForRoles);
-                        }
+                    var oAccess = (oData.results && oData.results.length > 0)
+                        ? oData.results[0]
+                        : oData;
 
-                    } else {
-                        this.getIllustratedMessage("Could not find a SuccessFactors profile for email: " + sEmail);
-                    }
-                }.bind(this),
-                error: function () {
-                    this.getIllustratedMessage("Failed to connect to SuccessFactors OData service.");
-                }.bind(this)
-            });
-        },
-
-        fnValidateUserRoles: function (sUserId) {
-            var oSFModel = this.getModel("mSuccessFactorsModel");
-            var oUserDataModel = this.getModel("mUserDataModel");
-
-            oSFModel.callFunction("/getUserRolesByUserId", {
-                urlParameters: { userId: sUserId },
-                success: function (oData) {
-                    var aRoles = oData.results || [];
-                    console.log("Raw Array Data: ", aRoles);
-                    
-                    var bIsHR = aRoles.some(function (oRole) {
-                        return oRole.roleName.includes("palceholder") || oRole.roleName.includes("HR");
+                    console.log("ZI_QBON_USER_ACCESS entity:", {
+                        userId: oAccess && oAccess.userId,
+                        userGlobalId: oAccess && oAccess.userGlobalId,
+                        isHR: oAccess && oAccess.isHR,
+                        isMgr: oAccess && oAccess.isMgr
                     });
 
+                    if (!oAccess || !oAccess.userId) {
+                        console.log("ZI_QBON_USER_ACCESS returned no usable userId");
+                        this.getIllustratedMessage("Could not resolve user access from backend.");
+                        return;
+                    }
+
+                    var sUserId = oAccess.userId;
+                    var sUserGlobalId = oAccess.userGlobalId || sUserId;
+                    var bIsHR = String(oAccess.isHR).toUpperCase() === "Y";
+                    var bIsMgr = String(oAccess.isMgr).toUpperCase() === "Y";
+
+                    // Default: backend values
+                    oUserDataModel.setProperty("/email", sEmail);
+                    oUserDataModel.setProperty("/userId", sUserId);
+                    oUserDataModel.setProperty("/userGlobalId", sUserGlobalId);
                     oUserDataModel.setProperty("/isHR", bIsHR);
+                    oUserDataModel.setProperty("/isMgr", bIsMgr);
+
+                    // Overwrite only when the logged-in email is a known proxy
+                    var sProxyId = this.mProxyUserIds[sEmailKey];
+                    if (sProxyId) {
+                        console.log("Proxy override for", sEmailKey, "->", sProxyId);
+                        oUserDataModel.setProperty("/userId", sProxyId);
+                        oUserDataModel.setProperty("/userGlobalId", sProxyId);
+                    }
+
+                    if (this._isEmailInList(sEmailKey, this.aRegularEmployees)) {
+                        oUserDataModel.setProperty("/isHR", false);
+                        oUserDataModel.setProperty("/isMgr", false);
+                    } else if (this._isEmailInList(sEmailKey, this.aManagers)) {
+                        oUserDataModel.setProperty("/isHR", false);
+                        oUserDataModel.setProperty("/isMgr", true);
+                    } else if (this._isEmailInList(sEmailKey, this.aDevelopers)) {
+                        oUserDataModel.setProperty("/isHR", true);
+                    }
+
+                    console.log("Final user access:", oUserDataModel.getData());
 
                     this.fnCloseBusyDialog();
-
                     this.getRouter().initialize();
-
                 }.bind(this),
-                error: function () {
-                    this.getIllustratedMessage("Failed to fetch user roles.");
+                error: function (oError) {
+                    console.log("ZI_QBON_USER_ACCESS error:", oError);
+                    if (oError && oError.responseText) {
+                        console.log("ZI_QBON_USER_ACCESS error responseText:", oError.responseText);
+                    }
+                    this.getIllustratedMessage("Failed to fetch user access from the backend.");
                 }.bind(this)
             });
         },

@@ -6,9 +6,10 @@ sap.ui.define([
     "sap/m/MessageToast",
     "sap/m/MessageBox",
     "sap/ui/core/Fragment",
+    "sap/ui/core/format/DateFormat",
     "adobeform/controller/HRValueHelpHandler.controller",
     "adobeform/controller/EmployeeValueHelpHandler.controller"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment, HRValueHelpHandler, EmployeeValueHelpHandler) {
+], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, Fragment, DateFormat, HRValueHelpHandler, EmployeeValueHelpHandler) {
     "use strict";
 
     return Controller.extend("adobeform.controller.gcdStatementFilter", { 
@@ -219,7 +220,18 @@ sap.ui.define([
         // =======================================================
         _loadDropdownData: function (sEmployeeId) {
             var oView = this.getView();
+            var oViewModel = oView.getModel();
             var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
+
+            oViewModel.setProperty("/data", {});
+            oViewModel.setProperty("/kpiRowCount", 1);
+            oViewModel.setProperty("/summaryRowCount", 1);
+            oViewModel.setProperty("/isPdfButtonVisible", false);
+            oViewModel.setProperty("/searchCriteria", {
+                globalId: "",
+                year: "",
+                quarter: ""
+            });
 
             var aFilters = [
                 new Filter("externalCode", FilterOperator.EQ, sEmployeeId)
@@ -239,7 +251,6 @@ sap.ui.define([
                     var aParsedPeriods  = [];
                     var aTemplateItems  = [];
                     var oTemplateMap    = Object.create(null);
-                    var oViewModel      = oView.getModel();
 
                     aResults.forEach(function (item) {
                         var sTemplateName = item.cust_VarPayTemplateName;
@@ -395,6 +406,7 @@ sap.ui.define([
                         if (oRecord.to_qSum && oRecord.to_qSum.results) {
                             oRecord.to_qSum = oRecord.to_qSum.results;
                         }
+                        oRecord.to_KPIChart = this._prepareKpiChartData(oRecord.to_KPIs);
 
                         var iKpiLength = oRecord.to_KPIs ? oRecord.to_KPIs.length : 1;
                         var iSumLength = oRecord.to_qSum ? oRecord.to_qSum.length : 1;
@@ -409,6 +421,11 @@ sap.ui.define([
                             quarter: sQuarter
                         });
                         oView.getModel().setProperty("/isPdfButtonVisible", true);
+                        var oResultsView = this.byId("resultsView");
+                        var oResultsController = oResultsView && oResultsView.getController();
+                        if (oResultsController && oResultsController.onDataReady) {
+                            oResultsController.onDataReady();
+                        }
                         MessageToast.show("Data loaded successfully.");
                     } else {
                         oView.getModel().setProperty("/data", {});
@@ -423,6 +440,106 @@ sap.ui.define([
                     MessageBox.error("Failed to fetch data from the backend.");
                 }
             });
+        },
+
+        // =======================================================
+        // HEADER ACTIONS
+        // =======================================================
+        onMyBonusAmountPress: function () {
+            var oResultsView = this.byId("resultsView");
+            var oDom = oResultsView && oResultsView.getDomRef();
+            if (oDom) {
+                oDom.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+        },
+
+        onBonusPlanDocumentPress: function () {
+            if (!this.getView().getModel().getProperty("/isPdfButtonVisible")) {
+                return;
+            }
+            var oResultsView = this.byId("resultsView");
+            var oController = oResultsView && oResultsView.getController();
+            if (oController) {
+                oController.onGeneratePress();
+            }
+        },
+
+        formatCleanNumber: function (sValue) {
+            if (!sValue) {
+                return "";
+            }
+            var fValue = parseFloat(sValue);
+            if (isNaN(fValue)) {
+                return sValue;
+            }
+            return fValue.toLocaleString(undefined, {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            });
+        },
+
+        // =======================================================
+        // CHART DATA
+        // =======================================================
+        _prepareKpiChartData: function (aKpis) {
+            var aChart = [];
+            var mSeen = {};
+            if (!Array.isArray(aKpis)) {
+                return aChart;
+            }
+
+            aKpis.forEach(function (oKpi) {
+                var fTarget = parseFloat(oKpi.kpiResTarget);
+                var fAchievement = parseFloat(oKpi.kpiResAchievement);
+                var bTarget = !isNaN(fTarget);
+                var bAchievement = !isNaN(fAchievement);
+
+                oKpi.kpiResTargetValue = bTarget ? fTarget : null;
+                oKpi.kpiResAchievementValue = bAchievement ? fAchievement : null;
+                if (!bTarget && !bAchievement) {
+                    return;
+                }
+
+                var sPeriod = this._formatChartPeriod(oKpi);
+                var sCategory = oKpi.KPIName || sPeriod || oKpi.bonusQuarter || "";
+                if (mSeen[sCategory]) {
+                    mSeen[sCategory] += 1;
+                    sCategory = sCategory + " (" + mSeen[sCategory] + ")";
+                } else {
+                    mSeen[sCategory] = 1;
+                }
+
+                aChart.push({
+                    chartCategory: sCategory,
+                    kpiResTargetValue: oKpi.kpiResTargetValue,
+                    kpiResAchievementValue: oKpi.kpiResAchievementValue,
+                    startKpiDate: oKpi.startKpiDate || ""
+                });
+            }.bind(this));
+
+            return aChart;
+        },
+
+        _formatChartPeriod: function (oKpi) {
+            var sStart = this._formatKpiDate(oKpi.startKpiDate);
+            var sEnd = this._formatKpiDate(oKpi.endKpiDate);
+            if (sStart && sEnd) {
+                return sStart + " to " + sEnd;
+            }
+            return sStart || sEnd || "";
+        },
+
+        _formatKpiDate: function (sValue) {
+            if (!sValue) {
+                return "";
+            }
+            var oParse = DateFormat.getDateInstance({ pattern: "yyyyMMdd", UTC: true });
+            var oDate = oParse.parse(String(sValue));
+            if (!oDate) {
+                return "";
+            }
+            var oDisplay = DateFormat.getDateInstance({ pattern: "MMM dd", UTC: true });
+            return oDisplay.format(oDate);
         },
 
         // =======================================================

@@ -2,14 +2,71 @@ sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/m/MessageBox"
-], function (Controller, Filter, FilterOperator, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/base/i18n/Localization"
+], function (Controller, Filter, FilterOperator, MessageBox, Localization) {
     "use strict";
 
     return Controller.extend("adobeform.controller.gcdStatementResults", {
 
         onInit: function () {
-            this.byId("resultsAccordion").bindElement("/data");
+            this.byId("resultsRoot").bindElement("/data");
+            var oChart = this.byId("kpiChart");
+            if (oChart) {
+                oChart.setUiConfig({ applicationSet: "fiori" });
+                oChart.setVizProperties({
+                    plotArea: {
+                        dataLabel: { visible: true }
+                    },
+                    title: { visible: false },
+                    legend: { visible: true },
+                    categoryAxis: { title: { visible: false } },
+                    valueAxis: { title: { visible: false } }
+                });
+                this._applyChartTexts();
+                Localization.attachChange(this._applyChartTexts, this);
+            }
+        },
+
+        onExit: function () {
+            Localization.detachChange(this._applyChartTexts, this);
+        },
+
+        _applyChartTexts: function () {
+            var oI18nModel = this.getView().getModel("i18n");
+            if (!oI18nModel) {
+                return;
+            }
+            var oBundle = oI18nModel.getResourceBundle();
+            var sTarget = oBundle.getText("CHART_KPI_TARGET");
+            var sAchievement = oBundle.getText("CHART_KPI_ACHIEVEMENT");
+            var oTargetMeasure = this.byId("kpiTargetMeasure");
+            var oAchievementMeasure = this.byId("kpiAchievementMeasure");
+            var oValueFeed = this.byId("kpiValueFeed");
+
+            if (oTargetMeasure) {
+                oTargetMeasure.setName(sTarget);
+            }
+            if (oAchievementMeasure) {
+                oAchievementMeasure.setName(sAchievement);
+            }
+            if (oValueFeed) {
+                oValueFeed.setValues([sTarget, sAchievement]);
+            }
+            var oChart = this.byId("kpiChart");
+            if (oChart) {
+                oChart.invalidate();
+            }
+        },
+
+        onDataReady: function () {
+            var oChart = this.byId("kpiChart");
+            if (!oChart) {
+                return;
+            }
+            setTimeout(function () {
+                oChart.invalidate();
+            }, 200);
         },
 
         // =======================================================

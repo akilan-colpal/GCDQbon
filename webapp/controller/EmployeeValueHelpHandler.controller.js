@@ -76,22 +76,25 @@ sap.ui.define([
 
             var oTree = sap.ui.core.Fragment.byId(this.oView.getId(), "orgTree");
             var oBinding = oTree.getBinding("items");
-            
-            if (sValue) {
-                var oFilter = new sap.ui.model.Filter({
-                    filters: [
-                        new sap.ui.model.Filter("empid", sap.ui.model.FilterOperator.Contains, sValue),
-                        new sap.ui.model.Filter("firstname", sap.ui.model.FilterOperator.Contains, sValue),
-                        new sap.ui.model.Filter("lastname", sap.ui.model.FilterOperator.Contains, sValue)
-                    ],
-                    and: false
+            var aWords = (sValue || "").trim().split(/\s+/).filter(Boolean);
+
+            if (aWords.length) {
+                var aWordFilters = aWords.map(function (sWord) {
+                    return new Filter({
+                        filters: [
+                            new Filter({ path: "empid", operator: FilterOperator.Contains, value1: sWord, caseSensitive: false }),
+                            new Filter({ path: "firstname", operator: FilterOperator.Contains, value1: sWord, caseSensitive: false }),
+                            new Filter({ path: "lastname", operator: FilterOperator.Contains, value1: sWord, caseSensitive: false })
+                        ],
+                        and: false
+                    });
                 });
-                oBinding.filter([oFilter]);
-                oTree.expandToLevel(99); 
-            } else {          
+                oBinding.filter([new Filter({ filters: aWordFilters, and: true })]);
+                oTree.expandToLevel(99);
+            } else {
                 oBinding.filter([]);
-                oTree.collapseAll(); 
-                oTree.expandToLevel(1); 
+                oTree.collapseAll();
+                oTree.expandToLevel(1);
             }
         },
 
