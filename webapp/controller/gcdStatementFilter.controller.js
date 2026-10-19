@@ -33,7 +33,8 @@ sap.ui.define([
                 },
                 ui: {
                     selectedKpiName: "",
-                    selectedKpiChart: []
+                    selectedKpiChart: [],
+                    quarterProgressChart: []
                 }
             });
             this.getView().setModel(oViewModel); 
@@ -426,9 +427,18 @@ sap.ui.define([
                         });
                         oView.getModel().setProperty("/isPdfButtonVisible", true);
                         var oResultsView = this.byId("resultsView");
-                        var oResultsController = oResultsView && oResultsView.getController();
-                        if (oResultsController && oResultsController.onDataReady) {
-                            oResultsController.onDataReady();
+                        if (oResultsView && oResultsView.loaded) {
+                            oResultsView.loaded().then(function (oLoadedView) {
+                                var oResultsController = oLoadedView.getController();
+                                if (oResultsController && oResultsController.onDataReady) {
+                                    oResultsController.onDataReady();
+                                }
+                            });
+                        } else {
+                            var oResultsController = oResultsView && oResultsView.getController();
+                            if (oResultsController && oResultsController.onDataReady) {
+                                oResultsController.onDataReady();
+                            }
                         }
                         MessageToast.show("Data loaded successfully.");
                     } else {

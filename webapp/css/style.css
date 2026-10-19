@@ -18,148 +18,117 @@
     margin: 0 auto !important;
 }
 
-/* Bonus results color scheme */
-.bonusNavContainer {
-    border-radius: 0.5rem;
-    overflow: hidden;
+/* ===================== Results shell ===================== */
+.resultsShell {
+    gap: 1.25rem;
 }
 
-.bonusHeroCard {
-    background: linear-gradient(180deg, #4E67B0 0%, #465DA3 55%, #2D3A6F 100%);
+.glanceHero {
+    background: linear-gradient(165deg, #4E67B0 0%, #465DA3 48%, #2D3A6F 100%);
     color: #ffffff;
-    padding: 1.5rem 1.25rem 1rem;
-    border-radius: 0.5rem;
+    padding: 1.75rem 1.5rem 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 28px rgba(45, 58, 111, 0.28);
 }
 
-.bonusHeroLabel,
-.bonusHeroTitle,
-.bonusHeroAmount,
-.bonusHeroCurrency,
-.bonusSectionTitle,
-.bonusLightLabel {
+.glanceEyebrow {
+    color: rgba(255, 255, 255, 0.78) !important;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.glanceTitle {
     color: #ffffff !important;
-}
-
-.bonusHeroLabel {
-    font-size: 0.875rem;
-}
-
-.bonusHeroTitle {
     font-weight: 700 !important;
-    margin-top: 0.25rem !important;
+    margin-top: 0.35rem !important;
 }
 
-.bonusHeroAmount {
-    font-size: 3rem;
-    font-weight: 300;
-    line-height: 1.1;
+.glanceEligibility {
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin-top: 0.35rem;
 }
 
-.bonusHeroCurrency {
-    font-size: 1.25rem;
-    font-weight: 300;
-    opacity: 0.95;
-}
-
-.kpiPillList ul {
-    display: flex !important;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 1rem;
-    background: transparent !important;
-}
-
-.kpiPillList .sapMListUl {
-    background: transparent !important;
-    border: none !important;
-}
-
-.kpiPillItem {
-    background: transparent !important;
-    border: none !important;
-}
-
-.kpiPill {
-    min-width: 11rem;
-    padding: 0.85rem 1.25rem;
-    border-radius: 1.5rem;
-    color: #ffffff;
-    cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
-}
-
-.kpiPillItem:nth-child(odd) .kpiPill {
-    background: linear-gradient(135deg, #5AC8D8 0%, #3BB4C8 100%);
-}
-
-.kpiPillItem:nth-child(even) .kpiPill {
-    background: linear-gradient(135deg, #1E9D8F 0%, #178277 100%);
-}
-
-.kpiPillAmount {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #ffffff;
-}
-
-.kpiPillCurrency,
-.kpiPillName,
-.kpiPillWeight {
-    color: #ffffff;
-}
-
-.kpiPillName {
-    font-size: 0.875rem;
+.glancePdfBtn {
     margin-top: 0.25rem;
 }
 
-.kpiPillWeight {
-    font-size: 0.75rem;
-    opacity: 0.9;
-}
-
-.bonusEarningsPanel {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-.bonusEarningsPanel .sapMPanelHdr,
-.bonusEarningsPanel .sapMPanelWrappingDivTb,
-.bonusEarningsPanel .sapMPanelHeadingDiv {
-    background: transparent !important;
+.glanceAwardAmount {
     color: #ffffff !important;
-    border: none !important;
+    font-size: clamp(2.25rem, 4vw, 3.25rem);
+    font-weight: 300;
+    line-height: 1.05;
 }
 
-.bonusEarningsPanel .sapMPanelContent {
-    background: rgba(45, 58, 111, 0.55) !important;
-    border: none !important;
-    border-radius: 0.5rem;
+.glanceCurrency {
+    color: rgba(255, 255, 255, 0.92) !important;
+    font-size: 1.15rem;
+    font-weight: 300;
 }
 
-.bonusEarningsPanel .sapMPanelExpandableIcon,
-.bonusEarningsPanel .sapUiIcon {
-    color: #ffffff !important;
+.glanceMetricLabel {
+    color: rgba(255, 255, 255, 0.78) !important;
+    font-size: 0.8125rem;
+    margin-bottom: 0.25rem;
 }
 
-.bonusObjectNumber .sapMObjectNumberText,
-.bonusObjectNumber .sapMObjectNumberUnit {
-    color: #ffffff !important;
+.glanceMetricGrid {
+    gap: 0.75rem;
 }
 
-.bonusDetailPage,
-.bonusDetailPage > section,
-.bonusDetailPage .sapMPageHeader {
-    background: #4C62B0 !important;
+.glanceMetricTile {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 0.65rem;
+    padding: 0.9rem 1rem;
+    min-height: 4.5rem;
 }
 
-.bonusDetailPage .sapMTitle,
-.bonusDetailPage .sapMBtnIcon,
-.bonusDetailPage .sapMPageHeader .sapMText {
+.glanceObjectNumber .sapMObjectNumberText,
+.glanceObjectNumber .sapMObjectNumberUnit {
     color: #ffffff !important;
 }
 
+.resultsSection {
+    background: #ffffff;
+    border: 1px solid rgba(45, 58, 111, 0.12);
+    border-radius: 0.75rem;
+    padding: 1.25rem 1.25rem 1.5rem;
+    box-shadow: 0 4px 16px rgba(45, 58, 111, 0.06);
+}
+
+.resultsSectionAlt {
+    background: linear-gradient(180deg, #f5f7fc 0%, #ffffff 42%);
+}
+
+.sectionHeader {
+    margin-bottom: 0.75rem;
+}
+
+.sectionTitle {
+    color: #2D3A6F !important;
+    font-weight: 700 !important;
+}
+
+.sectionSubtitle {
+    color: #667499 !important;
+    margin-top: 0.15rem;
+}
+
+.chartCardTitle {
+    color: #2D3A6F !important;
+}
+
+.progressChartCard,
+.kpiCompareCard {
+    background: #ffffff;
+    border: 1px solid rgba(78, 103, 176, 0.18);
+    border-radius: 0.65rem;
+    padding: 0.85rem 1rem 0.5rem;
+}
+
+/* ===================== KPI accordion ===================== */
 .kpiDetailAccordion {
     background: transparent !important;
     border: none !important;
@@ -174,35 +143,82 @@
     margin-bottom: 0.75rem;
     border: none !important;
     box-shadow: none !important;
-    overflow: hidden;
-    border-radius: 0.35rem;
+    overflow: visible;
+    border-radius: 0.5rem;
 }
 
-.kpiDetailList .sapMCLI:nth-child(odd) .kpiDetailPanel .sapMPanelHdr,
 .kpiDetailAccordion .sapMCLI:nth-child(odd) .kpiDetailPanel > .sapMPanelHeadingDiv,
-.kpiDetailAccordion .sapMCLI:nth-child(odd) .kpiDetailPanel .sapMPanelWrappingDivTb {
+.kpiDetailAccordion .sapMCLI:nth-child(odd) .kpiDetailPanel .sapMPanelWrappingDivTb,
+.kpiDetailAccordion .sapMCLI:nth-child(odd) .kpiDetailPanel .sapMPanelHdr {
     background: #5BC5E5 !important;
 }
 
-.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel .sapMPanelHdr,
 .kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel > .sapMPanelHeadingDiv,
-.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel .sapMPanelWrappingDivTb {
+.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel .sapMPanelWrappingDivTb,
+.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel .sapMPanelHdr {
     background: #1995AD !important;
 }
 
 .kpiDetailPanel .sapMPanelHdr,
 .kpiDetailPanel .sapMPanelHeadingDiv,
 .kpiDetailPanel .sapMPanelWrappingDivTb,
-.kpiDetailPanel .sapMPanelHdr > .sapMTitle,
-.kpiDetailPanel .sapUiIcon {
+.kpiDetailPanel .sapMPanelHdr > .sapMTitle {
     color: #ffffff !important;
     border: none !important;
+}
+
+.kpiDetailPanel .sapMPanelHeadingDiv,
+.kpiDetailPanel .sapMPanelWrappingDivTb,
+.kpiDetailPanel .sapMPanelHdr {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem;
+}
+
+.kpiDetailPanel .sapMPanelExpandableIcon,
+.kpiDetailPanel .sapMPanelExpandButton,
+.kpiDetailPanel .sapMPanelHdrButton,
+.kpiDetailPanel .sapMPanelHeaderIcon {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    flex: 0 0 auto !important;
+    min-width: 2rem !important;
+    min-height: 2rem !important;
+}
+
+.kpiDetailPanel .sapMPanelExpandableIcon .sapUiIcon,
+.kpiDetailPanel .sapMPanelExpandButton .sapUiIcon,
+.kpiDetailPanel .sapMPanelHdrButton .sapUiIcon,
+.kpiDetailPanel .sapMPanelHeaderIcon .sapUiIcon,
+.kpiDetailPanel .sapMPanelExpandableIcon::before,
+.kpiDetailPanel .sapMPanelExpandButton .sapMBtnIcon {
+    color: #ffffff !important;
+    font-size: 1rem !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .kpiDetailPanel .sapMPanelContent {
     background: #3D5199 !important;
     border: none !important;
     color: #ffffff;
+}
+
+.kpiMetaChip {
+    color: rgba(255, 255, 255, 0.92) !important;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.75rem;
+}
+
+.kpiColumnHeading {
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 0.75rem;
 }
 
 .kpiCalcBox {
@@ -270,6 +286,26 @@
 }
 
 .bonusTable {
-    background: rgba(255, 255, 255, 0.96);
-    border-radius: 0.35rem;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.disclaimerSection {
+    background: #f7f8fc;
+}
+
+.disclaimerText {
+    color: #44506b;
+    line-height: 1.45;
+}
+
+@media (max-width: 600px) {
+    .glanceHero {
+        padding: 1.25rem 1rem 1.1rem;
+    }
+
+    .resultsSection {
+        padding: 1rem;
+    }
 }
