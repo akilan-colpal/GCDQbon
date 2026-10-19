@@ -30,6 +30,10 @@ sap.ui.define([
                     globalId: "",
                     year: "",
                     quarter: ""
+                },
+                ui: {
+                    selectedKpiName: "",
+                    selectedKpiChart: []
                 }
             });
             this.getView().setModel(oViewModel); 

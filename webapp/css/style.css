@@ -17,3 +17,259 @@
     max-width: 100rem;
     margin: 0 auto !important;
 }
+
+/* Bonus results color scheme */
+.bonusNavContainer {
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.bonusHeroCard {
+    background: linear-gradient(180deg, #4E67B0 0%, #465DA3 55%, #2D3A6F 100%);
+    color: #ffffff;
+    padding: 1.5rem 1.25rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.bonusHeroLabel,
+.bonusHeroTitle,
+.bonusHeroAmount,
+.bonusHeroCurrency,
+.bonusSectionTitle,
+.bonusLightLabel {
+    color: #ffffff !important;
+}
+
+.bonusHeroLabel {
+    font-size: 0.875rem;
+}
+
+.bonusHeroTitle {
+    font-weight: 700 !important;
+    margin-top: 0.25rem !important;
+}
+
+.bonusHeroAmount {
+    font-size: 3rem;
+    font-weight: 300;
+    line-height: 1.1;
+}
+
+.bonusHeroCurrency {
+    font-size: 1.25rem;
+    font-weight: 300;
+    opacity: 0.95;
+}
+
+.kpiPillList ul {
+    display: flex !important;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    background: transparent !important;
+}
+
+.kpiPillList .sapMListUl {
+    background: transparent !important;
+    border: none !important;
+}
+
+.kpiPillItem {
+    background: transparent !important;
+    border: none !important;
+}
+
+.kpiPill {
+    min-width: 11rem;
+    padding: 0.85rem 1.25rem;
+    border-radius: 1.5rem;
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.kpiPillItem:nth-child(odd) .kpiPill {
+    background: linear-gradient(135deg, #5AC8D8 0%, #3BB4C8 100%);
+}
+
+.kpiPillItem:nth-child(even) .kpiPill {
+    background: linear-gradient(135deg, #1E9D8F 0%, #178277 100%);
+}
+
+.kpiPillAmount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.kpiPillCurrency,
+.kpiPillName,
+.kpiPillWeight {
+    color: #ffffff;
+}
+
+.kpiPillName {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.kpiPillWeight {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+.bonusEarningsPanel {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.bonusEarningsPanel .sapMPanelHdr,
+.bonusEarningsPanel .sapMPanelWrappingDivTb,
+.bonusEarningsPanel .sapMPanelHeadingDiv {
+    background: transparent !important;
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.bonusEarningsPanel .sapMPanelContent {
+    background: rgba(45, 58, 111, 0.55) !important;
+    border: none !important;
+    border-radius: 0.5rem;
+}
+
+.bonusEarningsPanel .sapMPanelExpandableIcon,
+.bonusEarningsPanel .sapUiIcon {
+    color: #ffffff !important;
+}
+
+.bonusObjectNumber .sapMObjectNumberText,
+.bonusObjectNumber .sapMObjectNumberUnit {
+    color: #ffffff !important;
+}
+
+.bonusDetailPage,
+.bonusDetailPage > section,
+.bonusDetailPage .sapMPageHeader {
+    background: #4C62B0 !important;
+}
+
+.bonusDetailPage .sapMTitle,
+.bonusDetailPage .sapMBtnIcon,
+.bonusDetailPage .sapMPageHeader .sapMText {
+    color: #ffffff !important;
+}
+
+.kpiDetailAccordion {
+    background: transparent !important;
+    border: none !important;
+}
+
+.kpiDetailAccordion .sapMListUl {
+    background: transparent !important;
+    border: none !important;
+}
+
+.kpiDetailPanel {
+    margin-bottom: 0.75rem;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    border-radius: 0.35rem;
+}
+
+.kpiDetailList .sapMCLI:nth-child(odd) .kpiDetailPanel .sapMPanelHdr,
+.kpiDetailAccordion .sapMCLI:nth-child(odd) .kpiDetailPanel > .sapMPanelHeadingDiv,
+.kpiDetailAccordion .sapMCLI:nth-child(odd) .kpiDetailPanel .sapMPanelWrappingDivTb {
+    background: #5BC5E5 !important;
+}
+
+.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel .sapMPanelHdr,
+.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel > .sapMPanelHeadingDiv,
+.kpiDetailAccordion .sapMCLI:nth-child(even) .kpiDetailPanel .sapMPanelWrappingDivTb {
+    background: #1995AD !important;
+}
+
+.kpiDetailPanel .sapMPanelHdr,
+.kpiDetailPanel .sapMPanelHeadingDiv,
+.kpiDetailPanel .sapMPanelWrappingDivTb,
+.kpiDetailPanel .sapMPanelHdr > .sapMTitle,
+.kpiDetailPanel .sapUiIcon {
+    color: #ffffff !important;
+    border: none !important;
+}
+
+.kpiDetailPanel .sapMPanelContent {
+    background: #3D5199 !important;
+    border: none !important;
+    color: #ffffff;
+}
+
+.kpiCalcBox {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    min-width: 7.5rem;
+}
+
+.kpiCalcValue,
+.kpiCalcLabel,
+.kpiCalcOperator,
+.kpiMetricLabel,
+.kpiMetricValue {
+    color: #ffffff !important;
+}
+
+.kpiCalcValue {
+    font-weight: 700;
+}
+
+.kpiCalcLabel {
+    font-size: 0.75rem;
+    opacity: 0.9;
+}
+
+.kpiCalcOperator {
+    font-size: 1.25rem;
+    margin: 0 0.5rem;
+}
+
+.kpiPayoutResult {
+    background: #5BC5E5;
+    border-radius: 1.25rem;
+    padding: 0.6rem 1rem;
+    display: inline-flex;
+}
+
+.kpiPayoutResultLabel,
+.kpiPayoutResultValue {
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+.kpiMetricRow {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.kpiMetricTarget .sapMObjStatusText {
+    border: 1px solid #ffffff;
+    border-radius: 1rem;
+    padding: 0.15rem 0.6rem;
+    color: #ffffff !important;
+}
+
+.kpiMetricAchievement .sapMObjStatusText,
+.kpiMetricPayout {
+    background: #5BC5E5;
+    border-radius: 1rem;
+    padding: 0.15rem 0.6rem;
+    color: #ffffff !important;
+    font-weight: 700;
+}
+
+.bonusTable {
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 0.35rem;
+}
