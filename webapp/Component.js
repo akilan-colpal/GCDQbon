@@ -35,7 +35,7 @@ sap.ui.define([
                 "armaan_seelan@colpal.com"
             ];
             this.aManagers = [
-                // "akilan_manivannan@colpal.com",
+                "akilan_manivannan@colpal.com",
                 "shilpi_kumar@colpal.com",
                 "salvador_cuenca@colpal.com"
             ];
@@ -44,7 +44,7 @@ sap.ui.define([
                 "armaan_seelan@colpal.com": "00149410",
                 "shilpi_kumar@colpal.com": "00110564",
                 "salvador_cuenca@colpal.com": "00002002",
-                // "akilan_manivannan@colpal.com": "00002002"
+                "akilan_manivannan@colpal.com": "00002002"
             };
             this.getUserInfo();
         },
@@ -80,8 +80,10 @@ sap.ui.define([
             oBtpModel.attachRequestCompleted(function (oEvent) {
 
                 var oData = oEvent.getSource().getData();
+                console.log("userapi attributes:", oData);
                 var sEmail = oData.email || oData.name || "";
                 if (!sEmail) {
+                    console.log("No email found in userapi attributes");
                     return;
                 }
                 console.log("Logged in email:", sEmail || "(none)");
@@ -89,23 +91,25 @@ sap.ui.define([
             }.bind(this));
 
             oBtpModel.attachRequestFailed(function () {
-                console.warn("Local environment — using user model");
+                console.warn("Local environment — using hardcoded user model");
                 var oUserDataModel = this.getModel("mUserDataModel");
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
-                oUserDataModel.setProperty("/userId", "00006077");
-                oUserDataModel.setProperty("/userGlobalId", "00006077");
+                oUserDataModel.setProperty("/userId", "00024611");
+                oUserDataModel.setProperty("/userGlobalId", "00024611");
                 oUserDataModel.setProperty("/isHR", true);
-                oUserDataModel.setProperty("/isMgr", true);
+                oUserDataModel.setProperty("/isMgr", false);
                 this.fnCloseBusyDialog();
                 this.getRouter().initialize();
             }.bind(this));
 
             this.getModel().metadataLoaded().then(function () {
+                console.log("Main OData metadata loaded — calling ZI_QBON_USER_ACCESS");
                 if (oRoot) {
                     oRoot.setBusy(false);
                 }
                 oBtpModel.loadData(sBtpAttributesUrl);
             }.bind(this), function (oError) {
+                console.log("Main OData metadata failed:", oError);
             }.bind(this));
         },
 
