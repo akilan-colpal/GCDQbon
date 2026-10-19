@@ -1,1 +1,19 @@
-/* Spacing and color come from the Horizon theme and standard UI5 controls. */
+/* Enter your custom styles here */
+.toolHeader {
+  background-color: #354a5f !important;
+}
+
+.toolHeader .sapMTitle {
+  color: #ffffff !important;
+  font-size: 1.125rem !important;
+  font-weight: bold !important;
+}
+
+.toolHeaderTitle {
+  color: #ffffff;
+}
+
+.cappedAppContainer {
+    max-width: 100rem;
+    margin: 0 auto !important;
+}

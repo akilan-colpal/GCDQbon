@@ -6,12 +6,6 @@ sap.ui.define([
     "use strict";
 
     return BaseController.extend("adobeform.controller.App", {
-        onInit: function () {
-            this.byId("shellBar").setHomeIcon(
-                sap.ui.require.toUrl("adobeform/image/ColPal_Icon.svg")
-            );
-        },
-
         pressLogo: function () {
             this.getOwnerComponent().getRouter().navTo("RouteGcdStatementFilter");
         },

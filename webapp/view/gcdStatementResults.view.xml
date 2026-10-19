@@ -7,7 +7,39 @@
     xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
     xmlns="sap.m">
 
-    <VBox id="resultsRoot" width="100%">
+    <VBox id="resultsRoot" width="100%" class="sapUiResponsiveMargin" visible="{/isPdfButtonVisible}">
+        <Toolbar>
+            <Title text="{VarPayTemplateName}" level="H2" />
+            <ToolbarSpacer />
+            <Button
+                id="generatePdfBtn"
+                text="{i18n>GENERATE_PDF}"
+                press=".onGeneratePress"
+                type="Emphasized"
+                visible="{/isPdfButtonVisible}" />
+        </Toolbar>
+
+        <HBox wrap="Wrap" justifyContent="SpaceAround" class="sapUiSmallMargin">
+            <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                <Label text="{i18n>ELIGIBILITY}" />
+                <Text text="{eligibilityPeriod}" />
+            </VBox>
+            <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+                <Label text="{i18n>QUARTER_AWARD}" />
+                <ObjectNumber
+                    number="{path: 'totalQuarterAward', formatter: '.formatCleanNumber'}"
+                    unit="{currency}"
+                    emphasized="true" />
+            </VBox>
+            <VBox class="sapUiTinyMarginBottom">
+                <Label text="{i18n>BONUSABLE_EARNINGS}" />
+                <ObjectNumber
+                    number="{path: 'bonusableEarnings', formatter: '.formatCleanNumber'}"
+                    unit="{currency}"
+                    emphasized="true" />
+            </VBox>
+        </HBox>
+
         <Panel
             id="summaryPanel"
             expandable="true"

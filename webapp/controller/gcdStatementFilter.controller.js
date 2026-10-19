@@ -443,42 +443,6 @@ sap.ui.define([
         },
 
         // =======================================================
-        // HEADER ACTIONS
-        // =======================================================
-        onMyBonusAmountPress: function () {
-            var oResultsView = this.byId("resultsView");
-            var oDom = oResultsView && oResultsView.getDomRef();
-            if (oDom) {
-                oDom.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-        },
-
-        onBonusPlanDocumentPress: function () {
-            if (!this.getView().getModel().getProperty("/isPdfButtonVisible")) {
-                return;
-            }
-            var oResultsView = this.byId("resultsView");
-            var oController = oResultsView && oResultsView.getController();
-            if (oController) {
-                oController.onGeneratePress();
-            }
-        },
-
-        formatCleanNumber: function (sValue) {
-            if (!sValue) {
-                return "";
-            }
-            var fValue = parseFloat(sValue);
-            if (isNaN(fValue)) {
-                return sValue;
-            }
-            return fValue.toLocaleString(undefined, {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2
-            });
-        },
-
-        // =======================================================
         // CHART DATA
         // =======================================================
         _prepareKpiChartData: function (aKpis) {
