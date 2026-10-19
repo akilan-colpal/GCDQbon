@@ -25,7 +25,7 @@ sap.ui.define([
             if (oModel && !oModel.getProperty("/ui")) {
                 oModel.setProperty("/ui", {
                     selectedKpiName: "",
-                    selectedKpiChart: [],
+                    selectedKpiCurve: [],
                     quarterProgressChart: []
                 });
             }
@@ -39,18 +39,22 @@ sap.ui.define([
         },
 
         _initCharts: function () {
-            var oKpiChart = this.byId("kpiCompareChart");
-            if (oKpiChart) {
-                oKpiChart.setUiConfig({ applicationSet: "fiori" });
-                oKpiChart.setVizProperties({
+            var oPayoutCurve = this.byId("kpiPayoutCurve");
+            if (oPayoutCurve) {
+                oPayoutCurve.setUiConfig({ applicationSet: "fiori" });
+                oPayoutCurve.setVizProperties({
                     plotArea: {
                         dataLabel: { visible: true },
-                        colorPalette: ["#5BC5E5", "#1E9D8F"]
+                        colorPalette: ["#5AC8FA"],
+                        marker: { visible: true, size: 12 }
                     },
                     title: { visible: false },
                     legend: { visible: false },
                     categoryAxis: { title: { visible: false } },
-                    valueAxis: { title: { visible: false } }
+                    valueAxis: {
+                        title: { visible: false },
+                        scale: { minValue: 0 }
+                    }
                 });
             }
 
@@ -81,17 +85,17 @@ sap.ui.define([
                 return;
             }
             var oBundle = oI18nModel.getResourceBundle();
-            var sValue = oBundle.getText("VALUE");
+            var sPayout = oBundle.getText("CHART_PAYOUT_PERCENT");
             var sSegment = oBundle.getText("CHART_SEGMENT_AWARD");
             var sTarget = oBundle.getText("CHART_QUARTER_TARGET");
 
-            var oMeasure = this.byId("kpiDetailMeasure");
-            var oValueFeed = this.byId("kpiValueFeed");
-            if (oMeasure) {
-                oMeasure.setName(sValue);
+            var oPayoutMeasure = this.byId("payoutCurveMeasure");
+            var oPayoutFeed = this.byId("payoutCurveFeed");
+            if (oPayoutMeasure) {
+                oPayoutMeasure.setName(sPayout);
             }
-            if (oValueFeed) {
-                oValueFeed.setValues([sValue]);
+            if (oPayoutFeed) {
+                oPayoutFeed.setValues([sPayout]);
             }
 
             var oSegmentMeasure = this.byId("segmentAwardMeasure");
@@ -111,7 +115,7 @@ sap.ui.define([
                 oTargetFeed.setValues([sTarget]);
             }
 
-            this._refreshChart("kpiCompareChart");
+            this._refreshChart("kpiPayoutCurve");
             this._refreshChart("quarterProgressChart");
         },
 
@@ -121,16 +125,18 @@ sap.ui.define([
             var aKpis = oData.to_KPIs || [];
             var aQSum = oData.to_qSum || [];
 
+            this._enrichKpiRows(aKpis);
+            oModel.setProperty("/data/to_KPIs", aKpis);
             oModel.setProperty("/ui/quarterProgressChart", this._prepareQuarterProgressChart(aQSum));
             oModel.setProperty("/ui/selectedKpiName", "");
-            oModel.setProperty("/ui/selectedKpiChart", []);
+            oModel.setProperty("/ui/selectedKpiCurve", []);
 
             if (aKpis.length > 0) {
                 this._selectKpi(aKpis[0]);
                 this._syncPanelExpansion(aKpis[0].KPIName);
             }
 
-            this._refreshChart("kpiCompareChart");
+            this._refreshChart("kpiPayoutCurve");
             this._refreshChart("quarterProgressChart");
         },
 
@@ -143,23 +149,58 @@ sap.ui.define([
                 return;
             }
             this._selectKpi(oContext.getObject());
-            this._refreshChart("kpiCompareChart");
+            this._refreshChart("kpiPayoutCurve");
+        },
+
+        _enrichKpiRows: function (aKpis) {
+            var oBundle = this.getView().getModel("i18n").getResourceBundle();
+            (aKpis || []).forEach(function (oKpi) {
+                oKpi.tierRows = [
+                    {
+                        tier: oBundle.getText("TIER_TARGET"),
+                        kpiResult: oKpi.kpiResTarget,
+                        payoutPercent: 100,
+                        amount: oKpi.kpiTargetAmount,
+                        highlight: "target"
+                    },
+                    {
+                        tier: oBundle.getText("TIER_ACHIEVEMENT"),
+                        kpiResult: oKpi.kpiResAchievement,
+                        payoutPercent: oKpi.kpiPayoutPercent,
+                        amount: oKpi.kpiPayout,
+                        highlight: "achievement"
+                    }
+                ];
+                oKpi.payoutCurve = this._buildPayoutCurve(oKpi);
+            }.bind(this));
+        },
+
+        _buildPayoutCurve: function (oKpi) {
+            var aPoints = [];
+            var fTargetResult = this._toNumber(oKpi.kpiResTarget);
+            var fAchievementResult = this._toNumber(oKpi.kpiResAchievement);
+            var fPayoutPercent = this._toNumber(oKpi.kpiPayoutPercent);
+
+            aPoints.push({
+                category: this.formatCleanNumber(oKpi.kpiResTarget) || "Target",
+                sortValue: fTargetResult,
+                payoutPercent: 100
+            });
+            aPoints.push({
+                category: this.formatCleanNumber(oKpi.kpiResAchievement) || "Achievement",
+                sortValue: fAchievementResult,
+                payoutPercent: fPayoutPercent
+            });
+
+            return aPoints.sort(function (a, b) {
+                return a.sortValue - b.sortValue;
+            });
         },
 
         _selectKpi: function (oKpi) {
             var oModel = this.getView().getModel();
-            var oBundle = this.getView().getModel("i18n").getResourceBundle();
             oModel.setProperty("/ui/selectedKpiName", oKpi.KPIName || "");
-            oModel.setProperty("/ui/selectedKpiChart", [
-                {
-                    metric: oBundle.getText("CHART_KPI_TARGET"),
-                    value: this._toNumber(oKpi.kpiResTarget)
-                },
-                {
-                    metric: oBundle.getText("CHART_KPI_ACHIEVEMENT"),
-                    value: this._toNumber(oKpi.kpiResAchievement)
-                }
-            ]);
+            oModel.setProperty("/ui/selectedKpiCurve", oKpi.payoutCurve || this._buildPayoutCurve(oKpi));
         },
 
         _prepareQuarterProgressChart: function (aQSum) {
@@ -329,7 +370,7 @@ sap.ui.define([
 
         formatPercent: function (sValue) {
             var sNumber = this.formatCleanNumber(sValue);
-            return sNumber === "" ? "" : sNumber + "%";
+            return sNumber === "" ? "" : sNumber + " %";
         },
 
         formatMoneyWithCurrency: function (sValue) {
@@ -340,6 +381,16 @@ sap.ui.define([
             var oData = this.getView().getModel().getProperty("/data") || {};
             var sCurrency = oData.currency || "";
             return "$" + sNumber + (sCurrency ? " " + sCurrency : "");
+        },
+
+        formatAmountMxp: function (sValue) {
+            var sNumber = this.formatCleanNumber(sValue);
+            if (!sNumber) {
+                return "";
+            }
+            var oData = this.getView().getModel().getProperty("/data") || {};
+            var sCurrency = oData.currency || "MXP";
+            return sNumber + " " + sCurrency;
         },
 
         formatCompareTitle: function (sLabel, sKpiName) {

@@ -33,7 +33,7 @@ sap.ui.define([
                 },
                 ui: {
                     selectedKpiName: "",
-                    selectedKpiChart: [],
+                    selectedKpiCurve: [],
                     quarterProgressChart: []
                 }
             });
