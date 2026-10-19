@@ -8,7 +8,7 @@
     xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
     xmlns="sap.m">
 
-    <VBox id="resultsRoot" width="100%" class="sapUiResponsiveMargin resultsShell" visible="{/isPdfButtonVisible}">
+    <VBox id="resultsRoot" width="100%" class="resultsShell">
 
         <!-- ===================== AT A GLANCE ===================== -->
         <VBox class="glanceHero" width="100%">
