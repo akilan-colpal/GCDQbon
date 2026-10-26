@@ -97,13 +97,12 @@ sap.ui.define([
                 oUserDataModel.setProperty("/userId", "00024611");
                 oUserDataModel.setProperty("/userGlobalId", "00024611");
                 oUserDataModel.setProperty("/isHR", true);
-                oUserDataModel.setProperty("/isMgr", false);
+                oUserDataModel.setProperty("/isMgr", true);
                 this.fnCloseBusyDialog();
                 this.getRouter().initialize();
             }.bind(this));
 
             this.getModel().metadataLoaded().then(function () {
-                console.log("Main OData metadata loaded — calling ZI_QBON_USER_ACCESS");
                 if (oRoot) {
                     oRoot.setBusy(false);
                 }
@@ -147,7 +146,6 @@ sap.ui.define([
 
                     var sProxyId = this.mProxyUserIds[sEmailKey];
                     if (sProxyId) {
-                        console.log("Proxy override for", sEmailKey, "->", sProxyId);
                         oUserDataModel.setProperty("/userId", sProxyId);
                         oUserDataModel.setProperty("/userGlobalId", sProxyId);
                     }
@@ -167,9 +165,7 @@ sap.ui.define([
                     this.getRouter().initialize();
                 }.bind(this),
                 error: function (oError) {
-                    console.log("ZI_QBON_USER_ACCESS error:", oError);
                     if (oError && oError.responseText) {
-                        console.log("ZI_QBON_USER_ACCESS error responseText:", oError.responseText);
                     }
                     this.getIllustratedMessage("Failed to fetch user access from the backend.");
                 }.bind(this)

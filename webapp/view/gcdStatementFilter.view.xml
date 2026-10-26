@@ -5,26 +5,31 @@
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core">
     
-    <Page id="mainPage" showHeader="false">
+    <Page id="mainPage" showHeader="false" enableScrolling="true" class="startupPageBg">
         <content>
-            <VBox id="_IDGenVBox" width="100%" class="startupPage">
+            <VBox id="_IDGenVBox" width="100%" height="100%" class="cappedAppContainer appShell">
 
-                <HBox alignItems="Stretch" width="100%" class="startupHero">
-                    <VBox id="bonusCard" class="bonusCard">
-                        <Title text="{i18n>MY_BONUS_AMOUNT}" level="H3" class="bonusTitle" />
+                <HBox alignItems="Stretch" width="100%" class="startupHero" renderType="Bare">
 
-                        <VBox alignItems="Center" class="ytdBlock">
-                            <Text text="{i18n>YEAR_TO_DATE_TOTAL}" textAlign="Center" class="ytdLabel" />
-                            <HBox justifyContent="Center" alignItems="End" width="100%" class="ytdAmountRow">
-                                <Text text="$" class="bonusDollar" />
-                                <Text text="{/startup/ytdAmount}" class="bonusFigure" />
-                                <Text text="{/startup/currency}" class="bonusCurrency" />
-                            </HBox>
-                            <Text text="{i18n>YEAR_TO_DATE_EXPLANATION}" textAlign="Center" class="ytdExplanation" />
+                    <!-- Left: criteria card -->
+                    <Panel id="bonusCard"
+                           width="24rem"
+                           class="bonusCard"
+                           headerText="{i18n>MY_BONUS_AMOUNT}">
+
+                        <VBox alignItems="Center" width="100%" class="ytdBlock sapUiMediumMarginBottom">
+                            <Label text="{i18n>YEAR_TO_DATE_TOTAL}" design="Bold" />
+                            <ObjectNumber
+                                class="sapUiTinyMarginTop bonusYtd"
+                                number="{/startup/ytdAmount}"
+                                unit="{/startup/currency}"
+                                />
+                            <Text text="{i18n>YEAR_TO_DATE_EXPLANATION}" textAlign="Center" width="100%" class="sapUiTinyMarginTop" />
                         </VBox>
 
-                        <VBox id="_IDGenVBox1" visible="{/isGlobalIdVisible}" class="bonusField">
-                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="bonusFieldLabel" />
+                        <!-- MANAGER VIEW -->
+                        <VBox id="_IDGenVBox1" visible="{/isGlobalIdVisible}" class="sapUiMediumMarginBottom">
+                            <Label id="_IDGenLabel" text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" />
                             <Input 
                                 id="employeeIdInput" 
                                 placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}" 
@@ -35,8 +40,9 @@
                                 width="100%" />
                         </VBox>
 
-                        <VBox visible="{mUserDataModel>/isHR}" class="bonusField">
-                            <Label text="{i18n>GLOBAL_ID}" design="Bold" class="bonusFieldLabel" />
+                        <!-- HR VIEW -->
+                        <VBox visible="{mUserDataModel>/isHR}" class="sapUiMediumMarginBottom">
+                            <Label text="{i18n>GLOBAL_ID}" design="Bold" class="sapUiTinyMarginBottom" />
                             <Input 
                                 id="hrEmployeeIdInput"
                                 placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}"
@@ -46,8 +52,8 @@
                                 change=".onGlobalIdChange"/>
                         </VBox>
 
-                        <VBox id="_IDGenVBox2" class="bonusField">
-                            <Label id="_IDGenLabel1" text="{i18n>BONUS_YEAR}" design="Bold" class="bonusFieldLabel" />
+                        <VBox id="_IDGenVBox2" class="sapUiMediumMarginBottom">
+                            <Label id="_IDGenLabel1" text="{i18n>BONUS_YEAR}" design="Bold" class="sapUiTinyMarginBottom" />
                             <Select id="bonusYearInput" 
                                     forceSelection="false"
                                     items="{/availableYears}" 
@@ -57,8 +63,8 @@
                             </Select>
                         </VBox>
 
-                        <VBox id="_IDGenVBox3" class="bonusField">
-                            <Label id="_IDGenLabel2" text="{i18n>BONUS_QUARTER}" design="Bold" class="bonusFieldLabel" />
+                        <VBox id="_IDGenVBox3" class="sapUiMediumMarginBottom">
+                            <Label id="_IDGenLabel2" text="{i18n>BONUS_QUARTER}" design="Bold" class="sapUiTinyMarginBottom" />
                             <Select id="bonusQuarterInput" 
                                     forceSelection="false"
                                     enabled="{/isQuarterEnabled}"
@@ -69,23 +75,38 @@
                             </Select>
                         </VBox>
 
-                        <HBox justifyContent="Center" width="100%" class="detailsAction">
-                            <Button id="searchBtn" text="{i18n>GET_THE_DETAILS}" press=".onGetDetailsPress" enabled="{/isSearchEnabled}" class="detailsBtn" />
+                        <HBox justifyContent="Center" width="100%" class="sapUiSmallMarginTop">
+                            <Button id="searchBtn" 
+                                    text="{i18n>GET_THE_DETAILS}" 
+                                    type="Accept"
+                                    press=".onSearchPress" 
+                                    enabled="{/isSearchEnabled}"
+                                    class="detailsBtn" />
                         </HBox>
-                    </VBox>
+                    </Panel>
 
-                    <VBox class="heroSide">
-                        <VBox class="heroGradient" />
-                        <VBox id="detailsStack" class="detailsStack">
-                            <HBox alignItems="Center" class="detailsStackBar">
+                    <!-- Right: empty state + sliding details card -->
+                    <VBox id="detailsStack" width="100%" class="detailsPane">
+
+                        <VBox alignItems="Center"
+                              justifyContent="Center"
+                              height="100%"
+                              class="heroEmpty sapUiContentPadding">
+                            <Title text="{i18n>NO_DATA_TITLE}" level="H3" />
+                            <Text text="{i18n>NO_DATA_DESCRIPTION}" class="sapUiSmallMarginTop" textAlign="Center" />
+                        </VBox>
+
+                        <VBox id="detailsPanel" width="100%" height="100%" class="detailsOpen">
+                            <OverflowToolbar class="detailsToolbar">
                                 <Button
                                     icon="sap-icon://nav-back"
                                     type="Transparent"
                                     press=".onDetailsBack"
-                                    class="detailsBackBtn"
                                     tooltip="{i18n>GET_THE_DETAILS}" />
-                                <Title text="{i18n>GET_THE_DETAILS}" level="H4" class="detailsStackTitle" />
-                            </HBox>
+                                <Title text="{i18n>GET_THE_DETAILS}" level="H4" />
+                                <ToolbarSpacer />
+                            </OverflowToolbar>
+
                             <mvc:XMLView
                                 id="resultsView"
                                 viewName="adobeform.view.gcdStatementResults"
@@ -94,8 +115,9 @@
                     </VBox>
                 </HBox>
 
+                <!-- Disclaimer -->
                 <VBox class="disclaimerBand">
-                    <l:Grid defaultSpan="XL3 L3 M6 S12" containerQuery="true">
+                    <l:Grid defaultSpan="XL3 L3 M6 S12" containerQuery="true" hSpacing="0" vSpacing="0">
                         <FormattedText htmlText="{i18n>CALCULATION_BASIS_HTML}" class="disclaimerText" />
                         <FormattedText htmlText="{i18n>ELIGIBILITY_PRORATION_HTML}" class="disclaimerText" />
                         <FormattedText htmlText="{i18n>PAYMENT_INFORMATION_HTML}" class="disclaimerText" />
@@ -105,7 +127,7 @@
                         text="{i18n>NOTE_GCD_BONUS_PRETAX}"
                         type="Information"
                         showIcon="true"
-                        class="sapUiSmallMarginTop" />
+                        class="disclaimerNote" />
                 </VBox>
 
             </VBox>
