@@ -16,7 +16,7 @@
                     tooltip="{i18n>appTitle}"/>
                 <VBox justifyContent="Center" class="sapUiSmallMarginBegin">
                     <Label text="{i18n>BONUS_PROGRAM}" class="qbOverline"/>
-                    <Title text="{i18n>REWARDING_EXCELLENCE}" level="H5"/>
+                    <Title text="{i18n>REWARDING_EXCELLENCE}" level="H4"/>
                 </VBox>
                 <ToolbarSpacer/>
                 <Select
@@ -28,21 +28,21 @@
                     <core:Item key="es" text="Español"/>
                 </Select>
                 <VBox justifyContent="Center" class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
-                    <Text text="{i18n>GREETING} {mUserDataModel>/displayName}"/>
+                    <Title text="{i18n>GREETING} {mUserDataModel>/displayName}" level="H5"/>
                     <Text text="{mUserDataModel>/title}" visible="{= ${mUserDataModel>/title} !== '' }"/>
                 </VBox>
                 <Avatar
                     initials="{mUserDataModel>/initials}"
-                    displaySize="S"
+                    displaySize="M"
                     backgroundColor="Accent6"/>
             </tnt:ToolHeader>
         </tnt:header>
         <tnt:mainContents>
-            <VBox fitContainer="true" justifyContent="SpaceBetween">
-                <App id="app"/>
+            <VBox class="qbCanvas" width="100%">
+                <App id="app" class="sapUiResponsiveContentPadding"/>
                 <HBox justifyContent="Center" alignItems="Center" class="qbBrandBand">
-                    <Title text="{i18n>REWARDING}" titleStyle="H3" class="sapUiTinyMarginEnd"/>
-                    <Title text="{i18n>EXCELLENCE}" titleStyle="H3" class="qbAccent"/>
+                    <Title text="{i18n>REWARDING}" level="H3" class="sapUiTinyMarginEnd"/>
+                    <Title text="{i18n>EXCELLENCE}" level="H3" class="qbAccent"/>
                 </HBox>
             </VBox>
         </tnt:mainContents>

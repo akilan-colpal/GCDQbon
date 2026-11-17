@@ -3,62 +3,72 @@
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
-    xmlns:form="sap.ui.layout.form">
+    xmlns:form="sap.ui.layout.form"
+    xmlns:f="sap.f">
 
-    <Page id="page" showHeader="false" class="sapUiResponsiveContentPadding">
+    <Page id="page" showHeader="false" backgroundDesign="Transparent">
         <content>
-            <VBox class="qbHero sapUiContentPadding">
-                <Title text="{i18n>MY_BONUS_AMOUNT}" titleStyle="H2" class="qbOnBrand sapUiSmallMarginBottom"/>
+            <VBox class="sapUiMediumMargin" width="auto">
+                <Label text="{i18n>BONUS_PROGRAM}" class="qbOverline sapUiTinyMarginBottom"/>
+                <Title text="{i18n>MY_BONUS_AMOUNT}" titleStyle="H1" class="sapUiTinyMarginBottom"/>
+                <Text text="{i18n>START_SUBTITLE}" class="sapUiSmallMarginBottom"/>
 
-                <form:Form editable="true">
-                    <form:layout>
-                        <form:ColumnLayout columnsM="2" columnsL="3" columnsXL="4"/>
-                    </form:layout>
-                    <form:formContainers>
-                        <form:FormContainer>
-                            <form:formElements>
-                                <form:FormElement label="{i18n>GLOBAL_ID}">
-                                    <form:fields>
-                                        <Input
-                                            id="employeeIdInput"
-                                            value="{path: 'journey>/selectedEmployeeLabel', mode: 'OneWay'}"
-                                            editable="{= ${journey>/role} === 'hr' || ${journey>/role} === 'manager' }"
-                                            showValueHelp="{= ${journey>/role} === 'hr' || ${journey>/role} === 'manager' }"
-                                            valueHelpRequest=".onEmployeeValueHelp"
-                                            change=".onGlobalIdChange"
-                                            placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}"/>
-                                    </form:fields>
-                                </form:FormElement>
-                                <form:FormElement label="{i18n>BONUS_YEAR}">
-                                    <form:fields>
-                                        <Select
-                                            id="bonusYearInput"
-                                            selectedKey="{journey>/year}"
-                                            items="{journey>/years}"
-                                            change=".onYearChange"
-                                            forceSelection="false"
-                                            enabled="{= ${journey>/selectedEmployeeId} !== '' &amp;&amp; !${journey>/periodsLoading} &amp;&amp; ${journey>/years}.length > 0 }">
-                                            <core:Item key="{journey>year}" text="{journey>year}"/>
-                                        </Select>
-                                    </form:fields>
-                                </form:FormElement>
-                            </form:formElements>
-                        </form:FormContainer>
-                    </form:formContainers>
-                </form:Form>
+                <f:Card class="sapUiMediumMarginTop" width="100%">
+                    <f:content>
+                        <VBox class="sapUiLargeMargin">
+                            <form:Form editable="true" width="100%">
+                                <form:layout>
+                                    <form:ColumnLayout columnsM="2" columnsL="2" columnsXL="2"/>
+                                </form:layout>
+                                <form:formContainers>
+                                    <form:FormContainer>
+                                        <form:formElements>
+                                            <form:FormElement label="{i18n>GLOBAL_ID}">
+                                                <form:fields>
+                                                    <Input
+                                                        id="employeeIdInput"
+                                                        value="{path: 'journey>/selectedEmployeeLabel', mode: 'OneWay'}"
+                                                        editable="{= ${journey>/role} === 'hr' || ${journey>/role} === 'manager' }"
+                                                        showValueHelp="{= ${journey>/role} === 'hr' || ${journey>/role} === 'manager' }"
+                                                        valueHelpRequest=".onEmployeeValueHelp"
+                                                        change=".onGlobalIdChange"
+                                                        placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}"/>
+                                                </form:fields>
+                                            </form:FormElement>
+                                            <form:FormElement label="{i18n>BONUS_YEAR}">
+                                                <form:fields>
+                                                    <Select
+                                                        id="bonusYearInput"
+                                                        selectedKey="{journey>/year}"
+                                                        items="{journey>/years}"
+                                                        change=".onYearChange"
+                                                        forceSelection="false"
+                                                        enabled="{= ${journey>/selectedEmployeeId} !== '' &amp;&amp; !${journey>/periodsLoading} &amp;&amp; ${journey>/years}.length > 0 }">
+                                                        <core:Item key="{journey>year}" text="{journey>year}"/>
+                                                    </Select>
+                                                </form:fields>
+                                            </form:FormElement>
+                                        </form:formElements>
+                                    </form:FormContainer>
+                                </form:formContainers>
+                            </form:Form>
 
-                <HBox visible="{journey>/periodsLoading}" alignItems="Center" class="sapUiSmallMarginTop">
-                    <BusyIndicator size="1rem"/>
-                    <Text text="{i18n>LOADING_PERIODS}" class="qbOnBrand sapUiTinyMarginBegin"/>
-                </HBox>
+                            <HBox visible="{journey>/periodsLoading}" alignItems="Center" class="sapUiSmallMarginTop">
+                                <BusyIndicator size="1.5rem"/>
+                                <Text text="{i18n>LOADING_PERIODS}" class="sapUiSmallMarginBegin"/>
+                            </HBox>
 
-                <Button
-                    id="getDetailsButton"
-                    text="{= ${journey>/periodsLoading} ? ${i18n>LOADING} : ${i18n>GET_DETAILS} }"
-                    type="Accept"
-                    class="sapUiMediumMarginTop"
-                    enabled="{= ${journey>/selectedEmployeeId} !== '' &amp;&amp; ${journey>/year} !== '' &amp;&amp; ${journey>/quarters}.length > 0 &amp;&amp; !${journey>/periodsLoading} &amp;&amp; !${journey>/summariesLoading} }"
-                    press=".onContinue"/>
+                            <Button
+                                id="getDetailsButton"
+                                text="{= ${journey>/periodsLoading} ? ${i18n>LOADING} : ${i18n>GET_DETAILS} }"
+                                type="Emphasized"
+                                icon="sap-icon://journey-arrive"
+                                class="sapUiLargeMarginTop"
+                                enabled="{= ${journey>/selectedEmployeeId} !== '' &amp;&amp; ${journey>/year} !== '' &amp;&amp; ${journey>/quarters}.length > 0 &amp;&amp; !${journey>/periodsLoading} &amp;&amp; !${journey>/summariesLoading} }"
+                                press=".onContinue"/>
+                        </VBox>
+                    </f:content>
+                </f:Card>
             </VBox>
         </content>
     </Page>

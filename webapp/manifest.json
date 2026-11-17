@@ -105,7 +105,7 @@
         "transition": "slide",
         "type": "View",
         "viewType": "XML",
-        "viewPath": "adobeform.view"
+        "path": "adobeform.view"
       },
       "routes": [
         {

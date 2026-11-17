@@ -1,40 +1,42 @@
 /*
- * Scoped extras on sap_horizon. Colors come from theme parameters
- * (sap_horizon css_variables.css). Derived shades use oklch(from var(--sapBrandColor)).
- * The Accept button uses --sapButton_Accept_Background; there is no theme parameter
- * for the React lime (#9CCB3B), so that hex is not copied.
- * .sapFCardContent is cleared only on .qbBrandCard so the brand fill can show.
+ * Minimal app-scoped styling for sap_horizon.
+ * Theme parameters only (Writing Themeable CSS). No control-DOM hacks
+ * except clearing the brand card content background so the fill shows.
  */
 
+.qbCanvas {
+	background: color-mix(in oklch, var(--sapBrandColor) 5%, var(--sapBackgroundColor));
+}
+
 .qbOverline {
-    color: var(--sapBrandColor);
+	color: var(--sapBrandColor);
 }
 
 .qbAccent {
-    color: var(--sapBrandColor);
+	color: var(--sapBrandColor);
 }
 
 .qbBrandBand {
-    padding: 2.5rem 1rem;
+	padding-block: 2rem;
+	padding-inline: 1rem;
 }
 
-.qbHero,
-.qbPeriodBand,
-.qbBrandCard.sapFCard,
-.qbBrandCard .sapFCardContent {
-    background-color: transparent;
-    background-image: linear-gradient(
-        145deg,
-        oklch(from var(--sapBrandColor) calc(l - 0.08) c h),
-        var(--sapBrandColor) 70%
-    );
-    border-radius: var(--sapElement_BorderCornerRadius);
-    box-shadow: var(--sapContent_Shadow1);
+.qbBrandSurface {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+	background-color: var(--sapBrandColor);
+	background-image: linear-gradient(
+		145deg,
+		oklch(from var(--sapBrandColor) calc(l - 0.08) c h),
+		var(--sapBrandColor) 70%
+	);
+	border-radius: var(--sapTile_BorderCornerRadius, var(--sapElement_BorderCornerRadius));
+	box-shadow: var(--sapContent_Shadow1);
 }
 
-.qbHero {
-    min-height: 28rem;
-    padding: 2rem;
+.qbBrandSurface.sapFCard .sapFCardContent {
+	background: transparent;
 }
 
 .qbOnBrand,
@@ -44,33 +46,58 @@
 .qbOnBrand.sapMObjectNumber,
 .qbOnBrand .sapMObjectNumberText,
 .qbOnBrand .sapMObjectNumberUnit {
-    color: var(--sapContent_ContrastTextColor);
+	color: var(--sapContent_ContrastTextColor);
 }
 
 .qbQuarterCard {
-    border-radius: var(--sapElement_BorderCornerRadius);
-    box-shadow: var(--sapContent_Shadow0);
-    transition: transform 160ms ease, box-shadow 160ms ease;
+	border-radius: var(--sapTile_BorderCornerRadius, var(--sapElement_BorderCornerRadius));
+	box-shadow: var(--sapContent_Shadow0);
+	transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .qbQuarterCard:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--sapContent_Shadow1);
+	transform: translateY(-0.125rem);
+	box-shadow: var(--sapContent_Shadow1);
+}
+
+.qbPeriodBand {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+	padding: 1.5rem;
+	background-color: var(--sapBrandColor);
+	background-image: linear-gradient(
+		145deg,
+		oklch(from var(--sapBrandColor) calc(l - 0.08) c h),
+		var(--sapBrandColor) 70%
+	);
+	border-radius: var(--sapTile_BorderCornerRadius, var(--sapElement_BorderCornerRadius));
+	box-shadow: var(--sapContent_Shadow1);
 }
 
 .qbFormula {
-    background: var(--sapGroup_ContentBackground);
-    border: 1px solid var(--sapList_BorderColor);
-    border-radius: var(--sapElement_BorderCornerRadius);
-    padding: 0.75rem;
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 100%;
+	background: var(--sapGroup_ContentBackground);
+	border: var(--sapButton_BorderWidth, 0.0625rem) solid var(--sapList_BorderColor);
+	border-radius: var(--sapElement_BorderCornerRadius);
+	padding: 0.75rem;
+	gap: 0.75rem;
+	flex-wrap: wrap;
 }
 
 .qbFormulaResult {
-    background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
-    border-radius: var(--sapElement_BorderCornerRadius);
-    padding: 0.75rem;
+	background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
+	border-radius: var(--sapElement_BorderCornerRadius);
+	padding: 0.75rem;
 }
 
 .qbAchievementRow {
-    background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
+	background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
+}
+
+.qbKpiPill {
+	margin-inline-end: 0.75rem;
+	margin-block-end: 0.5rem;
 }

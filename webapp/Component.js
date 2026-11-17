@@ -80,33 +80,33 @@ sap.ui.define([
                 oRoot.setBusy(true);
             }
 
-            var oBtpModel = new JSONModel();
-            oBtpModel.attachRequestCompleted(function (oEvent) {
-                var oData = oEvent.getSource().getData();
-                var sEmail = oData.email || oData.name || "";
-                if (!sEmail) {
-                    this.showAccessDenied(oBundle.getText("ACCESS_DENIED_DESCRIPTION"));
-                    return;
-                }
-                this.fnGetUserAccess(sEmail);
-            }.bind(this));
-
-            oBtpModel.attachRequestFailed(function () {
-                this.fnApplyAccess({
-                    email: "local.dev@colpal.com",
-                    userId: "00006077",
-                    userGlobalId: "00006077",
-                    isHR: "Y",
-                    isMgr: "Y",
-                    firstName: "",
-                    lastName: "",
-                    title: ""
-                }, "");
-            }.bind(this));
-
             var fnLoadUser = function () {
-                oBtpModel.loadData("./userapi/attributes");
-            };
+                fetch("./userapi/attributes").then(function (oResponse) {
+                    if (!oResponse.ok) {
+                        throw new Error("userapi");
+                    }
+                    return oResponse.json();
+                }).then(function (oData) {
+                    var sEmail = oData.email || oData.name || "";
+                    if (!sEmail) {
+                        this.showAccessDenied(oBundle.getText("ACCESS_DENIED_DESCRIPTION"));
+                        return;
+                    }
+                    this.fnGetUserAccess(sEmail);
+                }.bind(this)).catch(function () {
+                    console.warn("Local environment — using user model");
+                    this.fnApplyAccess({
+                        email: "local.dev@colpal.com",
+                        userId: "00006077",
+                        userGlobalId: "00006077",
+                        isHR: "Y",
+                        isMgr: "Y",
+                        firstName: "",
+                        lastName: "",
+                        title: ""
+                    }, "local.dev@colpal.com");
+                }.bind(this));
+            }.bind(this);
             this.getModel().metadataLoaded().then(fnLoadUser, fnLoadUser);
         },
 
