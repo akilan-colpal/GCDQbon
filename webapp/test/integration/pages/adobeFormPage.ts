@@ -1,6 +1,6 @@
 import Opa5 from "sap/ui/test/Opa5";
 
-const sViewName = "adobeForm";
+const sViewName = "Start";
 
 export default class adobeFormPage extends Opa5 {
 	// Actions

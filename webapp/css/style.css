@@ -1,67 +1,76 @@
-/* Enter your custom styles here */
-.toolHeader {
-  background-color: #354a5f !important;
+/*
+ * Scoped extras on sap_horizon. Colors come from theme parameters
+ * (sap_horizon css_variables.css). Derived shades use oklch(from var(--sapBrandColor)).
+ * The Accept button uses --sapButton_Accept_Background; there is no theme parameter
+ * for the React lime (#9CCB3B), so that hex is not copied.
+ * .sapFCardContent is cleared only on .qbBrandCard so the brand fill can show.
+ */
+
+.qbOverline {
+    color: var(--sapBrandColor);
 }
 
-.toolHeader .sapMTitle {
-  color: #ffffff !important;
-  font-size: 1.125rem !important;
-  font-weight: bold !important;
+.qbAccent {
+    color: var(--sapBrandColor);
 }
 
-.toolHeaderTitle {
-  color: #ffffff;
-}
-.KPIResultColumn {
-    background-color: #e8f5e9 !important;
-    color: #2e7d32 !important;      
+.qbBrandBand {
+    padding: 2.5rem 1rem;
 }
 
-.kpiBoxOutline {
-    border: 1px solid #d9d9d9; 
-    border-radius: 0.25rem;   
-    background-color: #ffffff; 
-    padding: 1.5rem 2rem;     
-    min-width: 12rem;         
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+.qbHero,
+.qbPeriodBand,
+.qbBrandCard.sapFCard,
+.qbBrandCard .sapFCardContent {
+    background-color: transparent;
+    background-image: linear-gradient(
+        145deg,
+        oklch(from var(--sapBrandColor) calc(l - 0.08) c h),
+        var(--sapBrandColor) 70%
+    );
+    border-radius: var(--sapElement_BorderCornerRadius);
+    box-shadow: var(--sapContent_Shadow1);
 }
 
-.kpiLabelBox {
-    border: 1px solid #d9d9d9;
-    border-right: none; 
-    border-radius: 0.25rem 0 0 0.25rem; 
-    background-color: #f2f2f2;
-    padding: 0.5rem 1rem;
+.qbHero {
+    min-height: 28rem;
+    padding: 2rem;
 }
 
-.kpiValueBox {
-    border: 1px solid #d9d9d9;
-    border-radius: 0 0.25rem 0.25rem 0;
-    background-color: #ffffff;
-    padding: 0.5rem 1rem;
+.qbOnBrand,
+.qbOnBrand.sapMTitle,
+.qbOnBrand.sapMText,
+.qbOnBrand.sapMLabel,
+.qbOnBrand.sapMObjectNumber,
+.qbOnBrand .sapMObjectNumberText,
+.qbOnBrand .sapMObjectNumberUnit {
+    color: var(--sapContent_ContrastTextColor);
 }
 
-.iconSize .sapMBtnIcon {
-    font-size: 2vh !important; 
+.qbQuarterCard {
+    border-radius: var(--sapElement_BorderCornerRadius);
+    box-shadow: var(--sapContent_Shadow0);
+    transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
-.myCustomSearchMargin {
-    margin-left: 2rem !important;
-    margin-right: 1rem !important;
-        max-width: calc(100% - 4rem); 
+.qbQuarterCard:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--sapContent_Shadow1);
 }
 
-.cappedAppContainer {
-    max-width: 100rem;
-    margin: 0 auto !important;
+.qbFormula {
+    background: var(--sapGroup_ContentBackground);
+    border: 1px solid var(--sapList_BorderColor);
+    border-radius: var(--sapElement_BorderCornerRadius);
+    padding: 0.75rem;
 }
 
-.blackTextLabel {
-    color: #000000 !important;
+.qbFormulaResult {
+    background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
+    border-radius: var(--sapElement_BorderCornerRadius);
+    padding: 0.75rem;
 }
 
-.sapUiTableColHdrScr .sapMLabel,
-.sapUiTableColHdr .sapMLabel {
-    text-align: center !important;
-    width: 100% !important;
+.qbAchievementRow {
+    background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
 }

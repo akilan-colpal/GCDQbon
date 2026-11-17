@@ -1,18 +1,23 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/core/Configuration",
-    "sap/ui/model/json/JSONModel"
-], function (BaseController, Configuration, JSONModel) { 
+    "sap/base/i18n/Localization",
+    "require"
+], function (Controller, Localization, require) {
     "use strict";
 
-    return BaseController.extend("adobeform.controller.App", {
-        pressLogo: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteadobeForm");
+    return Controller.extend("adobeform.controller.App", {
+        onInit: function () {
+            this.byId("logo").setSrc(require.toUrl("adobeform/image/ColPal_Icon.svg"));
         },
-      
+
+        pressLogo: function () {
+            this.getOwnerComponent().getRouter().navTo("RouteStart");
+        },
+
         onLanguageChange: function (oEvent) {
-            var sSelectedLang = oEvent.getParameter("selectedItem").getKey();
-            Configuration.setLanguage(sSelectedLang);
+            var sLanguage = oEvent.getParameter("selectedItem").getKey();
+            this.getOwnerComponent().getModel("appSettings").setProperty("/language", sLanguage);
+            Localization.setLanguage(sLanguage);
         }
     });
 });

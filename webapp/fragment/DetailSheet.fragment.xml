@@ -1,0 +1,333 @@
+<core:FragmentDefinition
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns:f="sap.f"
+    xmlns:layout="sap.ui.layout"
+    xmlns:microchart="sap.suite.ui.microchart">
+    <Dialog
+        id="detailDialog"
+        contentWidth="96%"
+        stretch="{device>/system/phone}"
+        verticalScrolling="true"
+        core:require="{
+            Decimal: 'sap/ui/model/odata/type/Decimal',
+            Formatter: 'adobeform/model/formatter'
+        }">
+        <customHeader>
+            <Bar>
+                <contentLeft>
+                    <VBox class="sapUiSmallMarginBegin">
+                        <Label text="{= ${journey>/detailCriteria/year} + ' · ' + ${journey>/detailCriteria/quarter} }"/>
+                        <Title text="{journey>/detail/VarPayTemplateName}" wrapping="false"/>
+                    </VBox>
+                </contentLeft>
+                <contentRight>
+                    <Button
+                        text="{i18n>GENERATE_PDF}"
+                        type="Emphasized"
+                        icon="sap-icon://pdf-attachment"
+                        enabled="{= ${journey>/detail} !== null &amp;&amp; !${journey>/pdfLoading} }"
+                        press=".onGeneratePdf"/>
+                    <Button icon="sap-icon://decline" tooltip="{i18n>CLOSE}" press=".onCloseDetail"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <VBox class="sapUiSmallMargin">
+                <VBox class="qbPeriodBand sapUiMediumMargin">
+                    <Label text="{i18n>PERIOD_TOTAL}" class="qbOnBrand"/>
+                    <ObjectNumber
+                        class="qbOnBrand"
+                        emphasized="true"
+                        number="{
+                            path: 'journey>/detail/totalQuarterAward',
+                            type: 'Decimal',
+                            formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                            constraints: { scale: 'variable', nullable: true, precision: 20 }
+                        }"
+                        unit="{journey>/detail/currency}"/>
+                    <HBox wrap="Wrap" justifyContent="Center" class="sapUiSmallMarginTop" items="{journey>/detail/to_KPIs}">
+                        <VBox alignItems="Center" class="sapUiSmallMargin">
+                            <ObjectStatus
+                                inverted="true"
+                                state="Information"
+                                text="{
+                                    path: 'journey>kpiPayout',
+                                    type: 'Decimal',
+                                    formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                    constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                }"/>
+                            <Text text="{journey>KPIName}" class="qbOnBrand sapUiTinyMarginTop"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <f:Card class="sapUiSmallMarginTop">
+                    <f:content>
+                        <VBox class="sapUiMediumMargin">
+                            <Title text="{i18n>BONUSABLE_EARNINGS}" level="H4"/>
+                            <ObjectNumber
+                                class="sapUiSmallMarginTop sapUiSmallMarginBottom"
+                                emphasized="true"
+                                number="{
+                                    path: 'journey>/detail/bonusableEarnings',
+                                    type: 'Decimal',
+                                    formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                    constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                }"
+                                unit="{journey>/detail/currency}"/>
+
+                            <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                                <Label text="{i18n>QUARTERLY_TARGET}"/>
+                                <Text text="{ path: 'journey>/detail/summary/quarterTargetPercent', formatter: 'Formatter.formatPercent' }"/>
+                            </HBox>
+
+                            <Panel expandable="true" expanded="false" class="sapUiTinyMarginBottom">
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <Title text="{i18n>QUARTERLY_TARGET_AMOUNT}" level="H6"/>
+                                        <ToolbarSpacer/>
+                                        <ObjectNumber
+                                            number="{
+                                                path: 'journey>/detail/summary/quarterTargetAmount',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                            }"
+                                            unit="{journey>/detail/currency}"/>
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
+                                    <HBox class="qbFormula" alignItems="Center" justifyContent="SpaceAround">
+                                        <VBox alignItems="Center">
+                                            <Text text="{
+                                                path: 'journey>/detail/bonusableEarnings',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                            }"/>
+                                            <Label text="{i18n>BONUSABLE_EARNINGS}"/>
+                                        </VBox>
+                                        <Text text="×"/>
+                                        <VBox alignItems="Center">
+                                            <Text text="{ path: 'journey>/detail/summary/quarterTargetPercent', formatter: 'Formatter.formatPercent' }"/>
+                                            <Label text="{i18n>QUARTERLY_TARGET_PERCENT}"/>
+                                        </VBox>
+                                        <Text text="="/>
+                                        <VBox alignItems="Center" class="qbFormulaResult">
+                                            <Text text="{
+                                                path: 'journey>/detail/summary/quarterTargetAmount',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                            }"/>
+                                            <Label text="{i18n>OVERALL_TARGET_AMOUNT}"/>
+                                        </VBox>
+                                    </HBox>
+                                </content>
+                            </Panel>
+
+                            <HBox justifyContent="SpaceBetween" class="sapUiTinyMarginBottom">
+                                <Label text="{i18n>PRORATION_PERCENT}"/>
+                                <Text text="{ path: 'journey>/detail/summary/paymentPeriod', formatter: 'Formatter.formatPercent' }"/>
+                            </HBox>
+
+                            <Panel expandable="true" expanded="false">
+                                <headerToolbar>
+                                    <Toolbar>
+                                        <Title text="{i18n>PRORATED_TARGET_AMOUNT}" level="H6"/>
+                                        <ToolbarSpacer/>
+                                        <ObjectNumber
+                                            number="{
+                                                path: 'journey>/detail/proratedTargetAmount',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                            }"
+                                            unit="{journey>/detail/currency}"/>
+                                    </Toolbar>
+                                </headerToolbar>
+                                <content>
+                                    <HBox class="qbFormula" alignItems="Center" justifyContent="SpaceAround">
+                                        <VBox alignItems="Center">
+                                            <Text text="{
+                                                path: 'journey>/detail/summary/quarterTargetAmount',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                            }"/>
+                                            <Label text="{i18n>QUARTERLY_TARGET_AMOUNT}"/>
+                                        </VBox>
+                                        <Text text="×"/>
+                                        <VBox alignItems="Center">
+                                            <Text text="{ path: 'journey>/detail/summary/paymentPeriod', formatter: 'Formatter.formatPercent' }"/>
+                                            <Label text="{i18n>PRORATION_PERCENT}"/>
+                                        </VBox>
+                                        <Text text="="/>
+                                        <VBox alignItems="Center" class="qbFormulaResult">
+                                            <Text text="{
+                                                path: 'journey>/detail/proratedTargetAmount',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                            }"/>
+                                            <Label text="{i18n>PRORATED_TARGET_AMOUNT}"/>
+                                        </VBox>
+                                    </HBox>
+                                </content>
+                            </Panel>
+                        </VBox>
+                    </f:content>
+                </f:Card>
+
+                <f:Card class="sapUiSmallMarginTop">
+                    <f:content>
+                        <VBox class="sapUiMediumMargin">
+                            <Title text="{i18n>KPI_DETAILS}" level="H4" class="sapUiSmallMarginBottom"/>
+                            <Text
+                                text="{i18n>NO_KPIS}"
+                                visible="{= !${journey>/detail/to_KPIs} || ${journey>/detail/to_KPIs}.length === 0 }"/>
+                            <VBox items="{journey>/detail/to_KPIs}">
+                                <Panel expandable="true" expanded="false" class="sapUiTinyMarginBottom">
+                                    <headerToolbar>
+                                        <Toolbar>
+                                            <Title text="{journey>KPIName}" level="H5"/>
+                                            <ToolbarSpacer/>
+                                            <ObjectStatus
+                                                inverted="true"
+                                                state="Information"
+                                                text="{
+                                                    path: 'journey>kpiPayout',
+                                                    type: 'Decimal',
+                                                    formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                    constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                }"/>
+                                        </Toolbar>
+                                    </headerToolbar>
+                                    <content>
+                                        <layout:Grid defaultSpan="XL6 L6 M12 S12" containerQuery="true">
+                                            <VBox class="sapUiSmallMargin">
+                                                <HBox class="qbFormula sapUiTinyMarginBottom" alignItems="Center" justifyContent="SpaceAround">
+                                                    <VBox>
+                                                        <Text text="{
+                                                            path: 'journey>proratedTarget',
+                                                            type: 'Decimal',
+                                                            formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                            constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                        }"/>
+                                                        <Label text="{i18n>PRORATED_TARGET}"/>
+                                                    </VBox>
+                                                    <Text text="×"/>
+                                                    <VBox>
+                                                        <Text text="{ path: 'journey>kpiWeight', formatter: 'Formatter.formatPercent' }"/>
+                                                        <Label text="{i18n>KPI_WEIGHT}"/>
+                                                    </VBox>
+                                                </HBox>
+                                                <HBox class="qbFormula sapUiTinyMarginBottom" alignItems="Center" justifyContent="SpaceAround">
+                                                    <VBox>
+                                                        <Text text="{
+                                                            path: 'journey>kpiTargetAmount',
+                                                            type: 'Decimal',
+                                                            formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                            constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                        }"/>
+                                                        <Label text="{i18n>TARGET_AMOUNT}"/>
+                                                    </VBox>
+                                                    <Text text="×"/>
+                                                    <VBox>
+                                                        <Text text="{ path: 'journey>kpiPayoutPercent', formatter: 'Formatter.formatPercent' }"/>
+                                                        <Label text="{i18n>ACHIEVEMENT}"/>
+                                                    </VBox>
+                                                </HBox>
+                                                <HBox class="qbFormulaResult" justifyContent="SpaceBetween" alignItems="Center">
+                                                    <Text text="{i18n>MY_KPI_PAYOUT}"/>
+                                                    <ObjectNumber
+                                                        number="{
+                                                            path: 'journey>kpiPayout',
+                                                            type: 'Decimal',
+                                                            formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                            constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                        }"
+                                                        unit="{journey>/detail/currency}"/>
+                                                </HBox>
+                                            </VBox>
+                                            <VBox class="sapUiSmallMargin">
+                                                <Table inset="false">
+                                                    <columns>
+                                                        <Column><Text text=""/></Column>
+                                                        <Column hAlign="End"><Text text="{i18n>KPI_RESULT}"/></Column>
+                                                        <Column hAlign="End"><Text text="{i18n>PAYOUT_PERCENT}"/></Column>
+                                                        <Column hAlign="End"><Text text="{i18n>AMOUNT}"/></Column>
+                                                    </columns>
+                                                    <items>
+                                                        <ColumnListItem>
+                                                            <Text text="{i18n>TARGET}"/>
+                                                            <Text text="{
+                                                                path: 'journey>kpiResTarget',
+                                                                type: 'Decimal',
+                                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                            }"/>
+                                                            <Text text="100%"/>
+                                                            <Text text="{
+                                                                path: 'journey>kpiTargetAmount',
+                                                                type: 'Decimal',
+                                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                            }"/>
+                                                        </ColumnListItem>
+                                                        <ColumnListItem class="qbAchievementRow">
+                                                            <Text text="{i18n>ACHIEVEMENT}"/>
+                                                            <Text text="{
+                                                                path: 'journey>kpiResAchievement',
+                                                                type: 'Decimal',
+                                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                            }"/>
+                                                            <Text text="{ path: 'journey>kpiPayoutPercent', formatter: 'Formatter.formatPercent' }"/>
+                                                            <Text text="{
+                                                                path: 'journey>kpiPayout',
+                                                                type: 'Decimal',
+                                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                                constraints: { scale: 'variable', nullable: true, precision: 20 }
+                                                            }"/>
+                                                        </ColumnListItem>
+                                                    </items>
+                                                </Table>
+                                                <microchart:LineMicroChart height="9rem" width="100%" points="{journey>chartPoints}">
+                                                    <microchart:points>
+                                                        <microchart:LineMicroChartPoint x="{journey>x}" y="{journey>y}"/>
+                                                    </microchart:points>
+                                                </microchart:LineMicroChart>
+                                            </VBox>
+                                        </layout:Grid>
+                                    </content>
+                                </Panel>
+                            </VBox>
+                        </VBox>
+                    </f:content>
+                </f:Card>
+
+                <VBox class="sapUiMediumMarginTop">
+                    <Table inset="false">
+                        <columns>
+                            <Column width="25%"><Text text=""/></Column>
+                            <Column width="25%"><Text text=""/></Column>
+                            <Column width="25%"><Text text=""/></Column>
+                            <Column width="25%"><Text text=""/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem vAlign="Top">
+                                <FormattedText htmlText="{i18n>CALCULATION_BASIS_HTML}"/>
+                                <FormattedText htmlText="{i18n>ELIGIBILITY_PRORATION_HTML}"/>
+                                <FormattedText htmlText="{i18n>PAYMENT_INFORMATION_HTML}"/>
+                                <FormattedText htmlText="{i18n>OFFICIAL_POLICY_DISCLAIMER_HTML}"/>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                    <Title text="{i18n>NOTE_GCD_BONUS_PRETAX}" level="H6" textAlign="Center" class="sapUiSmallMarginTop"/>
+                </VBox>
+            </VBox>
+        </content>
+    </Dialog>
+</core:FragmentDefinition>

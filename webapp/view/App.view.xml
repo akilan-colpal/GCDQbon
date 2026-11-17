@@ -4,25 +4,47 @@
     xmlns:tnt="sap.tnt"
     xmlns:core="sap.ui.core"
     xmlns="sap.m">
-    
-    <tnt:ToolPage id="toolPage" sideExpanded="false">
-        <tnt:header>
-            <tnt:ToolHeader id="toolHeader" class="toolHeader">
-                
-                <Image src="{value: 'adobeform/image/ColPal_Icon.svg', formatter: 'sap.ui.require.toUrl'}" width="auto" height="8.5rem" id="logo" press = "pressLogo" class="sapMPointer"/>        
 
-                <Title id="appTitle" level="H5" text="{i18n>title}" class="toolHeaderTitle center"/>
-                <ToolbarSpacer id="_IDGenToolbarSpacer" />
-          <Select change="onLanguageChange">
-                <core:Item key="en" text="English" />
-                <core:Item key="es" text="Español" />
-            </Select>
+    <tnt:ToolPage id="toolPage">
+        <tnt:header>
+            <tnt:ToolHeader id="toolHeader">
+                <Image
+                    id="logo"
+                    height="2.5rem"
+                    press=".pressLogo"
+                    decorative="false"
+                    tooltip="{i18n>appTitle}"/>
+                <VBox justifyContent="Center" class="sapUiSmallMarginBegin">
+                    <Label text="{i18n>BONUS_PROGRAM}" class="qbOverline"/>
+                    <Title text="{i18n>REWARDING_EXCELLENCE}" level="H5"/>
+                </VBox>
+                <ToolbarSpacer/>
+                <Select
+                    id="languageSelect"
+                    selectedKey="{appSettings>/language}"
+                    change=".onLanguageChange"
+                    tooltip="{i18n>LANGUAGE}">
+                    <core:Item key="en" text="English"/>
+                    <core:Item key="es" text="Español"/>
+                </Select>
+                <VBox justifyContent="Center" class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+                    <Text text="{i18n>GREETING} {mUserDataModel>/displayName}"/>
+                    <Text text="{mUserDataModel>/title}" visible="{= ${mUserDataModel>/title} !== '' }"/>
+                </VBox>
+                <Avatar
+                    initials="{mUserDataModel>/initials}"
+                    displaySize="S"
+                    backgroundColor="Accent6"/>
             </tnt:ToolHeader>
         </tnt:header>
-
         <tnt:mainContents>
-            <App id="app" />
+            <VBox fitContainer="true" justifyContent="SpaceBetween">
+                <App id="app"/>
+                <HBox justifyContent="Center" alignItems="Center" class="qbBrandBand">
+                    <Title text="{i18n>REWARDING}" titleStyle="H3" class="sapUiTinyMarginEnd"/>
+                    <Title text="{i18n>EXCELLENCE}" titleStyle="H3" class="qbAccent"/>
+                </HBox>
+            </VBox>
         </tnt:mainContents>
-
     </tnt:ToolPage>
 </mvc:View>

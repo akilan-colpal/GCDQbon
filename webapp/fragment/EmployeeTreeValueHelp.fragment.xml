@@ -1,64 +1,36 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
-    <Dialog 
-        id="treeDialog" 
-        title="Select Employee" 
-        contentWidth="50em" 
-        contentHeight="40em"
-        horizontalScrolling="false"
-        verticalScrolling="true"
-        class="sapUiContentPadding"> 
-
-        <customHeader>
-            <Toolbar height="3rem">
-                <Title text="Select Employee" level="H3" class="sapUiTinyMarginBegin" />
-            </Toolbar>
-        </customHeader>
-
+    <Dialog
+        id="treeDialog"
+        title="{i18n>SELECT_EMPLOYEE}"
+        contentWidth="40rem"
+        contentHeight="32rem">
         <content>
-            <VBox width="100%">
-                <SearchField 
-                    placeholder="Search by Name or ID..."
+            <VBox class="sapUiSmallMargin">
+                <SearchField
+                    placeholder="{i18n>FILTER_TREE}"
                     liveChange=".onManagerTreeSearch"
                     search=".onManagerTreeSearch"
-                    width="100%"
-                    class="sapUiSmallMarginBottom" />
-
-                <HBox class="sapUiTinyMarginBottom" alignItems="Center" justifyContent="SpaceBetween">
-                    <Text text="Click a row to select." />
-                </HBox>
-
-                <HBox class="sapUiTinyMarginBottom" />
-
-                <Tree 
+                    width="100%"/>
+                <Text text="{i18n>CLICK_ROW}" class="sapUiTinyMarginTop sapUiTinyMarginBottom"/>
+                <Tree
                     id="orgTree"
                     mode="SingleSelectMaster"
                     includeItemInSelection="true"
                     itemPress=".onTreeItemPress"
-                    toggleOpenState=".onTreeToggleOpenState"
                     width="100%"
+                    noDataText="{i18n>NO_MATCHING_PEOPLE}"
                     items="{
-                        path: 'treeModel>/treeHierarchy',
-                        parameters: { arrayNames: ['nodes'] }
+                        path: 'treeFilter>/nodes',
+                        parameters: { arrayNames: ['nodes'], numberOfExpandedLevels: 1 }
                     }">
-                    <StandardTreeItem 
-                        title="{
-                            parts: [
-                                'treeModel>firstname', 
-                                'treeModel>lastname', 
-                                'treeModel>empid'
-                            ],
-                            formatter: '.formatTreeTitle'
-                        }"
-                        type="Active" />
+                    <StandardTreeItem title="{treeFilter>title}" type="Active"/>
                 </Tree>
             </VBox>
         </content>
-
         <endButton>
-            <Button text="Cancel" press=".onCloseTreeDialog" />
+            <Button text="{i18n>CANCEL}" press=".onCloseTreeDialog"/>
         </endButton>
-
     </Dialog>
 </core:FragmentDefinition>
