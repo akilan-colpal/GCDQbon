@@ -7,7 +7,7 @@
 
     <tnt:ToolPage id="toolPage">
         <tnt:header>
-            <tnt:ToolHeader id="toolHeader">
+            <tnt:ToolHeader id="toolHeader" class="toolHeader">
                 <Image
                     id="logo"
                     height="2.5rem"
@@ -16,7 +16,7 @@
                     tooltip="{i18n>appTitle}"/>
                 <VBox justifyContent="Center" class="sapUiSmallMarginBegin">
                     <Label text="{i18n>BONUS_PROGRAM}" class="qbOverline"/>
-                    <Title text="{i18n>REWARDING_EXCELLENCE}" level="H4"/>
+                    <Title text="{i18n>GCD_BONUS}" level="H4"/>
                 </VBox>
                 <ToolbarSpacer/>
                 <Select
@@ -40,9 +40,9 @@
         <tnt:mainContents>
             <VBox class="qbCanvas" width="100%">
                 <App id="app" class="sapUiResponsiveContentPadding"/>
-                <HBox justifyContent="Center" alignItems="Center" class="qbBrandBand">
-                    <Title text="{i18n>REWARDING}" level="H3" class="sapUiTinyMarginEnd"/>
-                    <Title text="{i18n>EXCELLENCE}" level="H3" class="qbAccent"/>
+                <HBox justifyContent="Center" alignItems="Center" wrap="Wrap" class="qbBrandBand" width="100%">
+                    <Title text="{i18n>REWARDING}" level="H5" titleStyle="H5" class="sapUiTinyMarginEnd"/>
+                    <Title text="{i18n>EXCELLENCE}" level="H5" titleStyle="H5" class="qbAccent"/>
                 </HBox>
             </VBox>
         </tnt:mainContents>

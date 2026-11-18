@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+  <edmx:DataServices m:DataServiceVersion="2.0">
+    <Schema Namespace="SFOData" xml:lang="en" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+      <EntityType Name="User">
+        <Key>
+          <PropertyRef Name="userId"/>
+        </Key>
+        <Property Name="userId" Type="Edm.String" Nullable="false" MaxLength="100"/>
+        <Property Name="firstName" Type="Edm.String" MaxLength="128"/>
+        <Property Name="lastName" Type="Edm.String" MaxLength="128"/>
+        <Property Name="managerId" Type="Edm.String" MaxLength="100"/>
+        <NavigationProperty Name="directReports" Relationship="SFOData.User_directReports" FromRole="FromRole_User_directReports" ToRole="ToRole_User_directReports"/>
+      </EntityType>
+
+      <EntityType Name="cust_VarPayEmpHistData">
+        <Key>
+          <PropertyRef Name="externalCode"/>
+          <PropertyRef Name="cust_VarPayTemplateName"/>
+        </Key>
+        <Property Name="externalCode" Type="Edm.String" Nullable="false" MaxLength="100"/>
+        <Property Name="cust_VarPayTemplateName" Type="Edm.String" Nullable="false" MaxLength="255"/>
+      </EntityType>
+
+      <Association Name="User_directReports">
+        <End Type="SFOData.User" Multiplicity="0..1" Role="FromRole_User_directReports"/>
+        <End Type="SFOData.User" Multiplicity="*" Role="ToRole_User_directReports"/>
+        <ReferentialConstraint>
+          <Principal Role="FromRole_User_directReports">
+            <PropertyRef Name="userId"/>
+          </Principal>
+          <Dependent Role="ToRole_User_directReports">
+            <PropertyRef Name="managerId"/>
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+
+      <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="User" EntityType="SFOData.User"/>
+        <EntitySet Name="cust_VarPayEmpHistData" EntityType="SFOData.cust_VarPayEmpHistData"/>
+        <AssociationSet Name="User_directReports" Association="SFOData.User_directReports">
+          <End EntitySet="User" Role="FromRole_User_directReports"/>
+          <End EntitySet="User" Role="ToRole_User_directReports"/>
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,32 @@
+[
+  {
+    "userId": "00006077",
+    "firstName": "Alex",
+    "lastName": "Rivera",
+    "managerId": null
+  },
+  {
+    "userId": "00001234",
+    "firstName": "Jordan",
+    "lastName": "Lee",
+    "managerId": "00006077"
+  },
+  {
+    "userId": "00149410",
+    "firstName": "Armaan",
+    "lastName": "Seelan",
+    "managerId": "00001234"
+  },
+  {
+    "userId": "00005678",
+    "firstName": "Sam",
+    "lastName": "Patel",
+    "managerId": "00001234"
+  },
+  {
+    "userId": "00009876",
+    "firstName": "Casey",
+    "lastName": "Nguyen",
+    "managerId": "00006077"
+  }
+]

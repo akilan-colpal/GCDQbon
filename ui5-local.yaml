@@ -10,6 +10,10 @@ framework:
   libraries:
     - name: sap.m
     - name: sap.ui.core
+    - name: sap.ui.layout
+    - name: sap.f
+    - name: sap.tnt
+    - name: sap.suite.ui.microchart
     - name: sap.ushell
     - name: themelib_sap_horizon
 server:
@@ -33,34 +37,25 @@ server:
       configuration:
         flp:
           theme: sap_horizon
-    - name: fiori-tools-proxy
+    - name: fiori-tools-servestatic
       afterMiddleware: compression
       configuration:
-        ignoreCertErrors: false # If set to true, certificate errors will be ignored. E.g. self-signed certificates will be accepted
-        backend:
-          - path: backend/
-            url: https://eaeae0ff-9ca5-4323-b47d-ab81f7338371.abap.us10.hana.ondemand.com
-            destination: BTP_2_RAP_USER_TOKEN
+        paths:
+          - path: /userapi
+            src: webapp/localService/userapi
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
         mountPath: /
         services:
-          - urlPath: /sap/opu/odata/sap/Z_ADOBE_SERVICE
+          - urlPath: /backend/sap/opu/odata/sap/Z_GCDQBON_SERVICE
             metadataPath: ./webapp/localService/mainService/metadata.xml
             mockdataPath: ./webapp/localService/mainService/data
-            generateMockData: true
+            generateMockData: false
           - urlPath: /sapadmin/odata/v2
             metadataPath: ./webapp/localService/SuccessFactorService/metadata.xml
             mockdataPath: ./webapp/localService/SuccessFactorService/data
-            generateMockData: true
-          - urlPath: /sap/opu/odata/sap/Z_BONUSPDF_SERVICE
-            metadataPath: ./webapp/localService/Z_BONUSPDF_SERVICE/metadata.xml
-            mockdataPath: ./webapp/localService/Z_BONUSPDF_SERVICE/data
-            generateMockData: true
-        annotations:
-          - localPath: ./webapp/localService/Z_BONUSPDF_SERVICE/Z_BONUSPDF_SERVICE_VAN.xml
-            urlPath: /sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='Z_BONUSPDF_SERVICE_VAN',Version='0001')/$value/
+            generateMockData: false
 builder:
   customTasks:
     - name: ui5-tooling-transpile-task

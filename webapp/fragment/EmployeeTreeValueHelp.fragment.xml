@@ -4,31 +4,49 @@
     <Dialog
         id="treeDialog"
         title="{i18n>SELECT_EMPLOYEE}"
-        contentWidth="40rem"
-        contentHeight="32rem">
+        contentWidth="48rem"
+        contentHeight="32rem"
+        horizontalScrolling="false"
+        verticalScrolling="true"
+        class="sapUiContentPadding">
+
         <content>
-            <VBox class="sapUiSmallMargin">
+            <VBox width="100%">
                 <SearchField
                     placeholder="{i18n>FILTER_TREE}"
                     liveChange=".onManagerTreeSearch"
                     search=".onManagerTreeSearch"
-                    width="100%"/>
-                <Text text="{i18n>CLICK_ROW}" class="sapUiTinyMarginTop sapUiTinyMarginBottom"/>
+                    width="100%"
+                    class="sapUiSmallMarginBottom"/>
+
+                <Text text="{i18n>CLICK_ROW}" class="sapUiTinyMarginBottom"/>
+
                 <Tree
                     id="orgTree"
                     mode="SingleSelectMaster"
                     includeItemInSelection="true"
                     itemPress=".onTreeItemPress"
+                    toggleOpenState=".onTreeToggleOpenState"
                     width="100%"
                     noDataText="{i18n>NO_MATCHING_PEOPLE}"
                     items="{
-                        path: 'treeFilter>/nodes',
-                        parameters: { arrayNames: ['nodes'], numberOfExpandedLevels: 1 }
+                        path: 'treeModel>/treeHierarchy',
+                        parameters: { arrayNames: ['nodes'] }
                     }">
-                    <StandardTreeItem title="{treeFilter>title}" type="Active"/>
+                    <StandardTreeItem
+                        title="{
+                            parts: [
+                                'treeModel>firstname',
+                                'treeModel>lastname',
+                                'treeModel>empid'
+                            ],
+                            formatter: '.formatTreeTitle'
+                        }"
+                        type="Active"/>
                 </Tree>
             </VBox>
         </content>
+
         <endButton>
             <Button text="{i18n>CANCEL}" press=".onCloseTreeDialog"/>
         </endButton>

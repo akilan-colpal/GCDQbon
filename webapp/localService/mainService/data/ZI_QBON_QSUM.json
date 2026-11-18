@@ -1,0 +1,93 @@
+[
+  {
+    "global_id": "00006077",
+    "bonusYear": "2025",
+    "bonusQuarter": "Q1",
+    "summaryQuarter": "Q1",
+    "bonusableQuarterEarn": "62000.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "3875.00",
+    "segmentAward": "4850.00",
+    "startQSumDate": "20250101",
+    "endQSumDate": "20250331"
+  },
+  {
+    "global_id": "00006077",
+    "bonusYear": "2025",
+    "bonusQuarter": "Q2",
+    "summaryQuarter": "Q2",
+    "bonusableQuarterEarn": "64500.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "4031.25",
+    "segmentAward": "5125.50",
+    "startQSumDate": "20250401",
+    "endQSumDate": "20250630"
+  },
+  {
+    "global_id": "00006077",
+    "bonusYear": "2024",
+    "bonusQuarter": "Q3",
+    "summaryQuarter": "Q3",
+    "bonusableQuarterEarn": "58000.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "3625.00",
+    "segmentAward": "4200.00",
+    "startQSumDate": "20240701",
+    "endQSumDate": "20240930"
+  },
+  {
+    "global_id": "00006077",
+    "bonusYear": "2024",
+    "bonusQuarter": "Q4",
+    "summaryQuarter": "Q4",
+    "bonusableQuarterEarn": "60000.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "3750.00",
+    "segmentAward": "4600.00",
+    "startQSumDate": "20241001",
+    "endQSumDate": "20241231"
+  },
+  {
+    "global_id": "00149410",
+    "bonusYear": "2025",
+    "bonusQuarter": "Q1",
+    "summaryQuarter": "Q1",
+    "bonusableQuarterEarn": "42000.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "2625.00",
+    "segmentAward": "3100.00",
+    "startQSumDate": "20250101",
+    "endQSumDate": "20250331"
+  },
+  {
+    "global_id": "00149410",
+    "bonusYear": "2025",
+    "bonusQuarter": "Q2",
+    "summaryQuarter": "Q2",
+    "bonusableQuarterEarn": "43500.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "2718.75",
+    "segmentAward": "3350.00",
+    "startQSumDate": "20250401",
+    "endQSumDate": "20250630"
+  },
+  {
+    "global_id": "00001234",
+    "bonusYear": "2025",
+    "bonusQuarter": "Q1",
+    "summaryQuarter": "Q1",
+    "bonusableQuarterEarn": "88000.00",
+    "quarterTargetPercent": "0.0625",
+    "paymentPeriod": "1.00",
+    "quarterTargetAmount": "5500.00",
+    "segmentAward": "7200.00",
+    "startQSumDate": "20250101",
+    "endQSumDate": "20250331"
+  }
+]

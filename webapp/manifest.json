@@ -61,6 +61,8 @@
         "sap.m": {},
         "sap.ui.core": {},
         "sap.ui.layout": {},
+        "sap.ui.comp": {},
+        "sap.ui.table": {},
         "sap.f": {},
         "sap.tnt": {},
         "sap.suite.ui.microchart": {}

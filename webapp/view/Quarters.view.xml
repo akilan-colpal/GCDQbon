@@ -2,15 +2,13 @@
     controllerName="adobeform.controller.Quarters"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
-    xmlns:core="sap.ui.core"
-    xmlns:f="sap.f"
-    xmlns:cards="sap.f.cards">
+    xmlns:core="sap.ui.core">
 
     <Page
         id="quartersPage"
         showHeader="false"
         backgroundDesign="Transparent"
-        busy="{journey>/summariesLoading}"
+        busy="{/summariesLoading}"
         busyIndicatorDelay="0"
         core:require="{ Decimal: 'sap/ui/model/odata/type/Decimal' }">
         <content>
@@ -25,105 +23,85 @@
                 <IllustratedMessage
                     illustrationType="sapIllus-NoData"
                     title="{i18n>NO_QUARTERS}"
-                    description="{journey>/selectedEmployeeLabel}"
-                    visible="{= !${journey>/summariesLoading} &amp;&amp; ${journey>/quarters}.length === 0 }"/>
+                    description="{/selectedEmployeeLabel}"
+                    visible="{= !${/summariesLoading} &amp;&amp; ${/quarterCards}.length === 0 }"/>
 
-                <VBox visible="{= !${journey>/summariesLoading} &amp;&amp; ${journey>/quarters}.length > 0 }">
-                    <f:Card class="qbBrandSurface sapUiSmallMarginBottom" width="100%">
-                        <f:content>
-                            <HBox wrap="Wrap" alignItems="End" justifyContent="SpaceBetween" class="sapUiLargeMargin">
-                                <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
-                                    <Title text="{journey>/year}" titleStyle="H1" class="qbOnBrand"/>
-                                    <Title text="{i18n>PICK_QUARTER}" titleStyle="H4" class="qbOnBrand sapUiTinyMarginTop"/>
-                                    <Text text="{journey>/selectedEmployeeLabel}" class="qbOnBrand sapUiSmallMarginTop"/>
-                                </VBox>
-                                <VBox alignItems="End" class="sapUiSmallMarginBottom">
-                                    <Label text="{i18n>YEAR_TO_DATE}" class="qbOnBrand"/>
-                                    <ObjectNumber
-                                        class="qbOnBrand"
-                                        emphasized="true"
-                                        number="{
-                                            path: 'journey>/ytdAmount',
-                                            type: 'Decimal',
-                                            formatOptions: {
-                                                maxFractionDigits: 2,
-                                                minFractionDigits: 0,
-                                                groupingEnabled: true,
-                                                parseEmptyValueToZero: true
-                                            },
-                                            constraints: {
-                                                scale: 'variable',
-                                                nullable: false,
-                                                precision: 20
-                                            }
-                                        }"
-                                        unit="{journey>/currency}"/>
-                                </VBox>
-                            </HBox>
-                        </f:content>
-                    </f:Card>
+                <HBox
+                    visible="{= !${/summariesLoading} &amp;&amp; ${/quarterCards}.length > 0 }"
+                    wrap="Wrap"
+                    alignItems="Stretch"
+                    class="qbQuartersLayout">
 
-                    <Text text="{i18n>QUARTERS_SUBTITLE}" class="sapUiSmallMarginBottom"/>
+                    <VBox class="qbBrandSurface qbHero qbQuartersPanel">
+                        <Title text="{/searchCriteria/year}" titleStyle="H1" class="qbOnBrand"/>
+                        <Title text="{i18n>PICK_QUARTER}" titleStyle="H4" wrapping="true" class="qbOnBrand sapUiSmallMarginTop"/>
+                        <Text text="{/selectedEmployeeLabel}" class="qbOnBrand sapUiTinyMarginTop"/>
+                        <Title text="{i18n>YEAR_TO_DATE}" titleStyle="H5" class="qbOnBrand sapUiMediumMarginTop"/>
+                        <HBox alignItems="End" wrap="Wrap" class="qbHeroAmount sapUiSmallMarginBottom">
+                            <Title
+                                class="qbOnBrand qbHeroNumber sapUiTinyMarginEnd"
+                                titleStyle="H1"
+                                text="{
+                                    path: '/ytdAmount',
+                                    type: 'Decimal',
+                                    formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                    constraints: { scale: 'variable', nullable: false, precision: 20 }
+                                }"/>
+                            <Title text="{/currency}" titleStyle="H3" class="qbOnBrand qbHeroCurrency"/>
+                        </HBox>
 
-                    <f:GridContainer
-                        id="quarterGrid"
-                        containerQuery="true"
-                        snapToRow="true"
-                        items="{path: 'journey>/quarterCards'}">
-                        <f:layout>
-                            <f:GridContainerSettings
-                                gap="1rem"
-                                minColumnSize="16rem"
-                                maxColumnSize="24rem"
-                                rowSize="4.5rem"/>
-                        </f:layout>
-                        <f:layoutS>
-                            <f:GridContainerSettings
-                                columns="1"
-                                columnSize="100%"
-                                gap="0.75rem"
-                                rowSize="4.5rem"/>
-                        </f:layoutS>
-                        <f:Card class="qbQuarterCard">
-                            <f:layoutData>
-                                <f:GridContainerItemLayoutData columns="1" minRows="3"/>
-                            </f:layoutData>
-                            <f:header>
-                                <cards:Header
-                                    title="{journey>quarter}"
-                                    subtitle="{journey>periodDays}"
-                                    iconVisible="false"
-                                    press=".onSelectQuarter"/>
-                            </f:header>
-                            <f:content>
-                                <VBox class="sapUiMediumMargin">
-                                    <ObjectNumber
-                                        emphasized="true"
-                                        number="{
-                                            path: 'journey>totalQuarterAward',
-                                            type: 'Decimal',
-                                            formatOptions: {
-                                                maxFractionDigits: 2,
-                                                minFractionDigits: 0,
-                                                groupingEnabled: true,
-                                                parseEmptyValueToZero: true
-                                            },
-                                            constraints: {
-                                                scale: 'variable',
-                                                nullable: false,
-                                                precision: 20
-                                            }
-                                        }"
-                                        unit="{journey>currency}"/>
-                                    <Link
-                                        text="{i18n>VIEW_DETAILS}"
-                                        press=".onSelectQuarter"
-                                        class="sapUiSmallMarginTop"/>
-                                </VBox>
-                            </f:content>
-                        </f:Card>
-                    </f:GridContainer>
-                </VBox>
+                        <List
+                            id="quarterList"
+                            class="qbQuarterList sapUiSmallMarginTop"
+                            width="100%"
+                            items="{path: '/quarterCards'}"
+                            showSeparators="None"
+                            mode="None">
+                            <CustomListItem type="Active" press=".onSelectQuarter" class="qbQuarterPill">
+                                <HBox
+                                    class="qbQuarterRow"
+                                    width="100%"
+                                    alignItems="Center"
+                                    justifyContent="SpaceBetween"
+                                    wrap="Wrap">
+                                    <HBox alignItems="Center" class="qbQuarterLeft">
+                                        <Avatar
+                                            src="sap-icon://money-bills"
+                                            displayShape="Circle"
+                                            backgroundColor="Accent6"
+                                            displaySize="S"
+                                            class="qbQuarterBadge sapUiSmallMarginEnd"/>
+                                        <VBox>
+                                            <Title text="{quarter}" titleStyle="H5"/>
+                                            <Text text="{periodDays}"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <HBox alignItems="Center" justifyContent="End" wrap="Wrap" class="qbQuarterRight">
+                                        <ObjectNumber
+                                            class="sapUiSmallMarginEnd"
+                                            emphasized="false"
+                                            number="{
+                                                path: 'totalQuarterAward',
+                                                type: 'Decimal',
+                                                formatOptions: { maxFractionDigits: 2, minFractionDigits: 0, groupingEnabled: true, parseEmptyValueToZero: true },
+                                                constraints: { scale: 'variable', nullable: false, precision: 20 }
+                                            }"
+                                            unit="{currency}"/>
+                                        <Button
+                                            text="{i18n>VIEW_DETAILS}"
+                                            icon="sap-icon://navigation-right-arrow"
+                                            iconFirst="false"
+                                            type="Transparent"
+                                            press=".onSelectQuarter"/>
+                                    </HBox>
+                                </HBox>
+                            </CustomListItem>
+                        </List>
+                    </VBox>
+
+                    <VBox class="qbQuartersArt"/>
+                </HBox>
             </VBox>
         </content>
     </Page>

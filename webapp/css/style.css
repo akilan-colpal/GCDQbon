@@ -1,42 +1,125 @@
 /*
- * Minimal app-scoped styling for sap_horizon.
- * Theme parameters only (Writing Themeable CSS). No control-DOM hacks
- * except clearing the brand card content background so the fill shows.
+ * App-scoped styling for sap_horizon, using theme parameters (var(--sap*))
+ * per "Writing Themeable CSS". Prefer layout/spacing classes from sap.m
+ * over control-internal overrides. Font via sapFont*Family parameters
+ * ("Changing Font Families").
  */
+
+:root {
+	--sapFontFamily: "Plus Jakarta Sans", "72", "72full", Arial, Helvetica, sans-serif;
+	--sapFontLightFamily: "Plus Jakarta Sans", "72-Light", "72", "72full", Arial, Helvetica, sans-serif;
+	--sapFontBoldFamily: "Plus Jakarta Sans", "72-Bold", "72", "72full", Arial, Helvetica, sans-serif;
+	--sapFontSemiboldFamily: "Plus Jakarta Sans", "72-Semibold", "72", "72full", Arial, Helvetica, sans-serif;
+	--sapFontHeaderFamily: "Plus Jakarta Sans", "72-Bold", "72", "72full", Arial, Helvetica, sans-serif;
+}
 
 .qbCanvas {
 	background: color-mix(in oklch, var(--sapBrandColor) 5%, var(--sapBackgroundColor));
 }
 
-.qbOverline {
-	color: var(--sapBrandColor);
+/* Explicit product color for the shell header */
+.toolHeader {
+	background-color: #354a5f !important;
 }
 
+.toolHeader .sapMTitle,
+.toolHeader .sapMText,
+.toolHeader .sapMLabel {
+	color: var(--sapContent_ContrastTextColor) !important;
+}
+
+.toolHeader .sapMSlt {
+	background: color-mix(in oklch, var(--sapContent_ContrastTextColor) 12%, transparent);
+	border-color: color-mix(in oklch, var(--sapContent_ContrastTextColor) 35%, transparent);
+	color: var(--sapContent_ContrastTextColor);
+}
+
+.toolHeader .sapMSlt .sapMSltLabel,
+.toolHeader .sapMSlt .sapMSelectListItemText,
+.toolHeader .sapMSltArrow {
+	color: var(--sapContent_ContrastTextColor);
+}
+
+.qbOverline,
 .qbAccent {
 	color: var(--sapBrandColor);
 }
 
 .qbBrandBand {
-	padding-block: 2rem;
+	box-sizing: border-box;
+	padding-block: 0.75rem;
 	padding-inline: 1rem;
+	border-top: 0.0625rem solid var(--sapList_BorderColor);
+	background: color-mix(in oklch, var(--sapBrandColor) 4%, var(--sapGroup_ContentBackground));
 }
 
 .qbBrandSurface {
 	box-sizing: border-box;
-	width: 100%;
 	max-width: 100%;
 	background-color: var(--sapBrandColor);
-	background-image: linear-gradient(
-		145deg,
-		oklch(from var(--sapBrandColor) calc(l - 0.08) c h),
-		var(--sapBrandColor) 70%
-	);
-	border-radius: var(--sapTile_BorderCornerRadius, var(--sapElement_BorderCornerRadius));
-	box-shadow: var(--sapContent_Shadow1);
+	background-image:
+		radial-gradient(circle at 85% 15%, oklch(from var(--sapBrandColor) calc(l + 0.12) c h / 0.55), transparent 45%),
+		linear-gradient(145deg, oklch(from var(--sapBrandColor) calc(l - 0.12) c h), var(--sapBrandColor) 75%);
+	border-radius: var(--sapTile_BorderCornerRadius);
+	box-shadow: var(--sapContent_Shadow2);
 }
 
-.qbBrandSurface.sapFCard .sapFCardContent {
-	background: transparent;
+.qbHero {
+	padding: 2rem 2.25rem;
+}
+
+/* Start hero: brand wash + illustration (asset is app content, not a theme token) */
+.qbStartHero {
+	position: relative;
+	overflow: hidden;
+	min-height: 22rem;
+	background-image:
+		linear-gradient(
+			105deg,
+			oklch(from var(--sapBrandColor) calc(l - 0.08) c h) 0%,
+			oklch(from var(--sapBrandColor) calc(l - 0.02) c h / 0.92) 42%,
+			oklch(from var(--sapBrandColor) l c h / 0.55) 68%,
+			oklch(from var(--sapBrandColor) l c h / 0.2) 100%
+		),
+		url("../image/start-hero-illustration.jpg");
+	background-size: cover;
+	background-position: right center;
+	background-repeat: no-repeat;
+}
+
+.qbStartContent {
+	position: relative;
+	z-index: 1;
+	max-width: 28rem;
+	width: 100%;
+}
+
+@media (max-width: 40rem) {
+	.qbStartHero {
+		min-height: auto;
+		background-image:
+			linear-gradient(
+				145deg,
+				oklch(from var(--sapBrandColor) calc(l - 0.12) c h),
+				var(--sapBrandColor) 75%
+			);
+	}
+}
+
+.qbHeroNumber {
+	font-variant-numeric: tabular-nums;
+	font-size: calc(var(--sapFontHeader1Size) + 0.75rem);
+	line-height: 1;
+}
+
+.qbHeroCurrency {
+	font-size: var(--sapFontHeader4Size);
+	line-height: 1;
+	color: var(--sapContent_LabelColor);
+}
+
+.qbBrandSurface .qbHeroCurrency {
+	color: color-mix(in oklch, var(--sapContent_ContrastTextColor) 75%, transparent);
 }
 
 .qbOnBrand,
@@ -49,30 +132,123 @@
 	color: var(--sapContent_ContrastTextColor);
 }
 
-.qbQuarterCard {
-	border-radius: var(--sapTile_BorderCornerRadius, var(--sapElement_BorderCornerRadius));
-	box-shadow: var(--sapContent_Shadow0);
-	transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-.qbQuarterCard:hover {
-	transform: translateY(-0.125rem);
-	box-shadow: var(--sapContent_Shadow1);
-}
-
-.qbPeriodBand {
+.qbDetailToolbar {
 	box-sizing: border-box;
-	width: 100%;
-	max-width: 100%;
-	padding: 1.5rem;
-	background-color: var(--sapBrandColor);
-	background-image: linear-gradient(
-		145deg,
-		oklch(from var(--sapBrandColor) calc(l - 0.08) c h),
-		var(--sapBrandColor) 70%
-	);
-	border-radius: var(--sapTile_BorderCornerRadius, var(--sapElement_BorderCornerRadius));
+	padding-block: 0.75rem;
+	padding-inline: 0.5rem 0.75rem;
+	background: var(--sapPageHeader_Background);
+	border-bottom: 0.0625rem solid var(--sapPageHeader_BorderColor);
+}
+
+.qbDetailLabel {
+	font-size: var(--sapFontLargeSize);
+	color: var(--sapContent_LabelColor);
+}
+
+.qbDetailValue.sapMObjectNumber,
+.qbDetailValue .sapMObjectNumberText {
+	font-size: var(--sapFontLargeSize);
+}
+
+.qbLiftCard {
+	border-radius: var(--sapTile_BorderCornerRadius);
 	box-shadow: var(--sapContent_Shadow1);
+	margin-block-start: -1.5rem;
+}
+
+.qbLiftCard.sapMPanel {
+	margin-block-start: 1.25rem;
+	overflow: hidden;
+}
+
+.qbLiftCard.sapMPanel > .sapMPanelContent {
+	padding-block: 0.75rem 1rem;
+	padding-inline: 1.25rem;
+}
+
+.qbQuartersLayout {
+	gap: 1.25rem;
+	width: 100%;
+	align-items: stretch;
+}
+
+.qbQuartersPanel {
+	flex: 1 1 48%;
+	min-width: 20rem;
+	max-width: 40rem;
+}
+
+.qbQuarterList.sapMList {
+	width: 100%;
+	background: transparent;
+	border: none;
+}
+
+.qbQuarterList .sapMListUl {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.qbQuarterPill.sapMLIB,
+.qbQuarterPill {
+	border-radius: 999px;
+	background: var(--sapGroup_ContentBackground);
+	border: 0.0625rem solid var(--sapList_BorderColor);
+	box-shadow: var(--sapContent_Shadow0);
+	margin: 0;
+	overflow: hidden;
+}
+
+.qbQuarterRow {
+	box-sizing: border-box;
+	padding: 0.75rem 1.25rem;
+	gap: 0.75rem;
+	min-height: 3.5rem;
+}
+
+.qbQuarterLeft {
+	flex: 1 1 auto;
+	min-width: 8rem;
+}
+
+.qbQuarterRight {
+	flex: 0 1 auto;
+	margin-inline-start: auto;
+}
+
+.qbQuarterBadge.sapMAvatar {
+	border-radius: 999px;
+}
+
+.qbQuartersArt {
+	flex: 1 1 48%;
+	min-width: 18rem;
+	min-height: 24rem;
+	align-self: stretch;
+	border-radius: var(--sapTile_BorderCornerRadius);
+	box-shadow: var(--sapContent_Shadow0);
+	background-color: var(--sapBrandColor);
+	background-image: url("../image/start-hero-illustration.jpg");
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+@media (max-width: 40rem) {
+	.qbQuartersArt {
+		min-height: 14rem;
+		flex-basis: 100%;
+	}
+
+	.qbQuartersPanel {
+		max-width: 100%;
+	}
+
+	.qbQuarterPill.sapMLIB,
+	.qbQuarterPill {
+		border-radius: 1.5rem;
+	}
 }
 
 .qbFormula {
@@ -80,24 +256,92 @@
 	width: 100%;
 	max-width: 100%;
 	background: var(--sapGroup_ContentBackground);
-	border: var(--sapButton_BorderWidth, 0.0625rem) solid var(--sapList_BorderColor);
-	border-radius: var(--sapElement_BorderCornerRadius);
-	padding: 0.75rem;
+	border: 0.0625rem solid var(--sapList_BorderColor);
+	border-radius: var(--sapTile_BorderCornerRadius);
+	padding: 0.875rem 1rem;
 	gap: 0.75rem;
-	flex-wrap: wrap;
 }
 
-.qbFormulaResult {
-	background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
-	border-radius: var(--sapElement_BorderCornerRadius);
-	padding: 0.75rem;
-}
-
+.qbFormulaResult,
 .qbAchievementRow {
 	background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
 }
 
+.qbFormulaResult {
+	box-sizing: border-box;
+	width: 100%;
+	border: 0.0625rem solid color-mix(in oklch, var(--sapHighlightColor) 30%, var(--sapList_BorderColor));
+	border-radius: var(--sapTile_BorderCornerRadius);
+	padding: 0.875rem 1.25rem;
+}
+
+.qbSubPanel {
+	border: none;
+	background: transparent;
+	box-shadow: none;
+	overflow: visible;
+}
+
+.qbSubPanel.sapMPanel > .sapMPanelContent {
+	padding-block: 0.5rem 0.75rem;
+	padding-inline: 0;
+}
+
+.qbBrandPill {
+	padding: 0.25rem 0.875rem;
+	border-radius: 999px;
+	border: 0.0625rem solid color-mix(in oklch, var(--sapContent_ContrastTextColor) 45%, transparent);
+	background: color-mix(in oklch, var(--sapContent_ContrastTextColor) 14%, transparent);
+}
+
+.qbBrandPill .sapMObjectNumberText,
+.qbBrandPill .sapMObjectNumberUnit {
+	font-size: var(--sapFontLargeSize);
+}
+
 .qbKpiPill {
-	margin-inline-end: 0.75rem;
-	margin-block-end: 0.5rem;
+	margin-inline: 0.375rem;
+	margin-block-end: 0.375rem;
+}
+
+/* Slide-over: Dialog is centered by default; dock to the inline end.
+   Inline position from the popup needs !important to stick. */
+.qbSlideOver.sapMDialog:not(.sapMDialogStretched) {
+	inset-block: 0 !important;
+	inset-inline-start: auto !important;
+	inset-inline-end: 0 !important;
+	width: 75% !important;
+	max-width: 75% !important;
+	height: 100% !important;
+	max-height: 100% !important;
+	margin: 0;
+	border-start-start-radius: var(--sapTile_BorderCornerRadius);
+	border-end-start-radius: var(--sapTile_BorderCornerRadius);
+	border-start-end-radius: 0;
+	border-end-end-radius: 0;
+	box-shadow: var(--sapContent_Shadow3);
+}
+
+.qbSlideOver.sapMDialog {
+	transition: opacity 0.15s linear, transform 0.2s ease-out;
+}
+
+.qbSlideOver.sapMDialog:not(.sapMDialogOpen) {
+	transform: translate3d(100%, 0, 0);
+}
+
+html[dir="rtl"] .qbSlideOver.sapMDialog:not(.sapMDialogOpen) {
+	transform: translate3d(-100%, 0, 0);
+}
+
+.qbSlideOver.sapMDialog.sapMDialogOpen {
+	transform: translate3d(0, 0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.qbSlideOver.sapMDialog,
+	html[dir="rtl"] .qbSlideOver.sapMDialog {
+		transition: opacity 0.15s linear;
+		transform: translate3d(0, 0, 0);
+	}
 }
