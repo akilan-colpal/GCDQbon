@@ -1,6 +1,7 @@
 <core:FragmentDefinition
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
+    <!-- Manager picker. Tree data is treeModel>/treeHierarchy, copied from the view model. -->
     <Dialog
         id="treeDialog"
         title="{i18n>SELECT_EMPLOYEE}"
@@ -8,7 +9,8 @@
         contentHeight="32rem"
         horizontalScrolling="false"
         verticalScrolling="true"
-        class="sapUiContentPadding">
+        stretch="{device>/system/phone}"
+        class="sapUiResponsiveContentPadding">
 
         <content>
             <VBox width="100%">

@@ -10,27 +10,28 @@ sap.ui.define([
     return Controller.extend("adobeform.controller.Quarters", {
 
         onInit: function () {
-            var that = this;
-            var oStatementModel = this.getOwnerComponent().getModel("mStatementModel");
-            if (oStatementModel) {
-                this.getView().setModel(oStatementModel);
-            }
+            this.getView().setModel(this.getOwnerComponent().getModel("mQuartersModel"));
 
             this.getOwnerComponent().getRouter().getRoute("RouteQuarters").attachPatternMatched(this.onRouteMatched, this);
-            this._pDetail = this.loadFragment({
-                name: "adobeform.fragment.DetailSheet"
-            }).then(function (oDialog) {
-                oDialog.attachAfterOpen(that.onDetailAfterOpen, that);
-                oDialog.attachAfterClose(that.onDetailAfterClose, that);
-                return oDialog;
-            });
+        },
+
+        onFclStateChange: function (oEvent) {
+            var bIsPhone = oEvent.getParameter("isPhone");
+            var bDetailOpen = this.getOwnerComponent().getModel("mDetailModel").getProperty("/isPdfButtonVisible");
+            if (bDetailOpen) {
+                return;
+            }
+            this.byId("fcl").setLayout(!bIsPhone && window.innerWidth > 900 ? "TwoColumnsMidExpanded" : "OneColumn");
         },
 
         onRouteMatched: function () {
-            var oModel = this.getOwnerComponent().getModel("mStatementModel");
-            var sYear = oModel && oModel.getProperty("/searchCriteria/year");
+            var sYear = this.getOwnerComponent().getModel("mQuartersModel").getProperty("/searchCriteria/year");
             if (!sYear) {
                 this.getOwnerComponent().getRouter().navTo("RouteStart", {}, true);
+                return;
+            }
+            if (!this.getOwnerComponent().getModel("mDetailModel").getProperty("/isPdfButtonVisible")) {
+                this.byId("fcl").setLayout(window.innerWidth > 900 ? "TwoColumnsMidExpanded" : "OneColumn");
             }
         },
 
@@ -40,11 +41,7 @@ sap.ui.define([
         },
 
         onSelectQuarter: function (oEvent) {
-            var oContext = oEvent.getSource().getBindingContext();
-            if (!oContext) {
-                oContext = oEvent.getSource().getBindingContext("mStatementModel");
-            }
-            var oCard = oContext.getObject();
+            var oCard = oEvent.getSource().getBindingContext().getObject();
             var oBundle = this.getView().getModel("i18n").getResourceBundle();
             if (!oCard.statement) {
                 MessageToast.show(oBundle.getText("NO_RECORDS"));
@@ -70,24 +67,26 @@ sap.ui.define([
 
             this._prepareKpiCharts(oStatement);
 
-            var oModel = this.getOwnerComponent().getModel("mStatementModel");
-            var oCriteria = oModel.getProperty("/searchCriteria") || {};
-            oModel.setProperty("/searchCriteria", {
-                globalId: oCriteria.globalId || "",
-                year: oCriteria.year || "",
+            var oQuartersModel = this.getOwnerComponent().getModel("mQuartersModel");
+            var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
+            var oCriteria = oQuartersModel.getProperty("/searchCriteria");
+
+            oDetailModel.setProperty("/searchCriteria", {
+                globalId: oCriteria.globalId,
+                year: oCriteria.year,
                 quarter: oCard.quarter
             });
-            oModel.setProperty("/data", oStatement);
-            oModel.setProperty("/isPdfButtonVisible", true);
+            oDetailModel.setProperty("/data", oStatement);
+            oDetailModel.setProperty("/isPdfButtonVisible", true);
 
             var iKpiLength = oStatement.to_KPIs ? oStatement.to_KPIs.length : 1;
             var iSumLength = oStatement.to_qSum ? oStatement.to_qSum.length : 1;
-            oModel.setProperty("/kpiRowCount", iKpiLength || 1);
-            oModel.setProperty("/summaryRowCount", iSumLength || 1);
+            oDetailModel.setProperty("/kpiRowCount", iKpiLength || 1);
+            oDetailModel.setProperty("/summaryRowCount", iSumLength || 1);
 
-            this._pDetail.then(function (oDialog) {
-                oDialog.open();
-            });
+            var oFcl = this.byId("fcl");
+            oFcl.setLayout("TwoColumnsMidExpanded");
+            oFcl.toMidColumnPage(this.byId("detailPage"), "slide");
         },
 
         _prepareKpiCharts: function (oStatement) {
@@ -122,35 +121,17 @@ sap.ui.define([
             });
         },
 
-        onDetailAfterOpen: function () {
-            var oBlockLayer = document.getElementById("sap-ui-blocklayer-popup");
-            if (!oBlockLayer) {
-                return;
-            }
-            if (this._fnBlockLayerClick) {
-                oBlockLayer.removeEventListener("click", this._fnBlockLayerClick);
-            }
-            this._fnBlockLayerClick = this.onCloseDetail.bind(this);
-            oBlockLayer.addEventListener("click", this._fnBlockLayerClick);
-        },
-
-        onDetailAfterClose: function () {
-            var oBlockLayer = document.getElementById("sap-ui-blocklayer-popup");
-            if (oBlockLayer && this._fnBlockLayerClick) {
-                oBlockLayer.removeEventListener("click", this._fnBlockLayerClick);
-            }
-            this._fnBlockLayerClick = null;
-            var oModel = this.getOwnerComponent().getModel("mStatementModel");
-            if (oModel) {
-                oModel.setProperty("/data", {});
-            }
-        },
-
         onCloseDetail: function () {
-            var oDialog = this.byId("detailDialog");
-            if (oDialog && oDialog.isOpen()) {
-                oDialog.close();
+            var oFcl = this.byId("fcl");
+            if (oFcl) {
+                oFcl.backToTopMidColumn();
+                if (window.innerWidth <= 900) {
+                    oFcl.setLayout("OneColumn");
+                }
             }
+            var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
+            oDetailModel.setProperty("/data", {});
+            oDetailModel.setProperty("/isPdfButtonVisible", false);
         },
 
         // =======================================================
@@ -158,8 +139,8 @@ sap.ui.define([
         // =======================================================
         onGeneratePress: function () {
             var oView = this.getView();
-            var oModel = this.getOwnerComponent().getModel("mStatementModel");
-            var oCriteria = oModel.getProperty("/searchCriteria") || {};
+            var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
+            var oCriteria = oDetailModel.getProperty("/searchCriteria") || {};
             var sGlobalId = oCriteria.globalId || "";
             var sYear = oCriteria.year || "";
             var sQuarter = oCriteria.quarter || "";
@@ -181,13 +162,13 @@ sap.ui.define([
 
             var oODataModel = this.getOwnerComponent().getModel();
 
-            oModel.setProperty("/pdfLoading", true);
+            oDetailModel.setProperty("/pdfLoading", true);
             oView.setBusy(true);
             oODataModel.read("/ZI_QBON_DD", {
                 filters: aFilters,
                 success: function (oData) {
                     oView.setBusy(false);
-                    oModel.setProperty("/pdfLoading", false);
+                    oDetailModel.setProperty("/pdfLoading", false);
 
                     if (oData.results && oData.results.length > 0 && oData.results[0].PdfContent) {
                         try {
@@ -218,7 +199,7 @@ sap.ui.define([
                 },
                 error: function () {
                     oView.setBusy(false);
-                    oModel.setProperty("/pdfLoading", false);
+                    oDetailModel.setProperty("/pdfLoading", false);
                     MessageBox.error("Failed to fetch the PDF from the backend.");
                 }
             });

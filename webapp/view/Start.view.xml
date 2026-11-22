@@ -4,22 +4,37 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
 
-    <Page id="page" showHeader="false" backgroundDesign="Transparent">
+    <!--
+        Start. Unnamed model is mQuartersModel (set in Start.controller).
+        mUserDataModel comes from the component.
+        sapUiResponsiveContentPadding follows Device.media screen size.
+    -->
+    <Page
+        id="page"
+        showHeader="false"
+        backgroundDesign="Transparent"
+        class="sapUiResponsiveContentPadding">
         <content>
-            <VBox class="sapUiMediumMargin" width="auto">
-                <VBox class="qbBrandSurface qbHero qbStartHero">
+            <VBox width="100%">
+                <!-- Blue hero. Background image is .qbStartHero. -->
+                <VBox class="qbBrandSurface qbHero qbStartHero" width="100%">
                     <VBox class="qbStartContent">
                         <Title
                             text="{i18n>MY_BONUS_AMOUNT}"
                             titleStyle="H1"
                             wrapping="true"
-                            class="qbOnBrand"/>
+                            class="qbContrastText"/>
                         <Text
                             text="{i18n>START_SUBTITLE}"
-                            class="qbOnBrand sapUiTinyMarginTop sapUiSmallMarginBottom"/>
+                            class="qbContrastText sapUiTinyMarginTop sapUiSmallMarginBottom"/>
 
+                        <!--
+                            Employee + year.
+                            Input is editable with value help only for HR and manager.
+                            Year list is /availableYears from SuccessFactors templates.
+                        -->
                         <VBox class="sapUiSmallMarginTop" width="100%">
-                            <Label text="{i18n>GLOBAL_ID}" labelFor="employeeIdInput" class="qbOnBrand sapUiTinyMarginBottom"/>
+                            <Label text="{i18n>GLOBAL_ID}" labelFor="employeeIdInput" class="qbContrastText sapUiTinyMarginBottom"/>
                             <Input
                                 id="employeeIdInput"
                                 width="100%"
@@ -30,7 +45,7 @@
                                 change=".onGlobalIdChange"
                                 placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}"/>
 
-                            <Label text="{i18n>BONUS_YEAR}" labelFor="bonusYearInput" class="qbOnBrand sapUiSmallMarginTop sapUiTinyMarginBottom"/>
+                            <Label text="{i18n>BONUS_YEAR}" labelFor="bonusYearInput" class="qbContrastText sapUiSmallMarginTop sapUiTinyMarginBottom"/>
                             <Select
                                 id="bonusYearInput"
                                 width="100%"
@@ -42,12 +57,14 @@
                                 <core:Item key="{year}" text="{year}"/>
                             </Select>
 
+                            <!-- Shown while cust_VarPayEmpHistData is loading. -->
                             <HBox visible="{/periodsLoading}" alignItems="Center" class="sapUiTinyMarginTop">
                                 <BusyIndicator size="1.5rem"/>
-                                <Text text="{i18n>LOADING_PERIODS}" class="sapUiSmallMarginBegin qbOnBrand"/>
+                                <Text text="{i18n>LOADING_PERIODS}" class="qbContrastText sapUiSmallMarginBegin"/>
                             </HBox>
                         </VBox>
 
+                        <!-- Enabled when an employee, a year, and at least one quarter card exist. -->
                         <Button
                             id="getDetailsButton"
                             class="sapUiSmallMarginTop"

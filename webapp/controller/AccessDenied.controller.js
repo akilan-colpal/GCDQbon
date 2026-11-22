@@ -3,5 +3,8 @@ sap.ui.define([
 ], function (Controller) {
     "use strict";
 
-    return Controller.extend("adobeform.controller.AccessDenied", {});
+    return Controller.extend("adobeform.controller.AccessDenied", {
+        onInit: function () {
+        }
+    });
 });

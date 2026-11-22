@@ -1,12 +1,12 @@
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/base/i18n/Localization",
-    "sap/ui/model/json/JSONModel",
-    "require"
-], function (Controller, Localization, JSONModel, require) {
+    "sap/ui/model/json/JSONModel"
+], function (Controller, Localization, JSONModel) {
     "use strict";
 
     return Controller.extend("adobeform.controller.App", {
+
         onInit: function () {
             var sLanguage = (Localization.getLanguage() || "en").toLowerCase();
             var sAppLang = sLanguage.indexOf("es") === 0 ? "es" : "en";
@@ -14,8 +14,6 @@ sap.ui.define([
             this.getOwnerComponent().setModel(new JSONModel({
                 language: sAppLang
             }), "appSettings");
-
-            this.byId("logo").setSrc(require.toUrl("adobeform/image/ColPal_Icon.svg"));
         },
 
         pressLogo: function () {

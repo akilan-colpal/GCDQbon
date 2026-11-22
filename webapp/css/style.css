@@ -1,9 +1,3 @@
-/*
- * App-scoped styling for sap_horizon, using theme parameters (var(--sap*))
- * per "Writing Themeable CSS". Prefer layout/spacing classes from sap.m
- * over control-internal overrides. Font via sapFont*Family parameters
- * ("Changing Font Families").
- */
 
 :root {
 	--sapFontFamily: "Plus Jakarta Sans", "72", "72full", Arial, Helvetica, sans-serif;
@@ -14,7 +8,7 @@
 }
 
 .qbCanvas {
-	background: color-mix(in oklch, var(--sapBrandColor) 5%, var(--sapBackgroundColor));
+	background: var(--sapBackgroundColor);
 }
 
 /* Explicit product color for the shell header */
@@ -22,21 +16,7 @@
 	background-color: #354a5f !important;
 }
 
-.toolHeader .sapMTitle,
-.toolHeader .sapMText,
-.toolHeader .sapMLabel {
-	color: var(--sapContent_ContrastTextColor) !important;
-}
-
-.toolHeader .sapMSlt {
-	background: color-mix(in oklch, var(--sapContent_ContrastTextColor) 12%, transparent);
-	border-color: color-mix(in oklch, var(--sapContent_ContrastTextColor) 35%, transparent);
-	color: var(--sapContent_ContrastTextColor);
-}
-
-.toolHeader .sapMSlt .sapMSltLabel,
-.toolHeader .sapMSlt .sapMSelectListItemText,
-.toolHeader .sapMSltArrow {
+.toolHeader .qbHeaderText {
 	color: var(--sapContent_ContrastTextColor);
 }
 
@@ -50,7 +30,7 @@
 	padding-block: 0.75rem;
 	padding-inline: 1rem;
 	border-top: 0.0625rem solid var(--sapList_BorderColor);
-	background: color-mix(in oklch, var(--sapBrandColor) 4%, var(--sapGroup_ContentBackground));
+	background: var(--sapGroup_ContentBackground);
 }
 
 .qbBrandSurface {
@@ -94,105 +74,46 @@
 	width: 100%;
 }
 
-@media (max-width: 40rem) {
-	.qbStartHero {
-		min-height: auto;
-		background-image:
-			linear-gradient(
-				145deg,
-				oklch(from var(--sapBrandColor) calc(l - 0.12) c h),
-				var(--sapBrandColor) 75%
-			);
-	}
-}
-
 .qbHeroNumber {
 	font-variant-numeric: tabular-nums;
-	font-size: calc(var(--sapFontHeader1Size) + 0.75rem);
 	line-height: 1;
+	overflow-wrap: anywhere;
+}
+
+.qbHeroNumber.sapMTitle,
+.qbHeroNumber.sapMTitle.sapMTitleStyleH1 {
+	font-size: clamp(1.125rem, 3.5vw, 2.25rem);
 }
 
 .qbHeroCurrency {
-	font-size: var(--sapFontHeader4Size);
 	line-height: 1;
 	color: var(--sapContent_LabelColor);
+}
+
+.qbHeroCurrency.sapMTitle {
+	font-size: clamp(0.875rem, 2vw, 1.25rem);
 }
 
 .qbBrandSurface .qbHeroCurrency {
 	color: color-mix(in oklch, var(--sapContent_ContrastTextColor) 75%, transparent);
 }
 
-.qbOnBrand,
-.qbOnBrand.sapMTitle,
-.qbOnBrand.sapMText,
-.qbOnBrand.sapMLabel,
-.qbOnBrand.sapMObjectNumber,
-.qbOnBrand .sapMObjectNumberText,
-.qbOnBrand .sapMObjectNumberUnit {
+.qbBrandSurface .qbContrastText {
 	color: var(--sapContent_ContrastTextColor);
-}
-
-.qbDetailToolbar {
-	box-sizing: border-box;
-	padding-block: 0.75rem;
-	padding-inline: 0.5rem 0.75rem;
-	background: var(--sapPageHeader_Background);
-	border-bottom: 0.0625rem solid var(--sapPageHeader_BorderColor);
-}
-
-.qbDetailLabel {
-	font-size: var(--sapFontLargeSize);
-	color: var(--sapContent_LabelColor);
-}
-
-.qbDetailValue.sapMObjectNumber,
-.qbDetailValue .sapMObjectNumberText {
-	font-size: var(--sapFontLargeSize);
 }
 
 .qbLiftCard {
 	border-radius: var(--sapTile_BorderCornerRadius);
 	box-shadow: var(--sapContent_Shadow1);
-	margin-block-start: -1.5rem;
-}
-
-.qbLiftCard.sapMPanel {
-	margin-block-start: 1.25rem;
-	overflow: hidden;
-}
-
-.qbLiftCard.sapMPanel > .sapMPanelContent {
-	padding-block: 0.75rem 1rem;
-	padding-inline: 1.25rem;
-}
-
-.qbQuartersLayout {
-	gap: 1.25rem;
-	width: 100%;
-	align-items: stretch;
 }
 
 .qbQuartersPanel {
-	flex: 1 1 48%;
-	min-width: 20rem;
 	max-width: 40rem;
-}
-
-.qbQuarterList.sapMList {
-	width: 100%;
-	background: transparent;
-	border: none;
-}
-
-.qbQuarterList .sapMListUl {
-	display: flex;
-	flex-direction: column;
-	gap: 0.75rem;
 }
 
 .qbQuarterPill.sapMLIB,
 .qbQuarterPill {
-	border-radius: 999px;
+	border-radius: 1.75rem;
 	background: var(--sapGroup_ContentBackground);
 	border: 0.0625rem solid var(--sapList_BorderColor);
 	box-shadow: var(--sapContent_Shadow0);
@@ -202,30 +123,13 @@
 
 .qbQuarterRow {
 	box-sizing: border-box;
-	padding: 0.75rem 1.25rem;
-	gap: 0.75rem;
-	min-height: 3.5rem;
-}
-
-.qbQuarterLeft {
-	flex: 1 1 auto;
-	min-width: 8rem;
-}
-
-.qbQuarterRight {
-	flex: 0 1 auto;
-	margin-inline-start: auto;
-}
-
-.qbQuarterBadge.sapMAvatar {
-	border-radius: 999px;
+	padding: 0.5rem 1rem;
+	gap: 0.5rem;
+	min-height: 3rem;
 }
 
 .qbQuartersArt {
-	flex: 1 1 48%;
-	min-width: 18rem;
 	min-height: 24rem;
-	align-self: stretch;
 	border-radius: var(--sapTile_BorderCornerRadius);
 	box-shadow: var(--sapContent_Shadow0);
 	background-color: var(--sapBrandColor);
@@ -235,113 +139,47 @@
 	background-repeat: no-repeat;
 }
 
-@media (max-width: 40rem) {
-	.qbQuartersArt {
-		min-height: 14rem;
-		flex-basis: 100%;
-	}
-
-	.qbQuartersPanel {
-		max-width: 100%;
-	}
-
-	.qbQuarterPill.sapMLIB,
-	.qbQuarterPill {
-		border-radius: 1.5rem;
-	}
+.qbFormula,
+.qbFormulaResult {
+	box-sizing: border-box;
+	width: 100%;
+	border-radius: var(--sapTile_BorderCornerRadius);
 }
 
 .qbFormula {
-	box-sizing: border-box;
-	width: 100%;
 	max-width: 100%;
 	background: var(--sapGroup_ContentBackground);
 	border: 0.0625rem solid var(--sapList_BorderColor);
-	border-radius: var(--sapTile_BorderCornerRadius);
 	padding: 0.875rem 1rem;
 	gap: 0.75rem;
 }
 
 .qbFormulaResult,
 .qbAchievementRow {
-	background: color-mix(in oklch, var(--sapHighlightColor) 12%, var(--sapGroup_ContentBackground));
+	background: var(--sapInformationBackground);
 }
 
 .qbFormulaResult {
-	box-sizing: border-box;
-	width: 100%;
-	border: 0.0625rem solid color-mix(in oklch, var(--sapHighlightColor) 30%, var(--sapList_BorderColor));
-	border-radius: var(--sapTile_BorderCornerRadius);
+	border: 0.0625rem solid var(--sapInformationBorderColor);
 	padding: 0.875rem 1.25rem;
 }
 
-.qbSubPanel {
-	border: none;
-	background: transparent;
-	box-shadow: none;
-	overflow: visible;
-}
-
-.qbSubPanel.sapMPanel > .sapMPanelContent {
-	padding-block: 0.5rem 0.75rem;
-	padding-inline: 0;
-}
-
 .qbBrandPill {
-	padding: 0.25rem 0.875rem;
+	padding: 0.375rem 1.125rem;
 	border-radius: 999px;
 	border: 0.0625rem solid color-mix(in oklch, var(--sapContent_ContrastTextColor) 45%, transparent);
 	background: color-mix(in oklch, var(--sapContent_ContrastTextColor) 14%, transparent);
 }
 
-.qbBrandPill .sapMObjectNumberText,
-.qbBrandPill .sapMObjectNumberUnit {
-	font-size: var(--sapFontLargeSize);
-}
-
-.qbKpiPill {
-	margin-inline: 0.375rem;
-	margin-block-end: 0.375rem;
-}
-
-/* Slide-over: Dialog is centered by default; dock to the inline end.
-   Inline position from the popup needs !important to stick. */
-.qbSlideOver.sapMDialog:not(.sapMDialogStretched) {
-	inset-block: 0 !important;
-	inset-inline-start: auto !important;
-	inset-inline-end: 0 !important;
-	width: 75% !important;
-	max-width: 75% !important;
-	height: 100% !important;
-	max-height: 100% !important;
-	margin: 0;
-	border-start-start-radius: var(--sapTile_BorderCornerRadius);
-	border-end-start-radius: var(--sapTile_BorderCornerRadius);
-	border-start-end-radius: 0;
-	border-end-end-radius: 0;
-	box-shadow: var(--sapContent_Shadow3);
-}
-
-.qbSlideOver.sapMDialog {
-	transition: opacity 0.15s linear, transform 0.2s ease-out;
-}
-
-.qbSlideOver.sapMDialog:not(.sapMDialogOpen) {
-	transform: translate3d(100%, 0, 0);
-}
-
-html[dir="rtl"] .qbSlideOver.sapMDialog:not(.sapMDialogOpen) {
-	transform: translate3d(-100%, 0, 0);
-}
-
-.qbSlideOver.sapMDialog.sapMDialogOpen {
-	transform: translate3d(0, 0, 0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.qbSlideOver.sapMDialog,
-	html[dir="rtl"] .qbSlideOver.sapMDialog {
-		transition: opacity 0.15s linear;
-		transform: translate3d(0, 0, 0);
+/* Below 600px: hide hero illustration */
+@media (max-width: 600px) {
+	.qbStartHero {
+		min-height: auto;
+		background-image:
+			linear-gradient(
+				145deg,
+				oklch(from var(--sapBrandColor) calc(l - 0.12) c h),
+				var(--sapBrandColor) 75%
+			);
 	}
 }
