@@ -3,12 +3,11 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "sap/m/MessageToast",
     "sap/m/MessageBox",
     "adobeform/controller/HRValueHelpHandler.controller",
     "adobeform/controller/EmployeeValueHelpHandler.controller",
     "adobeform/model/formatter"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, HRValueHelpHandler, EmployeeValueHelpHandler, formatter) {
+], function (Controller, JSONModel, Filter, FilterOperator, MessageBox, HRValueHelpHandler, EmployeeValueHelpHandler, formatter) {
     "use strict";
 
     return Controller.extend("adobeform.controller.Start", {
@@ -19,8 +18,6 @@ sap.ui.define([
                 availableYears: [],
                 availableQuarters: [],
                 isYearEnabled: false,
-                isQuarterEnabled: false,
-                isGlobalIdVisible: false,
                 treeHierarchy: [],
                 isSearchEnabled: false,
                 periodsLoading: false,
@@ -36,8 +33,6 @@ sap.ui.define([
             });
             var oDetailModel = new JSONModel({
                 data: {},
-                kpiRowCount: 1,
-                summaryRowCount: 1,
                 isPdfButtonVisible: false,
                 pdfLoading: false,
                 searchCriteria: {
@@ -65,10 +60,8 @@ sap.ui.define([
                 this._updateSearchEnabled();
                 this._loadDropdownData(sEmpId);
             } else if (bIsMgr) {
-                oQuartersModel.setProperty("/isGlobalIdVisible", true);
                 this._preloadTreeData();
             } else {
-                oQuartersModel.setProperty("/isGlobalIdVisible", false);
                 var sEmpIdEmployee = oUserDataModel.getProperty("/userId");
                 var oEmpInput = this.byId("employeeIdInput");
                 if (oEmpInput) {
@@ -181,7 +174,6 @@ sap.ui.define([
 
                 this.byId("bonusYearInput").setSelectedKey("");
                 this.getView().getModel().setProperty("/isYearEnabled", false);
-                this.getView().getModel().setProperty("/isQuarterEnabled", false);
                 this._updateSearchEnabled();
                 this._loadDropdownData(sSelectedId);
             }.bind(this));
@@ -217,7 +209,6 @@ sap.ui.define([
 
                     this.byId("bonusYearInput").setSelectedKey("");
                     this.getView().getModel().setProperty("/isYearEnabled", false);
-                    this.getView().getModel().setProperty("/isQuarterEnabled", false);
                     this._updateSearchEnabled();
                     this._loadDropdownData(sId);
                 }
@@ -235,7 +226,6 @@ sap.ui.define([
                 this.getView().getModel().setProperty("/searchCriteria/globalId", sGlobalId);
                 this.byId("bonusYearInput").setSelectedKey("");
                 this.getView().getModel().setProperty("/isYearEnabled", false);
-                this.getView().getModel().setProperty("/isQuarterEnabled", false);
                 this._updateSearchEnabled();
                 this._loadDropdownData(sGlobalId);
             } else {
@@ -261,8 +251,6 @@ sap.ui.define([
             });
             var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
             oDetailModel.setProperty("/data", {});
-            oDetailModel.setProperty("/kpiRowCount", 1);
-            oDetailModel.setProperty("/summaryRowCount", 1);
             oDetailModel.setProperty("/isPdfButtonVisible", false);
             oDetailModel.setProperty("/pdfLoading", false);
             oDetailModel.setProperty("/searchCriteria", {
@@ -272,7 +260,6 @@ sap.ui.define([
             });
             this.byId("bonusYearInput").setSelectedKey("");
             oViewModel.setProperty("/isYearEnabled", false);
-            oViewModel.setProperty("/isQuarterEnabled", false);
             this._updateSearchEnabled();
 
             var aFilters = [
@@ -290,20 +277,11 @@ sap.ui.define([
                     var aResults = oData.results || [];
                     var aYears = [];
                     var aParsedPeriods = [];
-                    var aTemplateItems = [];
-                    var oTemplateMap = Object.create(null);
 
                     aResults.forEach(function (item) {
                         var sTemplateName = item.cust_VarPayTemplateName;
 
                         if (sTemplateName) {
-                            if (!oTemplateMap[sTemplateName]) {
-                                oTemplateMap[sTemplateName] = true;
-                                aTemplateItems.push({
-                                    templateName: sTemplateName
-                                });
-                            }
-
                             var aMatch = sTemplateName.match(/(\d{4})\s+(Q[1-4])/i);
                             if (aMatch) {
                                 var sYear = aMatch[1];
@@ -332,11 +310,6 @@ sap.ui.define([
 
                     oViewModel.setProperty("/allPeriods", aParsedPeriods);
                     oViewModel.setProperty("/availableYears", aYears);
-
-                    aTemplateItems.sort(function (a, b) {
-                        return a.templateName.localeCompare(b.templateName);
-                    });
-                    oViewModel.setProperty("/availableTemplates", aTemplateItems);
                     oViewModel.setProperty("/periodsLoading", false);
 
                     if (aParsedPeriods.length > 0) {
@@ -357,7 +330,6 @@ sap.ui.define([
 
                             oViewModel.setProperty("/availableQuarters", aQuarters);
                             oViewModel.setProperty("/isYearEnabled", aYears.length > 0);
-                            oViewModel.setProperty("/isQuarterEnabled", aQuarters.length > 0);
 
                             this.byId("bonusYearInput").setSelectedKey(oLatest.bonusYear);
                             oViewModel.setProperty("/searchCriteria/year", oLatest.bonusYear);
@@ -367,7 +339,6 @@ sap.ui.define([
                     } else {
                         oViewModel.setProperty("/availableQuarters", []);
                         oViewModel.setProperty("/isYearEnabled", false);
-                        oViewModel.setProperty("/isQuarterEnabled", false);
                         this.byId("bonusYearInput").setSelectedKey("");
                         this._updateSearchEnabled();
                         MessageBox.warning("No statements found");
@@ -378,7 +349,6 @@ sap.ui.define([
                     oView.setBusy(false);
                     oViewModel.setProperty("/periodsLoading", false);
                     oViewModel.setProperty("/isYearEnabled", false);
-                    oViewModel.setProperty("/isQuarterEnabled", false);
                     this._updateSearchEnabled();
                 }.bind(this)
             });
@@ -414,14 +384,9 @@ sap.ui.define([
             aQuarters.sort(function (a, b) { return a.quarter.localeCompare(b.quarter); });
 
             oView.getModel().setProperty("/availableQuarters", aQuarters);
-            oView.getModel().setProperty("/isQuarterEnabled", aQuarters.length > 0);
             oView.getModel().setProperty("/searchCriteria/year", sSelectedYear);
             this._updateSearchEnabled();
             this._loadYearStatements();
-        },
-
-        onQuarterChange: function () {
-            this._updateSearchEnabled();
         },
 
         // =======================================================
@@ -557,71 +522,6 @@ sap.ui.define([
                     }.bind(this)
                 });
             }.bind(this));
-        },
-
-        onSearchPress: function () {
-            var oView = this.getView();
-            var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
-            var sGlobalId = this._getSelectedGlobalId();
-            var sYear = this.byId("bonusYearInput").getSelectedKey();
-            var sQuarter = oDetailModel.getProperty("/searchCriteria/quarter");
-
-            if (!sQuarter) {
-                return;
-            }
-
-            var aFilters = [
-                new Filter("global_id", FilterOperator.EQ, sGlobalId),
-                new Filter("bonusYear", FilterOperator.EQ, sYear),
-                new Filter("bonusQuarter", FilterOperator.EQ, sQuarter)
-            ];
-
-            var oODataModel = this.getOwnerComponent().getModel();
-            oView.setBusy(true);
-            oODataModel.read("/ZI_QBON_DD", {
-                filters: aFilters,
-                urlParameters: {
-                    "$expand": "to_KPIs,to_qSum"
-                },
-                success: function (oData) {
-                    oView.setBusy(false);
-
-                    if (oData.results && oData.results.length > 0) {
-                        var oRecord = oData.results[0];
-
-                        if (oRecord.to_KPIs && oRecord.to_KPIs.results) {
-                            oRecord.to_KPIs = oRecord.to_KPIs.results;
-                        }
-                        if (oRecord.to_qSum && oRecord.to_qSum.results) {
-                            oRecord.to_qSum = oRecord.to_qSum.results;
-                        }
-
-                        var iKpiLength = oRecord.to_KPIs ? oRecord.to_KPIs.length : 1;
-                        var iSumLength = oRecord.to_qSum ? oRecord.to_qSum.length : 1;
-
-                        oDetailModel.setProperty("/kpiRowCount", iKpiLength || 1);
-                        oDetailModel.setProperty("/summaryRowCount", iSumLength || 1);
-                        oDetailModel.setProperty("/data", oRecord);
-                        oDetailModel.setProperty("/searchCriteria", {
-                            globalId: sGlobalId,
-                            year: sYear,
-                            quarter: sQuarter
-                        });
-                        oDetailModel.setProperty("/isPdfButtonVisible", true);
-                        MessageToast.show("Data loaded successfully.");
-                    } else {
-                        oDetailModel.setProperty("/data", {});
-                        oDetailModel.setProperty("/kpiRowCount", 1);
-                        oDetailModel.setProperty("/summaryRowCount", 1);
-                        oDetailModel.setProperty("/isPdfButtonVisible", false);
-                        MessageBox.information("No records found for the selected criteria.");
-                    }
-                }.bind(this),
-                error: function () {
-                    oView.setBusy(false);
-                    MessageBox.error("Failed to fetch data from the backend.");
-                }
-            });
         },
 
         onContinue: function () {

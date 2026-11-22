@@ -40,7 +40,7 @@
                     </HBox>
                     <HBox justifyContent="Center" wrap="Wrap" width="100%" class="sapUiMediumMarginTop" items="{mDetailModel>/data/to_KPIs}">
                         <VBox alignItems="Center" class="sapUiSmallMargin">
-                            <HBox alignItems="Baseline" justifyContent="Center" class="qbBrandPill">
+                            <HBox alignItems="Center" justifyContent="Center" class="qbBrandPill">
                                 <Title
                                     text="{path: 'mDetailModel>kpiPayout', formatter: '.formatCleanNumber'}"
                                     titleStyle="H6"
