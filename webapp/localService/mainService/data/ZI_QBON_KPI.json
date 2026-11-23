@@ -9,8 +9,17 @@
     "kpiTargetAmount": "3423612860.00",
     "kpiPayoutPercent": "110.00",
     "kpiPayout": "3423612860.00",
+    "kpiResThreshold": "3100000000.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "3150000000.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "1711806430.00",
     "kpiResTarget": "3423612860.00",
-    "kpiResAchievement": "3423612860.00"
+    "kpiResAchievement": "3480000000.00",
+    "kpiResMaxPayout": "3750000000.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "6847225720.00"
   },
   {
     "global_id": "00006077",
@@ -22,8 +31,17 @@
     "kpiTargetAmount": "3423612860.00",
     "kpiPayoutPercent": "140.00",
     "kpiPayout": "3423612860.00",
+    "kpiResThreshold": "3100000000.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "3150000000.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "1711806430.00",
     "kpiResTarget": "3423612860.00",
-    "kpiResAchievement": "3423612860.00"
+    "kpiResAchievement": "3550000000.00",
+    "kpiResMaxPayout": "3750000000.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "6847225720.00"
   },
   {
     "global_id": "00006077",
@@ -35,8 +53,17 @@
     "kpiTargetAmount": "3423612860.00",
     "kpiPayoutPercent": "120.00",
     "kpiPayout": "3423612860.00",
+    "kpiResThreshold": "3100000000.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "3150000000.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "1711806430.00",
     "kpiResTarget": "3423612860.00",
-    "kpiResAchievement": "3423612860.00"
+    "kpiResAchievement": "3500000000.00",
+    "kpiResMaxPayout": "3750000000.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "6847225720.00"
   },
   {
     "global_id": "00006077",
@@ -48,8 +75,17 @@
     "kpiTargetAmount": "3423612860.00",
     "kpiPayoutPercent": "134.00",
     "kpiPayout": "3423612860.00",
+    "kpiResThreshold": "3100000000.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "3150000000.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "1711806430.00",
     "kpiResTarget": "3423612860.00",
-    "kpiResAchievement": "3423612860.00"
+    "kpiResAchievement": "3530000000.00",
+    "kpiResMaxPayout": "3750000000.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "6847225720.00"
   },
   {
     "global_id": "00006077",
@@ -61,8 +97,17 @@
     "kpiTargetAmount": "1812.50",
     "kpiPayoutPercent": "100.00",
     "kpiPayout": "1812.50",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "906.25",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "100.00"
+    "kpiResAchievement": "100.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3625.00"
   },
   {
     "global_id": "00006077",
@@ -74,8 +119,17 @@
     "kpiTargetAmount": "1812.50",
     "kpiPayoutPercent": "132.00",
     "kpiPayout": "2387.50",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "906.25",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "109.00"
+    "kpiResAchievement": "109.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3625.00"
   },
   {
     "global_id": "00006077",
@@ -87,8 +141,17 @@
     "kpiTargetAmount": "1875.00",
     "kpiPayoutPercent": "115.00",
     "kpiPayout": "2156.25",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "937.50",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "106.00"
+    "kpiResAchievement": "106.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3750.00"
   },
   {
     "global_id": "00006077",
@@ -100,8 +163,17 @@
     "kpiTargetAmount": "1875.00",
     "kpiPayoutPercent": "130.00",
     "kpiPayout": "2443.75",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "937.50",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "111.00"
+    "kpiResAchievement": "111.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3750.00"
   },
   {
     "global_id": "00149410",
@@ -113,8 +185,17 @@
     "kpiTargetAmount": "1575.00",
     "kpiPayoutPercent": "105.00",
     "kpiPayout": "1653.75",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "787.50",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "103.00"
+    "kpiResAchievement": "103.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3150.00"
   },
   {
     "global_id": "00149410",
@@ -126,8 +207,17 @@
     "kpiTargetAmount": "1050.00",
     "kpiPayoutPercent": "138.00",
     "kpiPayout": "1446.25",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "525.00",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "118.00"
+    "kpiResAchievement": "118.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "2100.00"
   },
   {
     "global_id": "00149410",
@@ -139,8 +229,17 @@
     "kpiTargetAmount": "1631.25",
     "kpiPayoutPercent": "112.00",
     "kpiPayout": "1827.00",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "815.63",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "107.00"
+    "kpiResAchievement": "107.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3262.50"
   },
   {
     "global_id": "00149410",
@@ -152,8 +251,17 @@
     "kpiTargetAmount": "1087.50",
     "kpiPayoutPercent": "140.00",
     "kpiPayout": "1523.00",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "543.75",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "120.00"
+    "kpiResAchievement": "120.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "2175.00"
   },
   {
     "global_id": "00001234",
@@ -165,8 +273,17 @@
     "kpiTargetAmount": "3850.00",
     "kpiPayoutPercent": "125.00",
     "kpiPayout": "4812.50",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "1925.00",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "114.00"
+    "kpiResAchievement": "114.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "7700.00"
   },
   {
     "global_id": "00001234",
@@ -178,7 +295,16 @@
     "kpiTargetAmount": "1650.00",
     "kpiPayoutPercent": "145.00",
     "kpiPayout": "2387.50",
+    "kpiResThreshold": "85.00",
+    "kpiThresholdPercent": "0.00",
+    "kpiThresholdAmount": "0.00",
+    "kpiResMinPayout": "90.00",
+    "kpiMinPayoutPercent": "50.00",
+    "kpiMinPayoutAmount": "825.00",
     "kpiResTarget": "100.00",
-    "kpiResAchievement": "121.00"
+    "kpiResAchievement": "121.00",
+    "kpiResMaxPayout": "125.00",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "3300.00"
   }
 ]

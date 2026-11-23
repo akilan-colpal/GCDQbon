@@ -31,6 +31,35 @@ sap.ui.define([
             });
             this.setModel(oUserDataModel, "mUserDataModel");
 
+            this.setModel(new JSONModel({
+                allPeriods: [],
+                availableYears: [],
+                availableQuarters: [],
+                isYearEnabled: false,
+                treeHierarchy: [],
+                isSearchEnabled: false,
+                summariesLoading: false,
+                selectedEmployeeLabel: "",
+                quarterCards: [],
+                ytdAmount: "0",
+                currency: "MXP",
+                searchCriteria: {
+                    globalId: "",
+                    year: ""
+                }
+            }), "mQuartersModel");
+
+            this.setModel(new JSONModel({
+                data: {},
+                isPdfButtonVisible: false,
+                pdfLoading: false,
+                searchCriteria: {
+                    globalId: "",
+                    year: "",
+                    quarter: ""
+                }
+            }), "mDetailModel");
+
             this.aDevelopers = [
                 "isabel_miranda@colpal.com",
                 "juliana_guevara_vargas@colpal.com",

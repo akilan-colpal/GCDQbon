@@ -83,23 +83,9 @@
 	font-size: clamp(1.125rem, 3.5vw, 2.25rem);
 }
 
-.qbHeroCurrency {
-	line-height: 1;
-	color: var(--sapContent_LabelColor);
-}
-
-.qbHeroCurrency.sapMTitle {
-	font-size: clamp(0.875rem, 2vw, 1.25rem);
-}
-
-.qbBrandSurface .qbHeroCurrency {
-	color: color-mix(in oklch, var(--sapContent_ContrastTextColor) 75%, transparent);
-}
-
 .qbBrandSurface .qbContrastText {
 	color: var(--sapContent_ContrastTextColor);
 	text-shadow: none;
-
 }
 
 .qbLiftCard {

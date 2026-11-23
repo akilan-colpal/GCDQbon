@@ -56,6 +56,15 @@
         <Property Name="kpiPayout" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="kpiResTarget" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="kpiResAchievement" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="kpiResThreshold" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="kpiThresholdPercent" Type="Edm.Decimal" Precision="10" Scale="4"/>
+        <Property Name="kpiThresholdAmount" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="kpiResMinPayout" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="kpiMinPayoutPercent" Type="Edm.Decimal" Precision="10" Scale="4"/>
+        <Property Name="kpiMinPayoutAmount" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="kpiResMaxPayout" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="kpiMaxPayoutPercent" Type="Edm.Decimal" Precision="10" Scale="4"/>
+        <Property Name="kpiMaxPayoutAmount" Type="Edm.Decimal" Precision="20" Scale="2"/>
       </EntityType>
 
       <EntityType Name="ZI_QBON_QSUMType" sap:content-version="1">
