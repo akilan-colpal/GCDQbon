@@ -11,12 +11,6 @@ sap.ui.define([
     return Controller.extend("adobeform.controller.Quarters", {
 
         onInit: function () {
-            var oQuartersModel = this.getOwnerComponent().getModel("mQuartersModel");
-            this.getView().setModel(oQuartersModel || new JSONModel({
-                quarterCards: [],
-                summariesLoading: true
-            }));
-
             this.getOwnerComponent().getRouter().getRoute("RouteQuarters").attachPatternMatched(this.onRouteMatched, this);
         },
 
@@ -38,7 +32,6 @@ sap.ui.define([
                 this.getOwnerComponent().getRouter().navTo("RouteStart", {}, true);
                 return;
             }
-            this.getView().setModel(oQuartersModel);
             var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
             if (!oDetailModel || !oDetailModel.getProperty("/isPdfButtonVisible")) {
                 this.byId("fcl").setLayout(window.innerWidth > 900 ? "TwoColumnsMidExpanded" : "OneColumn");
@@ -51,31 +44,12 @@ sap.ui.define([
         },
 
         onSelectQuarter: function (oEvent) {
-            var oCard = oEvent.getSource().getBindingContext().getObject();
+            var oQuarter = oEvent.getSource().getBindingContext("mQuartersModel").getObject();
             var oBundle = this.getView().getModel("i18n").getResourceBundle();
-            if (!oCard.statement) {
+            if (!oQuarter.statement) {
                 MessageToast.show(oBundle.getText("NO_RECORDS"));
                 return;
             }
-
-            var oStatement = oCard.statement;
-            var oSummary = (oStatement.to_qSum && oStatement.to_qSum[0]) ? oStatement.to_qSum[0] : {};
-            var aKpis = oStatement.to_KPIs || [];
-
-            if (aKpis.length && aKpis[0].proratedTarget !== undefined && aKpis[0].proratedTarget !== null && aKpis[0].proratedTarget !== "") {
-                oStatement.proratedTargetAmount = aKpis[0].proratedTarget;
-            } else {
-                oStatement.proratedTargetAmount = oSummary.quarterTargetAmount;
-            }
-            if (oStatement.bonusableEarnings === undefined || oStatement.bonusableEarnings === null || oStatement.bonusableEarnings === "") {
-                oStatement.bonusableEarnings = oSummary.bonusableQuarterEarn;
-            }
-            if (!oStatement.VarPayTemplateName) {
-                oStatement.VarPayTemplateName = oBundle.getText("BONUS_STATEMENT");
-            }
-            oStatement.summary = oSummary;
-
-            this._prepareKpiCharts(oStatement);
 
             var oQuartersModel = this.getOwnerComponent().getModel("mQuartersModel");
             var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
@@ -84,40 +58,31 @@ sap.ui.define([
             oDetailModel.setProperty("/searchCriteria", {
                 globalId: oCriteria.globalId,
                 year: oCriteria.year,
-                quarter: oCard.quarter
+                quarter: oQuarter.quarter
             });
-            oDetailModel.setProperty("/data", oStatement);
+            oDetailModel.setProperty("/data", oQuarter.statement);
             oDetailModel.setProperty("/isPdfButtonVisible", true);
+
+            var aKpis = (oQuarter.statement.to_KPIs || []).map(function (oKpi) {
+                var aPoints = [
+                    { x: Number(oKpi.kpiResThreshold), y: Number(oKpi.kpiThresholdPercent), show: false },
+                    { x: Number(oKpi.kpiResMinPayout), y: Number(oKpi.kpiMinPayoutPercent), show: false },
+                    { x: Number(oKpi.kpiResTarget), y: 100, show: false },
+                    { x: Number(oKpi.kpiResAchievement), y: Number(oKpi.kpiPayoutPercent), show: true },
+                    { x: Number(oKpi.kpiResMaxPayout), y: Number(oKpi.kpiMaxPayoutPercent), show: false }
+                ].sort(function (a, b) {
+                    return a.x - b.x;
+                });
+
+                return Object.assign({}, oKpi, {
+                    chartPoints: aPoints
+                });
+            });
+            this.getView().setModel(new JSONModel({ kpis: aKpis }), "mChartModel");
 
             var oFcl = this.byId("fcl");
             oFcl.setLayout("TwoColumnsMidExpanded");
             oFcl.toMidColumnPage(this.byId("detailPage"), "slide");
-        },
-
-        _prepareKpiCharts: function (oStatement) {
-            var aKpis = oStatement.to_KPIs || [];
-            aKpis.forEach(function (oKpi, iIndex) {
-                if (!oKpi.KPIName) {
-                    oKpi.KPIName = "KPI " + (iIndex + 1);
-                }
-                var fTarget = parseFloat(oKpi.kpiResTarget);
-                var fAchievement = parseFloat(oKpi.kpiResAchievement);
-                var fPayout = parseFloat(oKpi.kpiPayoutPercent);
-                if (isNaN(fTarget)) {
-                    fTarget = 0;
-                }
-                if (isNaN(fAchievement)) {
-                    fAchievement = 0;
-                }
-                if (isNaN(fPayout)) {
-                    fPayout = 0;
-                }
-                oKpi.chartPoints = [
-                    { x: 0, y: 0 },
-                    { x: fTarget, y: 100 },
-                    { x: fAchievement, y: fPayout }
-                ];
-            });
         },
 
         onCloseDetail: function () {

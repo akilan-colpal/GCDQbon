@@ -24,7 +24,7 @@ sap.ui.define([
                     controller: this
                 }).then(function (oDialog) {
                     this.oView.addDependent(oDialog);
-                    oDialog.setModel(this.oView.getModel(), "treeModel");
+                    oDialog.setModel(this.oParentController.getOwnerComponent().getModel("mQuartersModel"), "treeModel");
                     return oDialog;
                 }.bind(this));
             }

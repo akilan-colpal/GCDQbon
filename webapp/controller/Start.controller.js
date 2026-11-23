@@ -4,46 +4,17 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/MessageBox",
+    "sap/m/BusyDialog",
     "adobeform/controller/HRValueHelpHandler.controller",
     "adobeform/controller/EmployeeValueHelpHandler.controller",
     "adobeform/model/formatter"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageBox, HRValueHelpHandler, EmployeeValueHelpHandler, formatter) {
+], function (Controller, JSONModel, Filter, FilterOperator, MessageBox, BusyDialog, HRValueHelpHandler, EmployeeValueHelpHandler, formatter) {
     "use strict";
 
     return Controller.extend("adobeform.controller.Start", {
 
         onInit: function () {
-            var oQuartersModel = new JSONModel({
-                allPeriods: [],
-                availableYears: [],
-                availableQuarters: [],
-                isYearEnabled: false,
-                treeHierarchy: [],
-                isSearchEnabled: false,
-                periodsLoading: false,
-                summariesLoading: false,
-                selectedEmployeeLabel: "",
-                quarterCards: [],
-                ytdAmount: "0",
-                currency: "MXP",
-                searchCriteria: {
-                    globalId: "",
-                    year: ""
-                }
-            });
-            var oDetailModel = new JSONModel({
-                data: {},
-                isPdfButtonVisible: false,
-                pdfLoading: false,
-                searchCriteria: {
-                    globalId: "",
-                    year: "",
-                    quarter: ""
-                }
-            });
-            this.getView().setModel(oQuartersModel);
-            this.getOwnerComponent().setModel(oQuartersModel, "mQuartersModel");
-            this.getOwnerComponent().setModel(oDetailModel, "mDetailModel");
+            var oQuartersModel = this.getOwnerComponent().getModel("mQuartersModel");
 
             this.oValueHelpHandler = new HRValueHelpHandler(this);
             this.oEmployeeTreeHandler = new EmployeeValueHelpHandler(this);
@@ -100,7 +71,7 @@ sap.ui.define([
         // =======================================================
         _preloadTreeData: async function () {
             var oView = this.getView();
-            var oViewModel = oView.getModel();
+            var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var oUserDataModel = this.getOwnerComponent().getModel("mUserDataModel");
             var sRootEmpId = oUserDataModel.getProperty("/userId");
 
@@ -143,7 +114,7 @@ sap.ui.define([
         },
 
         _selectEmployee: function (sSelectedId, sLabel) {
-            var oViewModel = this.getView().getModel();
+            var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             oViewModel.setProperty("/selectedEmployeeLabel", sLabel || sSelectedId);
             oViewModel.setProperty("/searchCriteria/globalId", sSelectedId);
             this.byId("bonusYearInput").setSelectedKey("");
@@ -190,18 +161,41 @@ sap.ui.define([
             }.bind(this));
         },
 
+        _openBusyDialog: function () {
+            if (!this._oBusyDialog) {
+                this._oBusyDialog = new BusyDialog({
+                    title: "Loading...",
+                    text: "Please Wait"
+                });
+            }
+            this._oBusyDialog.open();
+        },
+
+        _closeBusyDialog: function () {
+            if (this._oBusyDialog) {
+                this._oBusyDialog.close();
+            }
+        },
+
+        onExit: function () {
+            if (this._oBusyDialog) {
+                this._oBusyDialog.destroy();
+                this._oBusyDialog = null;
+            }
+        },
+
         // =======================================================
         // LOAD DROPDOWNS
         // =======================================================
         _loadDropdownData: function (sEmployeeId) {
             var oView = this.getView();
-            var oViewModel = oView.getModel();
+            var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var oSFModel = this.getOwnerComponent().getModel("mSuccessFactorsModel");
 
             oViewModel.setProperty("/quarterCards", []);
             oViewModel.setProperty("/ytdAmount", "0");
-            oViewModel.setProperty("/periodsLoading", true);
             oViewModel.setProperty("/summariesLoading", false);
+            this._openBusyDialog();
             oViewModel.setProperty("/searchCriteria", {
                 globalId: sEmployeeId,
                 year: ""
@@ -267,7 +261,7 @@ sap.ui.define([
 
                     oViewModel.setProperty("/allPeriods", aParsedPeriods);
                     oViewModel.setProperty("/availableYears", aYears);
-                    oViewModel.setProperty("/periodsLoading", false);
+                    this._closeBusyDialog();
 
                     if (aYears.length > 0) {
                         var sLatestYear = aYears[aYears.length - 1].year;
@@ -285,13 +279,14 @@ sap.ui.define([
                         oViewModel.setProperty("/isYearEnabled", false);
                         this.byId("bonusYearInput").setSelectedKey("");
                         this._updateSearchEnabled();
-                        MessageBox.warning("No statements found");
+                        var sEmployeeLabel = oViewModel.getProperty("/selectedEmployeeLabel") || sEmployeeId;
+                        MessageBox.warning("No statements found for " + sEmployeeLabel);
                         oView.setBusy(false);
                     }
                 }.bind(this),
                 error: function () {
                     oView.setBusy(false);
-                    oViewModel.setProperty("/periodsLoading", false);
+                    this._closeBusyDialog();
                     oViewModel.setProperty("/isYearEnabled", false);
                     this._updateSearchEnabled();
                 }.bind(this)
@@ -316,17 +311,17 @@ sap.ui.define([
         },
 
         onYearChange: function (oEvent) {
-            var oView = this.getView();
+            var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var oSelectedItem = oEvent.getParameter("selectedItem");
             if (!oSelectedItem) {
                 return;
             }
             var sSelectedYear = oSelectedItem.getKey();
-            var aAllPeriods = oView.getModel().getProperty("/allPeriods") || [];
+            var aAllPeriods = oViewModel.getProperty("/allPeriods") || [];
             var aQuarters = this._getQuartersForYear(aAllPeriods, sSelectedYear);
 
-            oView.getModel().setProperty("/availableQuarters", aQuarters);
-            oView.getModel().setProperty("/searchCriteria/year", sSelectedYear);
+            oViewModel.setProperty("/availableQuarters", aQuarters);
+            oViewModel.setProperty("/searchCriteria/year", sSelectedYear);
             this._updateSearchEnabled();
             this._loadYearStatements();
         },
@@ -335,7 +330,7 @@ sap.ui.define([
         // STATEMENT SEARCH
         // =======================================================
         _updateSearchEnabled: function () {
-            var oViewModel = this.getView().getModel();
+            var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var oYearSelect = this.byId("bonusYearInput");
             var sGlobalId = oViewModel.getProperty("/searchCriteria/globalId") || "";
             var bYearSelected = !!(oYearSelect && oYearSelect.getSelectedItem());
@@ -349,8 +344,7 @@ sap.ui.define([
         },
 
         _loadYearStatements: function () {
-            var oView = this.getView();
-            var oViewModel = oView.getModel();
+            var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var sGlobalId = oViewModel.getProperty("/searchCriteria/globalId") || "";
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var aQuarters = oViewModel.getProperty("/availableQuarters") || [];

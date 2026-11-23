@@ -38,7 +38,7 @@
                             <Input
                                 id="employeeIdInput"
                                 width="100%"
-                                value="{path: '/selectedEmployeeLabel', mode: 'OneWay'}"
+                                value="{path: 'mQuartersModel>/selectedEmployeeLabel', mode: 'OneWay'}"
                                 editable="{= ${mUserDataModel>/isHR} || ${mUserDataModel>/isMgr} }"
                                 showValueHelp="{= ${mUserDataModel>/isHR} || ${mUserDataModel>/isMgr} }"
                                 valueHelpOnly="true"
@@ -49,19 +49,13 @@
                             <Select
                                 id="bonusYearInput"
                                 width="100%"
-                                selectedKey="{/searchCriteria/year}"
-                                items="{/availableYears}"
+                                selectedKey="{mQuartersModel>/searchCriteria/year}"
+                                items="{mQuartersModel>/availableYears}"
                                 change=".onYearChange"
                                 forceSelection="false"
-                                enabled="{/isYearEnabled}">
-                                <core:Item key="{year}" text="{year}"/>
+                                enabled="{mQuartersModel>/isYearEnabled}">
+                                <core:Item key="{mQuartersModel>year}" text="{mQuartersModel>year}"/>
                             </Select>
-
-                            <!-- Shown while cust_VarPayEmpHistData is loading. -->
-                            <HBox visible="{/periodsLoading}" alignItems="Center" class="sapUiTinyMarginTop">
-                                <BusyIndicator size="1.5rem"/>
-                                <Text text="{i18n>LOADING_PERIODS}" class="qbContrastText sapUiSmallMarginBegin"/>
-                            </HBox>
                         </VBox>
 
                         <!-- Enabled when an employee, a year, and at least one quarter card exist. -->
@@ -69,11 +63,11 @@
                             id="getDetailsButton"
                             class="sapUiSmallMarginTop"
                             width="100%"
-                            text="{= ${/periodsLoading} || ${/summariesLoading} ? ${i18n>LOADING} : ${i18n>GET_DETAILS} }"
+                            text="{= ${mQuartersModel>/summariesLoading} ? ${i18n>LOADING} : ${i18n>GET_DETAILS} }"
                             type="Success"
                             icon="sap-icon://navigation-right-arrow"
                             iconFirst="false"
-                            enabled="{/isSearchEnabled}"
+                            enabled="{mQuartersModel>/isSearchEnabled}"
                             press=".onContinue"/>
                     </VBox>
                 </VBox>
