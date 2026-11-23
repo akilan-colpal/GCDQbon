@@ -1,13 +1,13 @@
 [
   {
-    "userId": "00006077",
-    "userGlobalId": "00006077",
+    "userId": "00015525",
+    "userGlobalId": "00015525",
     "email": "local.dev@colpal.com",
     "isHR": "Y",
     "isMgr": "Y",
-    "firstName": "Alex",
-    "lastName": "Rivera",
-    "title": "HR Business Partner"
+    "firstName": "Radka",
+    "lastName": "Svambergova",
+    "title": "Customer Development Manager"
   },
   {
     "userId": "00149410",
@@ -15,18 +15,8 @@
     "email": "armaan_seelan@colpal.com",
     "isHR": "N",
     "isMgr": "N",
-    "firstName": "Armaan",
-    "lastName": "Seelan",
-    "title": "Sales Associate"
-  },
-  {
-    "userId": "00001234",
-    "userGlobalId": "00001234",
-    "email": "jordan.lee@colpal.com",
-    "isHR": "N",
-    "isMgr": "Y",
-    "firstName": "Jordan",
-    "lastName": "Lee",
-    "title": "Sales Manager"
+    "firstName": "Anna",
+    "lastName": "Kaczorne",
+    "title": "Customer Development Manager"
   }
 ]

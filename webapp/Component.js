@@ -76,7 +76,7 @@ sap.ui.define([
             ];
             // proxies
             this.mProxyUserIds = {
-                "armaan_seelan@colpal.com": "00149410"
+                "armaan_seelan@colpal.com": "00015525"
             };
             this.getUserInfo();
         },
@@ -144,13 +144,13 @@ sap.ui.define([
                 console.warn("Local environment — using user model");
                 var oUserDataModel = this.getModel("mUserDataModel");
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
-                oUserDataModel.setProperty("/userId", "00149410");
-                oUserDataModel.setProperty("/userGlobalId", "00149410");
+                oUserDataModel.setProperty("/userId", "00015525");
+                oUserDataModel.setProperty("/userGlobalId", "00015525");
                 oUserDataModel.setProperty("/isHR", false);
                 oUserDataModel.setProperty("/isMgr", false);
-                oUserDataModel.setProperty("/displayName", "Alex Rivera");
-                oUserDataModel.setProperty("/initials", "AR");
-                oUserDataModel.setProperty("/title", "HR Business Partner");
+                oUserDataModel.setProperty("/displayName", "Radka Svambergova");
+                oUserDataModel.setProperty("/initials", "RS");
+                oUserDataModel.setProperty("/title", "Customer Development Manager");
                 this.fnCloseBusyDialog();
                 this.getRouter().initialize();
             }.bind(this));

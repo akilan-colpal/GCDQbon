@@ -51,9 +51,12 @@
         <Property Name="KPIName" Type="Edm.String" Nullable="false" MaxLength="100"/>
         <Property Name="proratedTarget" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="kpiWeight" Type="Edm.Decimal" Precision="10" Scale="4"/>
+        <Property Name="teamWeight" Type="Edm.Decimal" Precision="10" Scale="4"/>
         <Property Name="kpiTargetAmount" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="kpiPayoutPercent" Type="Edm.Decimal" Precision="10" Scale="4"/>
         <Property Name="kpiPayout" Type="Edm.Decimal" Precision="20" Scale="2"/>
+        <Property Name="startKpiDate" Type="Edm.String" MaxLength="8"/>
+        <Property Name="endKpiDate" Type="Edm.String" MaxLength="8"/>
         <Property Name="kpiResTarget" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="kpiResAchievement" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="kpiResThreshold" Type="Edm.Decimal" Precision="20" Scale="2"/>
@@ -73,6 +76,7 @@
           <PropertyRef Name="bonusYear"/>
           <PropertyRef Name="bonusQuarter"/>
           <PropertyRef Name="summaryQuarter"/>
+          <PropertyRef Name="startQSumDate"/>
         </Key>
         <Property Name="global_id" Type="Edm.String" Nullable="false" MaxLength="20"/>
         <Property Name="bonusYear" Type="Edm.String" Nullable="false" MaxLength="4"/>
@@ -81,6 +85,8 @@
         <Property Name="bonusableQuarterEarn" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="quarterTargetPercent" Type="Edm.Decimal" Precision="10" Scale="4"/>
         <Property Name="paymentPeriod" Type="Edm.Decimal" Precision="10" Scale="4"/>
+        <Property Name="prorationPercent" Type="Edm.Decimal" Precision="10" Scale="4"/>
+        <Property Name="planType" Type="Edm.String" MaxLength="100"/>
         <Property Name="quarterTargetAmount" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="segmentAward" Type="Edm.Decimal" Precision="20" Scale="2"/>
         <Property Name="startQSumDate" Type="Edm.String" MaxLength="8"/>

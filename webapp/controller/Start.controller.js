@@ -273,7 +273,6 @@ sap.ui.define([
                         this.byId("bonusYearInput").setSelectedKey(sLatestYear);
                         oViewModel.setProperty("/searchCriteria/year", sLatestYear);
                         this._updateSearchEnabled();
-                        this._loadYearStatements();
                     } else {
                         oViewModel.setProperty("/availableQuarters", []);
                         oViewModel.setProperty("/isYearEnabled", false);
@@ -322,8 +321,9 @@ sap.ui.define([
 
             oViewModel.setProperty("/availableQuarters", aQuarters);
             oViewModel.setProperty("/searchCriteria/year", sSelectedYear);
+            oViewModel.setProperty("/quarterCards", []);
+            oViewModel.setProperty("/ytdAmount", "0");
             this._updateSearchEnabled();
-            this._loadYearStatements();
         },
 
         // =======================================================
@@ -334,105 +334,61 @@ sap.ui.define([
             var oYearSelect = this.byId("bonusYearInput");
             var sGlobalId = oViewModel.getProperty("/searchCriteria/globalId") || "";
             var bYearSelected = !!(oYearSelect && oYearSelect.getSelectedItem());
-            var aCards = oViewModel.getProperty("/quarterCards") || [];
             var bSummariesLoading = oViewModel.getProperty("/summariesLoading");
 
             oViewModel.setProperty(
                 "/isSearchEnabled",
-                !!(sGlobalId && bYearSelected && aCards.length > 0 && !bSummariesLoading)
+                !!(sGlobalId && bYearSelected && !bSummariesLoading)
             );
         },
 
-        _loadYearStatements: function () {
+        onContinue: async function () {
+            var oView = this.getView();
             var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var sGlobalId = oViewModel.getProperty("/searchCriteria/globalId") || "";
             var sYear = this.byId("bonusYearInput").getSelectedKey();
             var aQuarters = oViewModel.getProperty("/availableQuarters") || [];
             var oODataModel = this.getOwnerComponent().getModel();
-            var oQuarterOrder = { Q1: 1, Q2: 2, Q3: 3, Q4: 4 };
 
             if (!sGlobalId || !sYear || aQuarters.length === 0) {
-                oViewModel.setProperty("/quarterCards", []);
-                oViewModel.setProperty("/ytdAmount", "0");
-                oViewModel.setProperty("/summariesLoading", false);
-                this._updateSearchEnabled();
                 return;
             }
 
+            oView.setBusy(true);
             oViewModel.setProperty("/summariesLoading", true);
             this._updateSearchEnabled();
 
-            var iPending = aQuarters.length;
-            var aCards = [];
-            var sYtdAmount = "0";
-            var sCurrency = "MXP";
-            var iBestRank = -1;
-
-            var fnFinish = function () {
-                iPending = iPending - 1;
-                if (iPending === 0) {
-                    aCards.sort(function (a, b) {
-                        return String(a.quarter).localeCompare(String(b.quarter));
-                    });
-                    oViewModel.setProperty("/quarterCards", aCards);
-                    oViewModel.setProperty("/ytdAmount", sYtdAmount);
-                    oViewModel.setProperty("/currency", sCurrency);
-                    oViewModel.setProperty("/summariesLoading", false);
-                    this._updateSearchEnabled();
-                }
-            }.bind(this);
-
-            aQuarters.forEach(function (oQuarterItem) {
-                var sQuarter = oQuarterItem.quarter;
-                var aFilters = [
-                    new Filter("global_id", FilterOperator.EQ, sGlobalId),
-                    new Filter("bonusYear", FilterOperator.EQ, sYear),
-                    new Filter("bonusQuarter", FilterOperator.EQ, sQuarter)
-                ];
-
-                oODataModel.read("/ZI_QBON_DD", {
-                    filters: aFilters,
-                    urlParameters: {
-                        "$expand": "to_KPIs,to_qSum"
-                    },
-                    success: function (oData) {
-                        var oRecord = null;
-                        var sPeriod = "";
-                        var sAward = "0";
-                        var sCardCurrency = sCurrency;
-
-                        if (oData.results && oData.results.length > 0) {
-                            oRecord = oData.results[0];
-
-                            if (oRecord.to_KPIs && oRecord.to_KPIs.results) {
-                                oRecord.to_KPIs = oRecord.to_KPIs.results;
+            try {
+                var aResponses = await Promise.all(aQuarters.map(function (oQ) {
+                    return new Promise(function (resolve) {
+                        oODataModel.read("/ZI_QBON_DD", {
+                            filters: [
+                                new Filter("global_id", FilterOperator.EQ, sGlobalId),
+                                new Filter("bonusYear", FilterOperator.EQ, sYear),
+                                new Filter("bonusQuarter", FilterOperator.EQ, oQ.quarter)
+                            ],
+                            urlParameters: { "$expand": "to_KPIs,to_qSum" },
+                            success: function (oData) {
+                                resolve({ quarter: oQ.quarter, results: oData.results || [] });
+                            },
+                            error: function () {
+                                resolve({ quarter: oQ.quarter, results: [] });
                             }
-                            if (oRecord.to_qSum && oRecord.to_qSum.results) {
-                                oRecord.to_qSum = oRecord.to_qSum.results;
-                            }
-
-                            sPeriod = formatter.spanPeriodRangeForQuarter(oRecord.to_qSum || [], sQuarter);
-                            sAward = oRecord.totalQuarterAward || "0";
-                            sCardCurrency = oRecord.currency || "MXP";
-
-                            var iRank = oQuarterOrder[sQuarter] || 0;
-                            if (iRank >= iBestRank) {
-                                iBestRank = iRank;
-                                sYtdAmount = oRecord.totalBonusYTD || "0";
-                                sCurrency = sCardCurrency;
-                            }
-                        }
-
-                        aCards.push({
-                            quarter: sQuarter,
-                            periodDays: sPeriod,
-                            totalQuarterAward: sAward,
-                            currency: sCardCurrency,
-                            statement: oRecord
                         });
-                        fnFinish();
-                    },
-                    error: function () {
+                    });
+                }));
+
+                var aCards = [];
+                var oLatest = aResponses[aResponses.length - 1];
+                var oLatestRecord = oLatest && oLatest.results && oLatest.results[0];
+                var sYtdAmount = (oLatestRecord && oLatestRecord.totalBonusYTD) || "0";
+                var sCurrency = (oLatestRecord && oLatestRecord.currency) || "MXP";
+
+                aResponses.forEach(function (oRes) {
+                    var sQuarter = oRes.quarter;
+                    var oRecord = oRes.results[0];
+
+                    if (!oRecord) {
                         aCards.push({
                             quarter: sQuarter,
                             periodDays: "",
@@ -440,14 +396,52 @@ sap.ui.define([
                             currency: sCurrency,
                             statement: null
                         });
-                        fnFinish();
+                        return;
                     }
-                });
-            });
-        },
 
-        onContinue: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteQuarters");
+                    oRecord.to_KPIs = (oRecord.to_KPIs && oRecord.to_KPIs.results) || oRecord.to_KPIs || [];
+                    oRecord.to_qSum = (oRecord.to_qSum && oRecord.to_qSum.results) || oRecord.to_qSum || [];
+
+                    if (oRecord.currency) {
+                        sCurrency = oRecord.currency;
+                    }
+
+                    // Backend returns YTD summaries (Q1..QX); keep only this quarter's rows.
+                    var aSums = oRecord.to_qSum.filter(function (oSum) {
+                        return String(oSum.summaryQuarter || "").toUpperCase() === sQuarter;
+                    }).sort(function (a, b) {
+                        return (a.startQSumDate || "") < (b.startQSumDate || "") ? -1 : 1;
+                    });
+
+                    var sPeriodDays = "";
+                    if (aSums.length > 0) {
+                        sPeriodDays = formatter.formatDateRange(
+                            aSums[0].startQSumDate,
+                            aSums[aSums.length - 1].endQSumDate
+                        );
+                    }
+
+                    aCards.push({
+                        quarter: sQuarter,
+                        periodDays: sPeriodDays,
+                        totalQuarterAward: oRecord.totalQuarterAward || "0",
+                        currency: oRecord.currency || sCurrency,
+                        statement: Object.assign({}, oRecord, {
+                            to_qSum: aSums
+                        })
+                    });
+                });
+
+                oViewModel.setProperty("/searchCriteria/year", sYear);
+                oViewModel.setProperty("/quarterCards", aCards);
+                oViewModel.setProperty("/ytdAmount", sYtdAmount);
+                oViewModel.setProperty("/currency", sCurrency);
+                this.getOwnerComponent().getRouter().navTo("RouteQuarters");
+            } finally {
+                oViewModel.setProperty("/summariesLoading", false);
+                oView.setBusy(false);
+                this._updateSearchEnabled();
+            }
         }
     });
 });

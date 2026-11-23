@@ -18,28 +18,9 @@ sap.ui.define([
 
     return {
         /**
-         * Date span for one bonus quarter using Edm.String (yyyyMMdd) dates.
+         * Formats a start/end yyyyMMdd pair into "MMM dd - MMM dd".
          */
-        spanPeriodRangeForQuarter: function (aRows, sQuarter) {
-            var sQuarterKey = String(sQuarter || "").toUpperCase();
-            var aFiltered = (aRows || []).filter(function (oRow) {
-                return String(oRow.summaryQuarter || "").toUpperCase().indexOf(sQuarterKey) !== -1;
-            });
-            var aUse = aFiltered.length ? aFiltered : (aRows || []);
-
-            var sStart = "";
-            var sEnd = "";
-            aUse.forEach(function (oRow) {
-                var sRowStart = oRow.startQSumDate || "";
-                var sRowEnd = oRow.endQSumDate || "";
-                if (sRowStart && (!sStart || sRowStart < sStart)) {
-                    sStart = sRowStart;
-                }
-                if (sRowEnd && (!sEnd || sRowEnd > sEnd)) {
-                    sEnd = sRowEnd;
-                }
-            });
-
+        formatDateRange: function (sStart, sEnd) {
             var sStartText = formatShortDate(sStart);
             var sEndText = formatShortDate(sEnd);
             if (sStartText && sEndText) {

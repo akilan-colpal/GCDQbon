@@ -4,11 +4,6 @@
     xmlns="sap.m"
     xmlns:core="sap.ui.core">
 
-    <!--
-        Start. Unnamed model is mQuartersModel (set in Start.controller).
-        mUserDataModel comes from the component.
-        sapUiResponsiveContentPadding follows Device.media screen size.
-    -->
     <Page
         id="page"
         showHeader="false"
@@ -53,7 +48,7 @@
                             </Select>
                         </VBox>
 
-                        <!-- Enabled when an employee, a year, and at least one quarter card exist. -->
+                        <!-- Enabled when an employee and a year are selected. -->
                         <Button
                             id="getDetailsButton"
                             class="sapUiSmallMarginTop"

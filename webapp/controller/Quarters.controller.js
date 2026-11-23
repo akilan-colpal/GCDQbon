@@ -4,8 +4,9 @@ sap.ui.define([
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "sap/m/MessageToast",
-    "sap/m/MessageBox"
-], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox) {
+    "sap/m/MessageBox",
+    "adobeform/model/formatter"
+], function (Controller, JSONModel, Filter, FilterOperator, MessageToast, MessageBox, formatter) {
     "use strict";
 
     return Controller.extend("adobeform.controller.Quarters", {
@@ -63,7 +64,10 @@ sap.ui.define([
             oDetailModel.setProperty("/data", oQuarter.statement);
             oDetailModel.setProperty("/isPdfButtonVisible", true);
 
-            var aKpis = (oQuarter.statement.to_KPIs || []).map(function (oKpi) {
+            var aSums = oQuarter.statement.to_qSum || [];
+            var aAllKpis = oQuarter.statement.to_KPIs || [];
+
+            var fnBuildKpi = function (oKpi, oSum) {
                 var aPoints = [
                     { x: Number(oKpi.kpiResThreshold), y: Number(oKpi.kpiThresholdPercent), show: false },
                     { x: Number(oKpi.kpiResMinPayout), y: Number(oKpi.kpiMinPayoutPercent), show: false },
@@ -75,10 +79,46 @@ sap.ui.define([
                 });
 
                 return Object.assign({}, oKpi, {
+                    prorationPercent: oSum.prorationPercent || oSum.paymentPeriod,
                     chartPoints: aPoints
                 });
+            };
+
+            var oFirstSum = aSums[0] || {};
+            var fOverallTarget = 0;
+            var aPlans = aSums.map(function (oSum) {
+                var aMatchedKpis = aAllKpis.filter(function (oKpi) {
+                    return oKpi.startKpiDate === oSum.startQSumDate && oKpi.endKpiDate === oSum.endQSumDate;
+                });
+                if (aMatchedKpis.length === 0 && aSums.length === 1) {
+                    aMatchedKpis = aAllKpis;
+                }
+                var oFirstKpi = aMatchedKpis[0] || aAllKpis[0] || {};
+                fOverallTarget += parseFloat(String(oSum.quarterTargetAmount || "0").trim()) || 0;
+
+                return {
+                    periodDays: formatter.formatDateRange(oSum.startQSumDate, oSum.endQSumDate),
+                    planType: oSum.planType || "",
+                    quarterTargetAmount: oSum.quarterTargetAmount,
+                    prorationPercent: oSum.prorationPercent || oSum.paymentPeriod,
+                    proratedTarget: oFirstKpi.proratedTarget,
+                    segmentAward: oSum.segmentAward,
+                    kpis: aMatchedKpis.map(function (oKpi) {
+                        return fnBuildKpi(oKpi, oSum);
+                    })
+                };
             });
-            this.getView().setModel(new JSONModel({ kpis: aKpis }), "mChartModel");
+
+            this.getView().setModel(new JSONModel({
+                earnings: {
+                    bonusableQuarterEarn: oFirstSum.bonusableQuarterEarn || oQuarter.statement.bonusableEarnings,
+                    quarterTargetPercent: oFirstSum.quarterTargetPercent,
+                    quarterTargetAmount: aSums.length > 1
+                        ? String(fOverallTarget)
+                        : (oFirstSum.quarterTargetAmount || "0")
+                },
+                plans: aPlans
+            }), "mChartModel");
 
             var oFcl = this.byId("fcl");
             oFcl.setLayout("TwoColumnsMidExpanded");
@@ -175,10 +215,10 @@ sap.ui.define([
         // FORMATTERS
         // =======================================================
         formatCleanNumber: function (sValue) {
-            if (!sValue) {
+            if (sValue === null || sValue === undefined || sValue === "") {
                 return "";
             }
-            var fValue = parseFloat(sValue);
+            var fValue = parseFloat(String(sValue).trim());
             if (isNaN(fValue)) {
                 return sValue;
             }
