@@ -8,12 +8,7 @@
     <!-- Shell. ToolPage holds the header and the routed pages. -->
     <tnt:ToolPage id="toolPage">
         <tnt:header>
-            <!--
-                Top bar. Navy comes from .toolHeader.
-                Left: logo (home) and product titles.
-                Right: language, greeting, role, initials.
-                sapUiHideOnPhone uses Device.media SAP_STANDARD (< 600px).
-            -->
+
             <tnt:ToolHeader id="toolHeader" class="toolHeader">
                 <Image
                     id="logo"
@@ -38,7 +33,6 @@
                     <core:Item key="en" text="English"/>
                     <core:Item key="es" text="Español"/>
                 </Select>
-                <!-- Signed-in user from mUserDataModel, filled in Component.js. -->
                 <VBox justifyContent="Center" class="sapUiSmallMarginBegin sapUiSmallMarginEnd sapUiHideOnPhone">
                     <Title text="{i18n>GREETING} {mUserDataModel>/displayName}" level="H5" class="qbHeaderText"/>
                     <Text text="{mUserDataModel>/title}" visible="{= ${mUserDataModel>/title} !== '' }" class="qbHeaderText"/>

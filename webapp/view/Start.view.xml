@@ -16,7 +16,6 @@
         class="sapUiResponsiveContentPadding">
         <content>
             <VBox width="100%">
-                <!-- Blue hero. Background image is .qbStartHero. -->
                 <VBox class="qbBrandSurface qbHero qbStartHero" width="100%">
                     <VBox class="qbStartContent">
                         <Title
@@ -28,11 +27,7 @@
                             text="{i18n>START_SUBTITLE}"
                             class="qbContrastText sapUiTinyMarginTop sapUiSmallMarginBottom"/>
 
-                        <!--
-                            Employee + year.
-                            Input is editable with value help only for HR and manager.
-                            Year list is /availableYears from SuccessFactors templates.
-                        -->
+
                         <VBox class="sapUiSmallMarginTop" width="100%">
                             <Label text="{i18n>GLOBAL_ID}" labelFor="employeeIdInput" class="qbContrastText sapUiTinyMarginBottom"/>
                             <Input

@@ -115,10 +115,10 @@ sap.ui.define([
                 console.warn("Local environment — using user model");
                 var oUserDataModel = this.getModel("mUserDataModel");
                 oUserDataModel.setProperty("/email", "local.dev@colpal.com");
-                oUserDataModel.setProperty("/userId", "00006077");
-                oUserDataModel.setProperty("/userGlobalId", "00006077");
-                oUserDataModel.setProperty("/isHR", true);
-                oUserDataModel.setProperty("/isMgr", true);
+                oUserDataModel.setProperty("/userId", "00149410");
+                oUserDataModel.setProperty("/userGlobalId", "00149410");
+                oUserDataModel.setProperty("/isHR", false);
+                oUserDataModel.setProperty("/isMgr", false);
                 oUserDataModel.setProperty("/displayName", "Alex Rivera");
                 oUserDataModel.setProperty("/initials", "AR");
                 oUserDataModel.setProperty("/title", "HR Business Partner");
@@ -157,11 +157,26 @@ sap.ui.define([
                     var bIsMgr = String(oAccess.isMgr).toUpperCase() === "Y";
 
                     // backend values
+                    var sDisplayName = [oAccess.firstName, oAccess.lastName].filter(Boolean).join(" ");
+                    var sInitials = [oAccess.firstName, oAccess.lastName]
+                        .filter(Boolean)
+                        .map(function (s) { return s.charAt(0).toUpperCase(); })
+                        .join("");
+
                     oUserDataModel.setProperty("/email", sEmail);
                     oUserDataModel.setProperty("/userId", sUserId);
                     oUserDataModel.setProperty("/userGlobalId", sUserGlobalId);
                     oUserDataModel.setProperty("/isHR", bIsHR);
                     oUserDataModel.setProperty("/isMgr", bIsMgr);
+                    if (sDisplayName) {
+                        oUserDataModel.setProperty("/displayName", sDisplayName);
+                    }
+                    if (sInitials) {
+                        oUserDataModel.setProperty("/initials", sInitials);
+                    }
+                    if (oAccess.title) {
+                        oUserDataModel.setProperty("/title", oAccess.title);
+                    }
 
                     var sProxyId = this.mProxyUserIds[sEmailKey];
                     if (sProxyId) {

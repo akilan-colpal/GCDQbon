@@ -11,7 +11,6 @@
 	background: var(--sapBackgroundColor);
 }
 
-/* Explicit product color for the shell header */
 .toolHeader {
 	background-color: #354a5f !important;
 }
@@ -48,7 +47,6 @@
 	padding: 2rem 2.25rem;
 }
 
-/* Start hero: brand wash + illustration (asset is app content, not a theme token) */
 .qbStartHero {
 	position: relative;
 	overflow: hidden;
@@ -100,6 +98,8 @@
 
 .qbBrandSurface .qbContrastText {
 	color: var(--sapContent_ContrastTextColor);
+	text-shadow: none;
+
 }
 
 .qbLiftCard {
@@ -167,7 +167,6 @@
 	background: color-mix(in oklch, var(--sapContent_ContrastTextColor) 14%, transparent);
 }
 
-/* Below 600px: hide hero illustration */
 @media (max-width: 600px) {
 	.qbStartHero {
 		min-height: auto;

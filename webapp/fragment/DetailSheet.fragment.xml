@@ -3,10 +3,7 @@
     xmlns:core="sap.ui.core"
     xmlns:layout="sap.ui.layout"
     xmlns:microchart="sap.suite.ui.microchart">
-    <!--
-        Statement detail. Shown in FlexibleColumnLayout midColumnPages by Quarters.controller.
-        Bindings read mDetailModel>/data (the selected ZI_QBON_DD row) and /searchCriteria.
-    -->
+
     <Page id="detailPage" backgroundDesign="Solid" enableScrolling="true" class="sapUiResponsiveContentPadding">
         <customHeader>
             <OverflowToolbar height="auto">
@@ -164,7 +161,6 @@
                     </content>
                 </Panel>
 
-                <!-- One expandable panel per KPI: formula, achievement table, sparkline. -->
                 <Panel width="100%" class="qbLiftCard sapUiMediumMarginTop">
                     <headerToolbar>
                         <OverflowToolbar>
@@ -285,7 +281,6 @@
                 </Panel>
 
                 <layout:Grid defaultSpan="XL3 L3 M6 S12" containerQuery="true" class="sapUiMediumMarginTop" width="100%">
-                <!-- Legal copy. HTML comes from i18n. -->
                     <FormattedText htmlText="{i18n>CALCULATION_BASIS_HTML}" class="sapUiTinyMargin"/>
                     <FormattedText htmlText="{i18n>ELIGIBILITY_PRORATION_HTML}" class="sapUiTinyMargin"/>
                     <FormattedText htmlText="{i18n>PAYMENT_INFORMATION_HTML}" class="sapUiTinyMargin"/>
