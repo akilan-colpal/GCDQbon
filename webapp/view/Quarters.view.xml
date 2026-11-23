@@ -44,7 +44,7 @@
                     visible="{= !${/summariesLoading} &amp;&amp; ${/quarterCards}.length > 0 }"
                     width="100%">
 
-                    <VBox class="qbBrandSurface qbHero qbQuartersPanel" width="100%">
+                    <VBox class="qbBrandSurface qbHero" width="100%">
                         <Title text="{/searchCriteria/year}" titleStyle="H1" wrapping="true" class="qbContrastText"/>
                         <Title text="{i18n>PICK_QUARTER}" titleStyle="H4" wrapping="true" class="qbContrastText sapUiSmallMarginTop"/>
                         <Text text="{/selectedEmployeeLabel}" class="qbContrastText sapUiTinyMarginTop"/>
@@ -99,11 +99,10 @@
                                             emphasized="true"
                                             number="{path: 'totalQuarterAward', formatter: '.formatCleanNumber'}"
                                             unit="{currency}"/>
-                                        <Button
-                                            icon="sap-icon://navigation-right-arrow"
-                                            tooltip="{i18n>VIEW_DETAILS}"
-                                            type="Transparent"
-                                            press=".onSelectQuarter"/>
+                                        <core:Icon
+                                            src="sap-icon://navigation-right-arrow"
+                                            decorative="true"
+                                            class="sapUiTinyMarginBegin"/>
                                     </HBox>
                                 </HBox>
                             </CustomListItem>

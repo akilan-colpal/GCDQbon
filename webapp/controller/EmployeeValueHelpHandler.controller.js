@@ -42,11 +42,16 @@ sap.ui.define([
             var oItem = oEvent.getParameter("listItem");
             var oContext = oItem.getBindingContext("treeModel");
             var sSelectedId = oContext.getProperty("empid");
+            var sLabel = this.formatTreeTitle(
+                oContext.getProperty("firstname"),
+                oContext.getProperty("lastname"),
+                sSelectedId
+            );
 
             this.onCloseTreeDialog();
 
             if (this.fnSuccessCallback) {
-                this.fnSuccessCallback(sSelectedId, this.oCurrentInput);
+                this.fnSuccessCallback(sSelectedId, this.oCurrentInput, sLabel);
             }
         },
 

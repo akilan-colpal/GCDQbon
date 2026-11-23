@@ -41,8 +41,8 @@
                                 value="{path: '/selectedEmployeeLabel', mode: 'OneWay'}"
                                 editable="{= ${mUserDataModel>/isHR} || ${mUserDataModel>/isMgr} }"
                                 showValueHelp="{= ${mUserDataModel>/isHR} || ${mUserDataModel>/isMgr} }"
+                                valueHelpOnly="true"
                                 valueHelpRequest=".onEmployeeValueHelp"
-                                change=".onGlobalIdChange"
                                 placeholder="{i18n>GLOBAL_ID_PLACEHOLDER}"/>
 
                             <Label text="{i18n>BONUS_YEAR}" labelFor="bonusYearInput" class="qbContrastText sapUiSmallMarginTop sapUiTinyMarginBottom"/>

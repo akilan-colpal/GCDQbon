@@ -107,10 +107,6 @@
 	box-shadow: var(--sapContent_Shadow1);
 }
 
-.qbQuartersPanel {
-	max-width: 40rem;
-}
-
 .qbQuarterPill.sapMLIB,
 .qbQuarterPill {
 	border-radius: 1.75rem;

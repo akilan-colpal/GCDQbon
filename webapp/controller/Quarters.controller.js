@@ -112,16 +112,10 @@ sap.ui.define([
                 if (isNaN(fPayout)) {
                     fPayout = 0;
                 }
-                var fTargetAmt = parseFloat(oKpi.kpiTargetAmount);
-                var fPayoutAmt = parseFloat(oKpi.kpiPayout);
-                var fPayoutY = fPayout <= 1 ? fPayout * 100 : fPayout;
-                if (fPayout > 1 && fPayout < 10 && fTargetAmt > 0 && fPayoutAmt > 0 && Math.abs((fPayoutAmt / fTargetAmt) - fPayout) < 0.05) {
-                    fPayoutY = fPayout * 100;
-                }
                 oKpi.chartPoints = [
                     { x: 0, y: 0 },
                     { x: fTarget, y: 100 },
-                    { x: fAchievement, y: fPayoutY }
+                    { x: fAchievement, y: fPayout }
                 ];
             });
         },
