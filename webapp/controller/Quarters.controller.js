@@ -43,9 +43,12 @@ sap.ui.define([
         },
 
         onSelectQuarter: function (oEvent) {
-            var oQuarter = oEvent.getSource().getBindingContext("mQuartersModel").getObject();
+            var oList = oEvent.getSource();
+            var oItem = oEvent.getParameter("listItem");
+            var oQuarter = oItem.getBindingContext("mQuartersModel").getObject();
             var oLang = this.getView().getModel("i18n").getResourceBundle();
             if (!oQuarter.statement) {
+                oList.removeSelections(true);
                 MessageToast.show(oLang.getText("NO_RECORDS"));
                 return;
             }
@@ -111,6 +114,10 @@ sap.ui.define([
         },
 
         onCloseDetail: function () {
+            var oList = this.byId("quarterList");
+            if (oList) {
+                oList.removeSelections(true);
+            }
             var oFcl = this.byId("fcl");
             if (oFcl) {
                 oFcl.backToTopMidColumn();
@@ -180,17 +187,17 @@ sap.ui.define([
                         title: { visible: true, text: oLang.getText("PAYOUT_PERCENT") }
                     },
                     plotArea: {
-                        colorPalette: ["#93c5fd"],
+                        colorPalette: ["#ABC2DB"],
                         dataLabel: { visible: false },
                         marker: { visible: true, size: 5 },
                         dataPointStyle: sAchievementLabel ? {
                             rules: [{
                                 dataContext: { "KPI result": sAchievementLabel },
-                                properties: { color: "#0070f2", size: 10 },
+                                properties: { color: "#0068FF", size: 10 },
                                 displayName: oLang.getText("ACHIEVEMENT")
                             }],
                             others: {
-                                properties: { color: "#93c5fd" },
+                                properties: { color: "#ABC2DB" },
                                 displayName: oLang.getText("PAYOUT_PERCENT")
                             }
                         } : {}

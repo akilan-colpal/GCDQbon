@@ -11,7 +11,7 @@
         class="sapUiResponsiveContentPadding">
         <content>
             <VBox width="100%">
-                <VBox class="qbBrandSurface qbHero qbStartHero" width="100%">
+                <VBox id="startHeroPanel" class="qbBrandSurface qbHero qbStartHero" width="100%">
                     <VBox class="qbStartContent">
                         <Title
                             text="{i18n>MY_BONUS_AMOUNT}"

@@ -38,6 +38,7 @@
                     initials="{mUserDataModel>/initials}"
                     displaySize="M"
                     backgroundColor="Accent6"
+                    class="sapUiHideOnPhone"
                     tooltip="{mUserDataModel>/displayName}"/>
             </tnt:ToolHeader>
         </tnt:header>

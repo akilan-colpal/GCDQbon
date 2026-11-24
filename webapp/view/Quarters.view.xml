@@ -46,14 +46,14 @@
                         <Title text="{mQuartersModel>/searchCriteria/year}" titleStyle="H1" wrapping="true" class="qbContrastText"/>
                         <Title text="{i18n>PICK_QUARTER}" titleStyle="H4" wrapping="true" class="qbContrastText sapUiSmallMarginTop"/>
                         <Text text="{mQuartersModel>/selectedEmployeeName}" class="qbContrastText sapUiTinyMarginTop"/>
-                        <Title text="{i18n>YEAR_TO_DATE}" titleStyle="H5" class="qbContrastText sapUiMediumMarginTop"/>
+                        <Title text="{i18n>YEAR_TO_DATE}" titleStyle="H4" class="qbContrastText sapUiMediumMarginTop"/>
                         <HBox alignItems="End" wrap="Wrap" class="sapUiSmallMarginBottom">
                             <Title
                                 class="qbContrastText qbHeroNumber sapUiTinyMarginEnd"
                                 titleStyle="H1"
                                 wrapping="true"
                                 text="{path: 'mQuartersModel>/ytdAmount', formatter: '.formatCleanNumber'}"/>
-                            <Title text="{mQuartersModel>/currency}" titleStyle="H5" class="qbContrastText"/>
+                            <Title text="{mQuartersModel>/currency}" titleStyle="H4" class="qbContrastText"/>
                         </HBox>
 
                         <!-- One pill per /quarterCards row. -->
@@ -64,17 +64,17 @@
                             backgroundDesign="Transparent"
                             items="{path: 'mQuartersModel>/quarterCards'}"
                             showSeparators="None"
-                            mode="None">
-                            <CustomListItem type="Active" press=".onSelectQuarter" class="qbQuarterPill sapUiTinyMarginBottom">
+                            mode="SingleSelectMaster"
+                            itemPress=".onSelectQuarter">
+                            <CustomListItem type="Active" class="qbQuarterPill sapUiTinyMarginBottom">
                                 <HBox
                                     class="qbQuarterRow"
                                     width="100%"
                                     alignItems="Center"
-                                    justifyContent="SpaceBetween"
-                                    wrap="Wrap">
+                                    justifyContent="SpaceBetween">
                                     <HBox alignItems="Center">
                                         <layoutData>
-                                            <FlexItemData growFactor="1" shrinkFactor="1" minWidth="7rem"/>
+                                            <FlexItemData growFactor="1" shrinkFactor="1"/>
                                         </layoutData>
                                         <Avatar
                                             src="sap-icon://money-bills"
