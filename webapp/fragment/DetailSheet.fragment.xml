@@ -72,7 +72,7 @@
                             <Title text="{ path: 'mChartModel>/earnings/quarterTargetPercent', formatter: '.formatPercent' }" titleStyle="H5"/>
                         </HBox>
 
-                        <Panel expandable="true" expanded="true" width="100%" backgroundDesign="Transparent" class="sapUiSmallMarginTop">
+                        <Panel expandable="true" expanded="false" width="100%" backgroundDesign="Transparent" class="sapUiSmallMarginTop">
                             <headerToolbar>
                                 <OverflowToolbar>
                                     <Title text="{i18n>QUARTERLY_TARGET_AMOUNT}" level="H6"/>
@@ -117,7 +117,7 @@
                         <VBox width="100%" class="sapUiMediumMarginTop" items="{mChartModel>/plans}">
                             <Panel
                                 expandable="true"
-                                expanded="true"
+                                expanded="false"
                                 width="100%"
                                 backgroundDesign="Transparent"
                                 class="sapUiSmallMarginBottom">
@@ -141,7 +141,7 @@
                                         <Title text="{ path: 'mChartModel>prorationPercent', formatter: '.formatPercent' }" titleStyle="H5"/>
                                     </HBox>
 
-                                    <Panel expandable="true" expanded="true" width="100%" backgroundDesign="Transparent" class="sapUiSmallMarginTop">
+                                    <Panel expandable="true" expanded="false" width="100%" backgroundDesign="Transparent" class="sapUiSmallMarginTop">
                                         <headerToolbar>
                                             <OverflowToolbar>
                                                 <Title text="{i18n>PRORATED_TARGET_AMOUNT}" level="H6"/>
@@ -158,7 +158,7 @@
                                                 <VBox alignItems="Center" class="sapUiTinyMargin">
                                                     <ObjectNumber
                                                         emphasized="true"
-                                                        number="{path: 'mChartModel>quarterTargetAmount', formatter: '.formatCleanNumber'}"
+                                                        number="{path: 'mChartModel>/earnings/quarterTargetAmount', formatter: '.formatCleanNumber'}"
                                                         unit="{mDetailModel>/data/currency}"/>
                                                     <Label text="{i18n>QUARTERLY_TARGET_AMOUNT}" class="sapUiTinyMarginTop"/>
                                                 </VBox>
@@ -182,14 +182,15 @@
                                         </content>
                                     </Panel>
 
+                                    <Title text="{i18n>KPI_DETAILS}" level="H4" class="sapUiMediumMarginTop sapUiSmallMarginBottom"/>
                                     <Text
                                         text="{i18n>NO_KPIS}"
                                         class="sapUiSmallMarginTop"
                                         visible="{= !${mChartModel>kpis} || ${mChartModel>kpis}.length === 0 }"/>
-                                    <VBox width="100%" class="sapUiMediumMarginTop" items="{path: 'mChartModel>kpis', templateShareable: false}">
+                                    <VBox width="100%" items="{path: 'mChartModel>kpis', templateShareable: false}">
                                         <Panel
                                             expandable="true"
-                                            expanded="true"
+                                            expanded="false"
                                             width="100%"
                                             backgroundDesign="Transparent"
                                             class="sapUiSmallMarginBottom"
@@ -219,10 +220,6 @@
                                             <content>
                                                 <layout:Grid defaultSpan="XL6 L6 M12 S12" containerQuery="true" width="100%">
                                                     <VBox class="sapUiSmallMarginEnd sapUiSmallMarginBottom">
-                                                        <HBox justifyContent="SpaceBetween" alignItems="Center" class="sapUiSmallMarginBottom">
-                                                            <Label text="{i18n>PRORATION_PERCENT}"/>
-                                                            <Title text="{ path: 'mChartModel>prorationPercent', formatter: '.formatPercent' }" titleStyle="H6"/>
-                                                        </HBox>
                                                         <HBox class="qbFormula sapUiSmallMarginBottom" alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap">
                                                             <VBox class="sapUiTinyMargin">
                                                                 <ObjectNumber
@@ -232,9 +229,14 @@
                                                                 <Label text="{i18n>PRORATED_TARGET}" class="sapUiTinyMarginTop"/>
                                                             </VBox>
                                                             <Title text="×" titleStyle="H5"/>
-                                                            <VBox alignItems="End" class="sapUiTinyMargin">
+                                                            <VBox alignItems="Center" class="sapUiTinyMargin">
                                                                 <Title text="{ path: 'mChartModel>kpiWeight', formatter: '.formatPercent' }" titleStyle="H5"/>
                                                                 <Label text="{i18n>KPI_WEIGHT}" class="sapUiTinyMarginTop"/>
+                                                            </VBox>
+                                                            <Title text="×" titleStyle="H5"/>
+                                                            <VBox alignItems="End" class="sapUiTinyMargin">
+                                                                <Title text="{ path: 'mChartModel>teamWeight', formatter: '.formatPercent' }" titleStyle="H5"/>
+                                                                <Label text="{i18n>TEAM_WEIGHT}" class="sapUiTinyMarginTop"/>
                                                             </VBox>
                                                         </HBox>
                                                         <HBox class="qbFormula sapUiSmallMarginBottom" alignItems="Center" justifyContent="SpaceBetween" wrap="Wrap">
@@ -248,7 +250,7 @@
                                                             <Title text="×" titleStyle="H5"/>
                                                             <VBox alignItems="End" class="sapUiTinyMargin">
                                                                 <Title text="{ path: 'mChartModel>kpiPayoutPercent', formatter: '.formatPercent' }" titleStyle="H5"/>
-                                                                <Label text="{i18n>ACHIEVEMENT}" class="sapUiTinyMarginTop"/>
+                                                                <Label text="{i18n>KPI_PAYOUT_PERCENT}" class="sapUiTinyMarginTop"/>
                                                             </VBox>
                                                         </HBox>
                                                         <HBox class="qbFormulaResult" justifyContent="SpaceBetween" alignItems="Center" wrap="Wrap" width="100%">
@@ -265,13 +267,13 @@
                                                             <columns>
                                                                 <Column width="8rem"><Text text=""/></Column>
                                                                 <Column hAlign="End" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
-                                                                    <Text text="{i18n>KPI_RESULT}"/>
+                                                                    <Text text="{= ${i18n>KPI_RESULT} + (${mDetailModel>/data/currency} ? ' (' + ${mDetailModel>/data/currency} + ')' : '') }"/>
                                                                 </Column>
                                                                 <Column hAlign="End" minScreenWidth="Tablet" demandPopin="true" popinDisplay="Inline">
                                                                     <Text text="{i18n>PAYOUT_PERCENT}"/>
                                                                 </Column>
                                                                 <Column hAlign="End">
-                                                                    <Text text="{i18n>AMOUNT}"/>
+                                                                    <Text text="{= ${i18n>AMOUNT} + (${mDetailModel>/data/currency} ? ' (' + ${mDetailModel>/data/currency} + ')' : '') }"/>
                                                                 </Column>
                                                             </columns>
                                                             <items>
@@ -285,26 +287,10 @@
                                                                 </ColumnListItem>
                                                                 <ColumnListItem>
                                                                     <cells>
-                                                                        <Text text="{i18n>MIN_PAYOUT}"/>
-                                                                        <Text text="{path: 'mChartModel>kpiResMinPayout', formatter: '.formatCleanNumber'}"/>
-                                                                        <Text text="{path: 'mChartModel>kpiMinPayoutPercent', formatter: '.formatPercent'}"/>
-                                                                        <Text text="{path: 'mChartModel>kpiMinPayoutAmount', formatter: '.formatCleanNumber'}"/>
-                                                                    </cells>
-                                                                </ColumnListItem>
-                                                                <ColumnListItem>
-                                                                    <cells>
                                                                         <Text text="{i18n>TARGET}"/>
                                                                         <Text text="{path: 'mChartModel>kpiResTarget', formatter: '.formatCleanNumber'}"/>
                                                                         <Text text="100%"/>
                                                                         <Text text="{path: 'mChartModel>kpiTargetAmount', formatter: '.formatCleanNumber'}"/>
-                                                                    </cells>
-                                                                </ColumnListItem>
-                                                                <ColumnListItem class="qbAchievementRow" highlight="Information">
-                                                                    <cells>
-                                                                        <Text text="{i18n>ACHIEVEMENT}"/>
-                                                                        <Text text="{path: 'mChartModel>kpiResAchievement', formatter: '.formatCleanNumber'}"/>
-                                                                        <Text text="{ path: 'mChartModel>kpiPayoutPercent', formatter: '.formatPercent' }"/>
-                                                                        <Text text="{path: 'mChartModel>kpiPayout', formatter: '.formatCleanNumber'}"/>
                                                                     </cells>
                                                                 </ColumnListItem>
                                                                 <ColumnListItem>
@@ -315,14 +301,16 @@
                                                                         <Text text="{path: 'mChartModel>kpiMaxPayoutAmount', formatter: '.formatCleanNumber'}"/>
                                                                     </cells>
                                                                 </ColumnListItem>
+                                                                <ColumnListItem class="qbAchievementRow" highlight="Information">
+                                                                    <cells>
+                                                                        <Text text="{i18n>ACHIEVEMENT}"/>
+                                                                        <Text text="{path: 'mChartModel>kpiResAchievement', formatter: '.formatCleanNumber'}"/>
+                                                                        <Text text="{ path: 'mChartModel>kpiPayoutPercent', formatter: '.formatPercent' }"/>
+                                                                        <Text text="{path: 'mChartModel>kpiPayout', formatter: '.formatCleanNumber'}"/>
+                                                                    </cells>
+                                                                </ColumnListItem>
                                                             </items>
                                                         </Table>
-                                                        <HBox justifyContent="End" alignItems="Center" class="sapUiSmallMarginTop">
-                                                            <ObjectStatus
-                                                                text="{= ${path: 'mChartModel>kpiResAchievement', formatter: '.formatCleanNumber'} + ' ' + ${mDetailModel>/data/currency} + ' · ' + ${path: 'mChartModel>kpiPayoutPercent', formatter: '.formatPercent'} }"
-                                                                state="Information"
-                                                                inverted="true"/>
-                                                        </HBox>
                                                         <microchart:LineMicroChart
                                                             class="sapUiTinyMarginTop"
                                                             size="Responsive"

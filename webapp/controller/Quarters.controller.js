@@ -85,7 +85,7 @@ sap.ui.define([
             };
 
             var oFirstSum = aSums[0] || {};
-            var fOverallTarget = 0;
+            var fQuarterlyTargetAmount = 0;
             var aPlans = aSums.map(function (oSum) {
                 var aMatchedKpis = aAllKpis.filter(function (oKpi) {
                     return oKpi.startKpiDate === oSum.startQSumDate && oKpi.endKpiDate === oSum.endQSumDate;
@@ -94,7 +94,7 @@ sap.ui.define([
                     aMatchedKpis = aAllKpis;
                 }
                 var oFirstKpi = aMatchedKpis[0] || aAllKpis[0] || {};
-                fOverallTarget += parseFloat(String(oSum.quarterTargetAmount || "0").trim()) || 0;
+                fQuarterlyTargetAmount += parseFloat(String(oSum.quarterTargetAmount || "0").trim()) || 0;
 
                 return {
                     periodDays: formatter.formatDateRange(oSum.startQSumDate, oSum.endQSumDate),
@@ -114,7 +114,7 @@ sap.ui.define([
                     bonusableQuarterEarn: oFirstSum.bonusableQuarterEarn || oQuarter.statement.bonusableEarnings,
                     quarterTargetPercent: oFirstSum.quarterTargetPercent,
                     quarterTargetAmount: aSums.length > 1
-                        ? String(fOverallTarget)
+                        ? String(fQuarterlyTargetAmount)
                         : (oFirstSum.quarterTargetAmount || "0")
                 },
                 plans: aPlans
