@@ -187,6 +187,14 @@
 }
 
 @media (max-width: 600px) {
+	.toolHeader .sapMImg {
+		height: 5rem !important;
+	}
+
+	.toolHeader .qbHeaderText.sapMTitle {
+		font-size: 0.9375rem;
+	}
+
 	.qbHero {
 		padding: 1.25rem 1rem;
 	}

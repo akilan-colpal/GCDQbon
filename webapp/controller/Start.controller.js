@@ -341,7 +341,7 @@ sap.ui.define([
         },
 
         onContinue: async function () {
-            var oHeroPanel = this.byId("startHeroPanel");
+            var oView = this.getView();
             var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
             var sGlobalId = oViewModel.getProperty("/searchCriteria/globalId") || "";
             var sYear = this.byId("bonusYearInput").getSelectedKey();
@@ -352,10 +352,7 @@ sap.ui.define([
                 return;
             }
 
-            if (oHeroPanel) {
-                oHeroPanel.setBusyIndicatorDelay(0);
-                oHeroPanel.setBusy(true);
-            }
+            oView.setBusy(true);
 
             try {
                 var aResponses = await Promise.all(aQuarters.map(function (oQ) {
@@ -437,9 +434,7 @@ sap.ui.define([
                 oViewModel.setProperty("/currency", sCurrency);
                 this.getOwnerComponent().getRouter().navTo("RouteQuarters");
             } finally {
-                if (oHeroPanel) {
-                    oHeroPanel.setBusy(false);
-                }
+                oView.setBusy(false);
             }
         }
     });

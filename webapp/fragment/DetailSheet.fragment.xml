@@ -5,25 +5,30 @@
 
     <Page id="detailPage" backgroundDesign="Solid" enableScrolling="true" class="sapUiResponsiveContentPadding">
         <customHeader>
-            <OverflowToolbar height="auto">
-                <VBox class="sapUiTinyMarginTopBottom">
-                    <Label text="{= ${mDetailModel>/searchCriteria/year} + ' · ' + ${mDetailModel>/searchCriteria/quarter} }"/>
-                    <Title text="{mDetailModel>/data/VarPayTemplateName}" level="H1" titleStyle="H3" wrapping="true"/>
-                </VBox>
-                <ToolbarSpacer/>
-                <Button
-                    text="{i18n>GENERATE_PDF}"
-                    type="Emphasized"
-                    icon="sap-icon://pdf-attachment"
-                    enabled="{= !!${mDetailModel>/data/global_id} &amp;&amp; !${mDetailModel>/pdfLoading} }"
-                    press=".onGeneratePress"
-                    class="sapUiTinyMarginEnd"/>
-                <Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>CLOSE}" press=".onCloseDetail">
-                    <layoutData>
-                        <OverflowToolbarLayoutData priority="NeverOverflow"/>
-                    </layoutData>
-                </Button>
-            </OverflowToolbar>
+            <Toolbar height="auto">
+                <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+                    <VBox class="sapUiTinyMarginTopBottom sapUiTinyMarginEnd">
+                        <layoutData>
+                            <FlexItemData shrinkFactor="1" minWidth="0"/>
+                        </layoutData>
+                        <Label text="{= ${mDetailModel>/searchCriteria/year} + ' · ' + ${mDetailModel>/searchCriteria/quarter} }"/>
+                        <Title text="{mDetailModel>/data/VarPayTemplateName}" level="H1" titleStyle="H3" wrapping="true"/>
+                    </VBox>
+                    <HBox alignItems="Center">
+                        <layoutData>
+                            <FlexItemData shrinkFactor="0"/>
+                        </layoutData>
+                        <Button
+                            text="{i18n>GENERATE_PDF}"
+                            type="Emphasized"
+                            icon="sap-icon://pdf-attachment"
+                            enabled="{= !!${mDetailModel>/data/global_id} &amp;&amp; !${mDetailModel>/pdfLoading} }"
+                            press=".onGeneratePress"
+                            class="sapUiTinyMarginEnd"/>
+                        <Button icon="sap-icon://decline" type="Transparent" tooltip="{i18n>CLOSE}" press=".onCloseDetail"/>
+                    </HBox>
+                </HBox>
+            </Toolbar>
         </customHeader>
         <content>
             <VBox id="detailSheet" width="100%" class="sapUiSmallMarginTop">
