@@ -105,11 +105,17 @@
     "proratedTarget": "36590.41",
     "kpiWeight": "75",
     "teamWeight": "100",
-    "kpiTargetAmount": "27442.81",
-    "kpiPayoutPercent": "94",
-    "kpiPayout": "25689.21",
-    "kpiResTarget": "96396865.42",
-    "kpiResAchievement": "95575220.95"
+    "kpiTargetAmount": "3938.19",
+    "kpiPayoutPercent": "68.30",
+    "kpiPayout": "2689.78",
+    "kpiResThreshold": "55348336.76",
+    "kpiThresholdPercent": "25.00",
+    "kpiThresholdAmount": "984.55",
+    "kpiResTarget": "61498151.95",
+    "kpiResMaxPayout": "64573059.55",
+    "kpiMaxPayoutPercent": "200.00",
+    "kpiMaxPayoutAmount": "7876.38",
+    "kpiResAchievement": "58898949.74"
   },
   {
     "global_id": "00015525",

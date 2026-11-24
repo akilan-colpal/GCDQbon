@@ -38,11 +38,10 @@ sap.ui.define([
                 isYearEnabled: false,
                 treeHierarchy: [],
                 isSearchEnabled: false,
-                summariesLoading: false,
-                selectedEmployeeLabel: "",
+                selectedEmployeeName: "",
                 quarterCards: [],
                 ytdAmount: "0",
-                currency: "MXP",
+                currency: "",
                 searchCriteria: {
                     globalId: "",
                     year: ""
@@ -241,8 +240,8 @@ sap.ui.define([
 
         getIllustratedMessage: function (sErrorMessage) {
             this.fnCloseBusyDialog();
-            var oBundle = this.getModel("i18n").getResourceBundle();
-            var sMessage = sErrorMessage || oBundle.getText("ACCESS_DENIED_DESCRIPTION");
+            var oLang = this.getModel("i18n").getResourceBundle();
+            var sMessage = sErrorMessage || oLang.getText("ACCESS_DENIED_DESCRIPTION");
             this.getModel("mUserDataModel").setProperty("/accessDeniedMessage", sMessage);
             var oRouter = this.getRouter();
             oRouter.initialize(true);

@@ -15,10 +15,7 @@
                     src="{value: 'adobeform/image/ColPal_Icon.svg', formatter: 'sap.ui.require.toUrl'}"
                     width="auto"
                     height="8.5rem"
-                    press=".pressLogo"
-                    class="sapMPointer"
-                    decorative="false"
-                    tooltip="{i18n>appTitle}"/>
+                    decorative="true"/>
                 <VBox justifyContent="Center" class="sapUiSmallMarginBegin">
                     <Label text="{i18n>BONUS_PROGRAM}" class="qbHeaderText sapUiHideOnPhone"/>
                     <Title text="{i18n>GCD_BONUS}" level="H4" wrapping="true" class="qbHeaderText"/>

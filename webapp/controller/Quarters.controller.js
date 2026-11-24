@@ -15,7 +15,7 @@ sap.ui.define([
             this.getOwnerComponent().getRouter().getRoute("RouteQuarters").attachPatternMatched(this.onRouteMatched, this);
         },
 
-        onFclStateChange: function (oEvent) {
+        onFlexColStateChange: function (oEvent) {
             var bIsPhone = oEvent.getParameter("isPhone");
             var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
             var bDetailOpen = oDetailModel && oDetailModel.getProperty("/isPdfButtonVisible");
@@ -33,10 +33,8 @@ sap.ui.define([
                 this.getOwnerComponent().getRouter().navTo("RouteStart", {}, true);
                 return;
             }
-            var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
-            if (!oDetailModel || !oDetailModel.getProperty("/isPdfButtonVisible")) {
-                this.byId("fcl").setLayout(window.innerWidth > 900 ? "TwoColumnsMidExpanded" : "OneColumn");
-            }
+            this.onCloseDetail();
+            this.byId("fcl").setLayout(window.innerWidth > 900 ? "TwoColumnsMidExpanded" : "OneColumn");
         },
 
         onBack: function () {
@@ -46,9 +44,9 @@ sap.ui.define([
 
         onSelectQuarter: function (oEvent) {
             var oQuarter = oEvent.getSource().getBindingContext("mQuartersModel").getObject();
-            var oBundle = this.getView().getModel("i18n").getResourceBundle();
+            var oLang = this.getView().getModel("i18n").getResourceBundle();
             if (!oQuarter.statement) {
-                MessageToast.show(oBundle.getText("NO_RECORDS"));
+                MessageToast.show(oLang.getText("NO_RECORDS"));
                 return;
             }
 
@@ -64,58 +62,45 @@ sap.ui.define([
             oDetailModel.setProperty("/data", oQuarter.statement);
             oDetailModel.setProperty("/isPdfButtonVisible", true);
 
-            var aSums = oQuarter.statement.to_qSum || [];
+            var aQuarterSummaries = oQuarter.statement.to_qSum || [];
             var aAllKpis = oQuarter.statement.to_KPIs || [];
 
-            var fnBuildKpi = function (oKpi, oSum) {
-                var aPoints = [
-                    { x: Number(oKpi.kpiResThreshold), y: Number(oKpi.kpiThresholdPercent), show: false },
-                    { x: Number(oKpi.kpiResMinPayout), y: Number(oKpi.kpiMinPayoutPercent), show: false },
-                    { x: Number(oKpi.kpiResTarget), y: 100, show: false },
-                    { x: Number(oKpi.kpiResAchievement), y: Number(oKpi.kpiPayoutPercent), show: true },
-                    { x: Number(oKpi.kpiResMaxPayout), y: Number(oKpi.kpiMaxPayoutPercent), show: false }
-                ].sort(function (a, b) {
-                    return a.x - b.x;
-                });
-
-                return Object.assign({}, oKpi, {
-                    prorationPercent: oSum.prorationPercent || oSum.paymentPeriod,
-                    chartPoints: aPoints
-                });
-            };
-
-            var oFirstSum = aSums[0] || {};
+            var sCurrency = oQuarter.statement.currency || "";
             var fQuarterlyTargetAmount = 0;
-            var aPlans = aSums.map(function (oSum) {
+            var aPlans = aQuarterSummaries.map(function (oSummary) {
                 var aMatchedKpis = aAllKpis.filter(function (oKpi) {
-                    return oKpi.startKpiDate === oSum.startQSumDate && oKpi.endKpiDate === oSum.endQSumDate;
+                    return oKpi.startKpiDate === oSummary.startQSumDate && oKpi.endKpiDate === oSummary.endQSumDate;
                 });
-                if (aMatchedKpis.length === 0 && aSums.length === 1) {
+                if (aMatchedKpis.length === 0 && aQuarterSummaries.length === 1) {
                     aMatchedKpis = aAllKpis;
                 }
                 var oFirstKpi = aMatchedKpis[0] || aAllKpis[0] || {};
-                fQuarterlyTargetAmount += parseFloat(String(oSum.quarterTargetAmount || "0").trim()) || 0;
+                fQuarterlyTargetAmount += parseFloat(String(oSummary.quarterTargetAmount || "0").trim()) || 0;
 
                 return {
-                    periodDays: formatter.formatDateRange(oSum.startQSumDate, oSum.endQSumDate),
-                    planType: oSum.planType || "",
-                    quarterTargetAmount: oSum.quarterTargetAmount,
-                    prorationPercent: oSum.prorationPercent || oSum.paymentPeriod,
+                    periodDays: formatter.formatDateRange(oSummary.startQSumDate, oSummary.endQSumDate),
+                    planType: oSummary.planType || "",
+                    quarterTargetAmount: oSummary.quarterTargetAmount,
+                    prorationPercent: oSummary.prorationPercent || oSummary.paymentPeriod,
                     proratedTarget: oFirstKpi.proratedTarget,
-                    segmentAward: oSum.segmentAward,
+                    segmentAward: oSummary.segmentAward,
+                    showCalc: false,
                     kpis: aMatchedKpis.map(function (oKpi) {
-                        return fnBuildKpi(oKpi, oSum);
-                    })
+                        return Object.assign({}, oKpi, {
+                            prorationPercent: oSummary.prorationPercent || oSummary.paymentPeriod
+                        }, this._buildKpiChartData(oKpi, sCurrency, oLang));
+                    }.bind(this))
                 };
-            });
+            }.bind(this));
 
             this.getView().setModel(new JSONModel({
                 earnings: {
-                    bonusableQuarterEarn: oFirstSum.bonusableQuarterEarn || oQuarter.statement.bonusableEarnings,
-                    quarterTargetPercent: oFirstSum.quarterTargetPercent,
-                    quarterTargetAmount: aSums.length > 1
+                    bonusableQuarterEarn: aQuarterSummaries[0]?.bonusableQuarterEarn || oQuarter.statement.bonusableEarnings,
+                    quarterTargetPercent: aQuarterSummaries[0]?.quarterTargetPercent,
+                    quarterTargetAmount: aQuarterSummaries.length > 1
                         ? String(fQuarterlyTargetAmount)
-                        : (oFirstSum.quarterTargetAmount || "0")
+                        : (aQuarterSummaries[0]?.quarterTargetAmount || "0"),
+                    showCalc: false
                 },
                 plans: aPlans
             }), "mChartModel");
@@ -133,11 +118,89 @@ sap.ui.define([
                     oFcl.setLayout("OneColumn");
                 }
             }
+            var oDetailPage = this.byId("detailPage");
+            if (oDetailPage && oDetailPage.scrollTo) {
+                oDetailPage.scrollTo(0, 0);
+            }
+            this.getView().setModel(new JSONModel({}), "mChartModel");
             var oDetailModel = this.getOwnerComponent().getModel("mDetailModel");
             if (oDetailModel) {
                 oDetailModel.setProperty("/data", {});
                 oDetailModel.setProperty("/isPdfButtonVisible", false);
             }
+        },
+
+        // =======================================================
+        // CHART DATA
+        // =======================================================
+        _buildKpiChartData: function (oKpi, sCurrency, oLang) {
+            var aRawPoints = [
+                { val: parseFloat(oKpi.kpiResThreshold), y: parseFloat(oKpi.kpiThresholdPercent) },
+                { val: parseFloat(oKpi.kpiResTarget), y: 100 },
+                { val: parseFloat(oKpi.kpiResAchievement), y: parseFloat(oKpi.kpiPayoutPercent) },
+                { val: parseFloat(oKpi.kpiResMaxPayout), y: parseFloat(oKpi.kpiMaxPayoutPercent) }
+            ].filter(function (oPoint) {
+                return !isNaN(oPoint.val) && !isNaN(oPoint.y);
+            }).sort(function (a, b) {
+                return a.val - b.val;
+            });
+
+            if (aRawPoints.length > 0 && aRawPoints[0].y > 0) {
+                aRawPoints.unshift({ val: 0, y: 0 });
+            }
+
+            var aPoints = aRawPoints.map(function (oPoint) {
+                return {
+                    label: oPoint.val === 0 ? "0" : this.formatCleanNumber(oPoint.val),
+                    payoutPercent: oPoint.y
+                };
+            }.bind(this));
+
+            var sAchievementLabel = this.formatCleanNumber(oKpi.kpiResAchievement);
+
+            return {
+                chartPoints: aPoints,
+                vizProperties: {
+                    title: { visible: false },
+                    legend: { visible: false },
+                    categoryAxis: {
+                        title: {
+                            visible: true,
+                            text: sCurrency
+                                ? oLang.getText("KPI_RESULT") + " (" + sCurrency + ")"
+                                : oLang.getText("KPI_RESULT")
+                        },
+                        label: {
+                            visible: true,
+                            hideSubLevels: false,
+                            style: { fontSize: "11px" }
+                        }
+                    },
+                    valueAxis: {
+                        title: { visible: true, text: oLang.getText("PAYOUT_PERCENT") }
+                    },
+                    plotArea: {
+                        colorPalette: ["#93c5fd"],
+                        dataLabel: { visible: false },
+                        marker: { visible: true, size: 5 },
+                        dataPointStyle: sAchievementLabel ? {
+                            rules: [{
+                                dataContext: { "KPI result": sAchievementLabel },
+                                properties: { color: "#0070f2", size: 10 },
+                                displayName: oLang.getText("ACHIEVEMENT")
+                            }],
+                            others: {
+                                properties: { color: "#93c5fd" },
+                                displayName: oLang.getText("PAYOUT_PERCENT")
+                            }
+                        } : {}
+                    },
+                    interaction: {
+                        selectability: { mode: "none" }
+                    },
+                    tooltip: { visible: true }
+                }
+            };
         },
 
         // =======================================================
@@ -224,7 +287,7 @@ sap.ui.define([
             }
             return fValue.toLocaleString(undefined, {
                 minimumFractionDigits: 0,
-                maximumFractionDigits: 2
+                maximumFractionDigits: 20
             });
         },
 

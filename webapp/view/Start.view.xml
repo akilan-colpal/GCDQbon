@@ -28,7 +28,7 @@
                             <Input
                                 id="employeeIdInput"
                                 width="100%"
-                                value="{path: 'mQuartersModel>/selectedEmployeeLabel', mode: 'OneWay'}"
+                                value="{path: 'mQuartersModel>/selectedEmployeeName', mode: 'OneWay'}"
                                 editable="{= ${mUserDataModel>/isHR} || ${mUserDataModel>/isMgr} }"
                                 showValueHelp="{= ${mUserDataModel>/isHR} || ${mUserDataModel>/isMgr} }"
                                 valueHelpOnly="true"
@@ -53,7 +53,7 @@
                             id="getDetailsButton"
                             class="sapUiSmallMarginTop"
                             width="100%"
-                            text="{= ${mQuartersModel>/summariesLoading} ? ${i18n>LOADING} : ${i18n>GET_DETAILS} }"
+                            text="{i18n>GET_DETAILS}"
                             type="Success"
                             icon="sap-icon://navigation-right-arrow"
                             iconFirst="false"

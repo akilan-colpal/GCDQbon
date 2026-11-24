@@ -28,7 +28,7 @@ sap.ui.define([
             } else {
                 var sEmpId = oUserDataModel.getProperty("/userId");
                 var sDisplayName = oUserDataModel.getProperty("/displayName");
-                oQuartersModel.setProperty("/selectedEmployeeLabel", this._formatEmployeeLabel(sDisplayName, sEmpId));
+                oQuartersModel.setProperty("/selectedEmployeeName", this._formatEmployeeLabel(sDisplayName, sEmpId));
                 oQuartersModel.setProperty("/searchCriteria/globalId", sEmpId);
                 this._updateSearchEnabled();
                 this._loadDropdownData(sEmpId);
@@ -75,7 +75,7 @@ sap.ui.define([
             var oUserDataModel = this.getOwnerComponent().getModel("mUserDataModel");
             var sRootEmpId = oUserDataModel.getProperty("/userId");
 
-            oViewModel.setProperty("/selectedEmployeeLabel", this._formatEmployeeLabel(oUserDataModel.getProperty("/displayName"), sRootEmpId));
+            oViewModel.setProperty("/selectedEmployeeName", this._formatEmployeeLabel(oUserDataModel.getProperty("/displayName"), sRootEmpId));
             oViewModel.setProperty("/searchCriteria/globalId", sRootEmpId);
             this._updateSearchEnabled();
 
@@ -89,7 +89,7 @@ sap.ui.define([
 
                 var sRootName = [oUserData.firstName, oUserData.lastName].filter(Boolean).join(" ");
                 if (sRootName) {
-                    oViewModel.setProperty("/selectedEmployeeLabel", this._formatEmployeeLabel(sRootName, sRootEmpId));
+                    oViewModel.setProperty("/selectedEmployeeName", this._formatEmployeeLabel(sRootName, sRootEmpId));
                 }
                 oViewModel.setProperty("/treeHierarchy", [oUserNode]);
                 this._loadDropdownData(sRootEmpId);
@@ -115,7 +115,7 @@ sap.ui.define([
 
         _selectEmployee: function (sSelectedId, sLabel) {
             var oViewModel = this.getOwnerComponent().getModel("mQuartersModel");
-            oViewModel.setProperty("/selectedEmployeeLabel", sLabel || sSelectedId);
+            oViewModel.setProperty("/selectedEmployeeName", sLabel || sSelectedId);
             oViewModel.setProperty("/searchCriteria/globalId", sSelectedId);
             this.byId("bonusYearInput").setSelectedKey("");
             oViewModel.setProperty("/isYearEnabled", false);
@@ -194,7 +194,6 @@ sap.ui.define([
 
             oViewModel.setProperty("/quarterCards", []);
             oViewModel.setProperty("/ytdAmount", "0");
-            oViewModel.setProperty("/summariesLoading", false);
             this._openBusyDialog();
             oViewModel.setProperty("/searchCriteria", {
                 globalId: sEmployeeId,
@@ -278,7 +277,7 @@ sap.ui.define([
                         oViewModel.setProperty("/isYearEnabled", false);
                         this.byId("bonusYearInput").setSelectedKey("");
                         this._updateSearchEnabled();
-                        var sEmployeeLabel = oViewModel.getProperty("/selectedEmployeeLabel") || sEmployeeId;
+                        var sEmployeeLabel = oViewModel.getProperty("/selectedEmployeeName") || sEmployeeId;
                         MessageBox.warning("No statements found for " + sEmployeeLabel);
                         oView.setBusy(false);
                     }
@@ -334,11 +333,10 @@ sap.ui.define([
             var oYearSelect = this.byId("bonusYearInput");
             var sGlobalId = oViewModel.getProperty("/searchCriteria/globalId") || "";
             var bYearSelected = !!(oYearSelect && oYearSelect.getSelectedItem());
-            var bSummariesLoading = oViewModel.getProperty("/summariesLoading");
 
             oViewModel.setProperty(
                 "/isSearchEnabled",
-                !!(sGlobalId && bYearSelected && !bSummariesLoading)
+                !!(sGlobalId && bYearSelected)
             );
         },
 
@@ -355,8 +353,6 @@ sap.ui.define([
             }
 
             oView.setBusy(true);
-            oViewModel.setProperty("/summariesLoading", true);
-            this._updateSearchEnabled();
 
             try {
                 var aResponses = await Promise.all(aQuarters.map(function (oQ) {
@@ -382,7 +378,7 @@ sap.ui.define([
                 var oLatest = aResponses[aResponses.length - 1];
                 var oLatestRecord = oLatest && oLatest.results && oLatest.results[0];
                 var sYtdAmount = (oLatestRecord && oLatestRecord.totalBonusYTD) || "0";
-                var sCurrency = (oLatestRecord && oLatestRecord.currency) || "MXP";
+                var sCurrency = (oLatestRecord && oLatestRecord.currency) || "";
 
                 aResponses.forEach(function (oRes) {
                     var sQuarter = oRes.quarter;
@@ -438,9 +434,7 @@ sap.ui.define([
                 oViewModel.setProperty("/currency", sCurrency);
                 this.getOwnerComponent().getRouter().navTo("RouteQuarters");
             } finally {
-                oViewModel.setProperty("/summariesLoading", false);
                 oView.setBusy(false);
-                this._updateSearchEnabled();
             }
         }
     });

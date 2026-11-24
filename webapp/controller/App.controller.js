@@ -16,10 +16,6 @@ sap.ui.define([
             }), "appSettings");
         },
 
-        pressLogo: function () {
-            this.getOwnerComponent().getRouter().navTo("RouteStart");
-        },
-
         onLanguageChange: function (oEvent) {
             var sSelectedLang = oEvent.getParameter("selectedItem").getKey();
             this.getOwnerComponent().getModel("appSettings").setProperty("/language", sSelectedLang);
